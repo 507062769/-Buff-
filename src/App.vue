@@ -1,16 +1,19 @@
 <template>
   <div id="app">
-    <topHeader></topHeader>
-    <!-- <router-view></router-view> -->
+    <TopHeader></TopHeader>
+    <router-view></router-view>
+    <Footerr></Footerr>
   </div>
 </template>
 
 <script>
-import topHeader from './components/topHeader.vue'
+import TopHeader from "./components/topHeader.vue";
+import Footerr from "./components/footer.vue";
+
 export default {
-  name: 'App',
-  components: { topHeader }
-}
+  name: "App",
+  components: { TopHeader, Footerr },
+};
 </script>
 
 <style>
