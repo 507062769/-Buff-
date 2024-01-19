@@ -7,8 +7,10 @@ import router from "./router";
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 
-const vm=new Vue({
+const vm = new Vue({
   router,
   render: (h) => h(App),
+  beforeCreate() {
+    Vue.prototype.$bus = this;
+  },
 }).$mount("#app");
-console.log('vm:',vm)

@@ -5,29 +5,16 @@
         <span class="kind">{{ title }}</span>
         <router-link to="/marketplace" class="goShop">进入市场></router-link>
       </div>
-      <div class="content">
-        <div class="market" v-for="item in marketInfo" :key="item.id">
-          <a href="#">
-            <div class="item_bg">
-              <img class="marketImg" :src="item.Img" alt="" />
-            </div>
-          </a>
-          <h3>
-            <a href="#">{{ item.Title }}</a>
-          </h3>
-          <p>
-            <b>￥{{ item.Price }}</b>
-          </p>
-        </div>
-      </div>
+      <Item :marketInfo="marketInfo" />
     </div>
   </div>
 </template>
 
 <script>
+import Item from "../market/marketItem.vue";
 export default {
   name: "marketList",
-  components: {},
+  components: { Item },
   props: ["marketInfo", "title"],
   data() {
     return {};
@@ -42,14 +29,14 @@ export default {
 
 <style scoped lang='less'>
 #marketList {
-  height: 600px;
+  height: fit-content;
   width: 100%;
   background-image: url("../../../public/img/list-bj.jpg");
   padding: 55px 0 0 0;
 
   .center {
     width: 80%;
-    height: 500px;
+    height: fit-content;
     margin: 0 auto;
 
     .title {
@@ -82,53 +69,6 @@ export default {
 
       .goShop:hover {
         color: #aa7f25;
-      }
-    }
-
-    .content {
-      height: 500px;
-      width: 100%;
-      margin-top: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-
-      .market {
-        height: 230px;
-        width: 19%;
-        margin-bottom: 16px;
-        background-color: white;
-        .item_bg {
-          height: 70%;
-          width: 100%;
-          background-image: url("../../../public/img/item_bg.png");
-        }
-
-        .marketImg {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-        }
-        h3 {
-          margin: 6px 10px 0;
-          height: 26px;
-          overflow: hidden;
-        }
-        p {
-          margin: 6px 10px 0;
-          font-size: 16px;
-          color: #eea20e;
-        }
-        h3 a:hover {
-          color: #f5b50e;
-        }
-        a {
-          color: #111;
-          text-decoration: none;
-        }
-      }
-      .market:hover {
-        background-color: #fefcf7;
       }
     }
   }

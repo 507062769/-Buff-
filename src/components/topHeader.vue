@@ -25,7 +25,6 @@
         </div>
       </div>
     </div>
-    <!-- <Banner /> -->
   </div>
 </template>
 
@@ -62,8 +61,10 @@ export default {
     height: 100%;
     width: 80%;
     margin: 0 auto;
-    display: flex;
     align-content: center;
+    display: flex;
+    // display: inline-grid;
+    // grid-template-columns: 100px auto 1000px auto auto;
 
     .logo {
       width: 77px;
@@ -85,7 +86,7 @@ export default {
       line-height: 70px;
       font-size: 14px;
       text-align: center;
-      margin-left: 900px;
+      margin-left: 778px;
 
       .loginRegister {
         display: inline-block;
