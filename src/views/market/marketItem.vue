@@ -16,7 +16,7 @@
         </p>
       </div>
     </div>
-    <div class="paging">
+    <!-- <div class="paging">
       <el-pagination
         background
         layout="prev, pager, next"
@@ -25,7 +25,7 @@
         hide-on-single-page="1"
       >
       </el-pagination>
-    </div>
+    </div> -->
   </div>
 </template>
 
