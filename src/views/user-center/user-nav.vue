@@ -6,14 +6,14 @@
     </div>
     <div class="my-menu">
       <ul @click="toggleTab">
-        <li :tabIndex="1" :class="tabIndex == 1 ? 'on' : ''">
-          <router-link to="#"><i class="el-icon-money"> </i> 我的钱包</router-link>
+        <li :tabIndex="1" :class="tabIndex == 1 ? 'on' : ''" >
+          <a><i class="el-icon-money"> </i> 我的钱包</a>
         </li>
-        <li :tabIndex="2" :class="tabIndex == 2 ? 'on' : ''">
-          <router-link to="#"><i class="el-icon-setting"> </i> 账号设置</router-link>
+        <li :tabIndex="2" :class="tabIndex == 2 ? 'on' : ''" >
+          <a><i class="el-icon-setting"> </i> 账号设置</a>
         </li>
         <li :tabIndex="3" :class="tabIndex == 3 ? 'on' : ''">
-          <router-link to="#"><i class="el-icon-message"> </i> 消息中心</router-link>
+          <a><i class="el-icon-message"> </i> 消息中心</a>
         </li>
       </ul>
     </div>
@@ -34,11 +34,32 @@ export default {
   watch: {},
   computed: {},
   methods: {
-    toggleTab(e) {
-      console.log("被点击啦！", e.target);
-      this.tabIndex = e.target.tabIndex;
-      // e.target.classList.add("on");
-    },
+    // 切换tab栏，对应的tabIndex发生变化从而改变选中的li的样式
+    toggleTab({ target }) {
+      if (target.tagName === "LI") {
+        this.tabIndex = target.tabIndex;
+      } else if (target.tagName === "A") {
+        this.tabIndex = target.closest("li").tabIndex;
+      }
+      switch (this.tabIndex) {
+        case 1:
+          this.$router.push({
+            name: "recharge"
+          })
+          break;
+        case 2:
+          this.$router.push({
+            name: "profile"
+          })
+          break;
+        case 3:
+          this.$router.push({
+            name: "message"
+          })
+          break;
+      }
+
+    }
   },
 };
 </script>
@@ -46,7 +67,7 @@ export default {
 <style scoped lang="less">
 #userNav {
   width: 20%;
-  height: 500px;
+  height: 530px;
   color: #fff;
 
   .my-thum {
@@ -78,6 +99,7 @@ export default {
       text-align: center;
       cursor: pointer;
       pointer-events: auto;
+
       a {
         color: #fff;
       }

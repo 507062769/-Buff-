@@ -33,6 +33,40 @@ const routes = [
     name: "UserCenter",
     path: "/user-center",
     component: () => import("../views/user-center/user-center.vue"),
+    children: [
+      {
+        name: "myPurse",
+        path: "myPurse",
+        component: () => import("../views/user-center/myPurse.vue"),
+        children: [
+          {
+            name: "recharge",
+            path: "recharge",
+            component: () => import("../views/user-center/recharge.vue"),
+          },
+          {
+            name: "withdraw",
+            path: "withdraw",
+            component: () => import("../views/user-center/withdraw.vue"),
+          },
+          {
+            name: "asset",
+            path: "asset",
+            component: () => import("../views/user-center/asset.vue"),
+          },
+        ],
+      },
+      {
+        name: "profile",
+        path: "profile",
+        component: () => import("../views/user-center/profile.vue"),
+      },
+      {
+        name: "message",
+        path: "message",
+        component: () => import("../views/user-center/message.vue"),
+      },
+    ],
   },
 
   {

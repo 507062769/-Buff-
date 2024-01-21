@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <TopHeader></TopHeader>
-    <router-view></router-view>
+    <div class="allBg" :class="$route.path!=='/home'?'padding20':''">
+      <router-view></router-view>
+    </div>
     <Footerr></Footerr>
   </div>
 </template>
@@ -13,6 +15,9 @@ import Footerr from "./components/footer.vue";
 export default {
   name: "App",
   components: { TopHeader, Footerr },
+  mounted() {
+   
+  }
 };
 </script>
 
@@ -22,5 +27,14 @@ export default {
   padding: 0;
   list-style: none;
   text-decoration: none;
+}
+
+.allBg {
+  background-image: url("../public/img/bg/header-bg_csgo.jpg");
+  height: fit-content;
+  background-position: -204px -70px;
+}
+.padding20{
+  padding: 20px 0;
 }
 </style>

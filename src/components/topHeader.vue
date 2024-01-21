@@ -1,5 +1,5 @@
 <template>
-  <div class="bg">
+  <div class="bg" :class="$route.path!=='/home'?'notHomeBg':'homeBg'">
     <div id="topHeader">
       <div class="PageCenter">
         <div class="logo">
@@ -143,20 +143,28 @@ export default {
     },
     goUserCenter() {
       this.$router.push({
-        path: "/user-center",
+        name:"recharge"
       });
     },
   },
 };
 </script>
 
-<style scoped lang="less">
-.bg {
+<style scoped lang="less">、
+.bg{
   width: 100%;
   height: 70px;
+}
+.homeBg {
   background-image: url("../../public/img/bg/bj.jpg");
+}
 
-  #topHeader {
+.notHomeBg{
+  background-image: url("../../public/img/bg/header-bg_csgo.jpg");
+  background-position: -204px 0;
+}
+
+#topHeader {
     height: 70px;
     width: 100%;
     background-image: url("../../public/img/bg/top-bg.png");
@@ -356,7 +364,7 @@ export default {
       }
     }
   }
-}
+
 
 .form .input {
   width: 90%;

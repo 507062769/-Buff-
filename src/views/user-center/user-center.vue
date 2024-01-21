@@ -1,7 +1,7 @@
 <template>
   <div id="userCenter">
     <UserNav></UserNav>
-    <div></div>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -26,5 +26,6 @@ export default {
   width: 80%;
   height: fit-content;
   margin: 0 auto;
+  display: flex;
 }
 </style>
