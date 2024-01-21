@@ -36,37 +36,37 @@ export default {
           id: 0,
           Title: "巴黎Major印花",
           Desc: "现已开放交易",
-          Img: "img/banner1.png",
+          Img: "img/banner/banner1.png",
         },
         {
           id: 1,
           Title: "阿努比斯收藏品",
           Desc: "现已开放交易",
-          Img: "img/banner2.png",
+          Img: "img/banner/banner2.png",
         },
         {
           id: 2,
           Title: "热门CSGO饰品",
           Desc: "好货推荐跟着买就对了",
-          Img: "img/banner3.png",
+          Img: "img/banner/banner3.png",
         },
         {
           id: 3,
           Title: "BUFF移动端APP",
           Desc: "随时随地便捷交易快人一步",
-          Img: "img/banner4.png",
+          Img: "img/banner/banner4.png",
         },
         {
           id: 4,
           Title: "交易防骗指南",
           Desc: "务必阅读",
-          Img: "img/banner5.png",
+          Img: "img/banner/banner5.png",
         },
         {
           id: 5,
           Title: "UU加速器 IOS/安卓",
           Desc: "免费加速 交易访问问题",
-          Img: "img/banner6.png",
+          Img: "img/banner/banner6.png",
         },
       ],
       bnTimer: null,
@@ -95,7 +95,7 @@ export default {
 .bg {
   width: 100%;
   height: 440px;
-  background-image: url("../../public/img/bj.jpg");
+  background-image: url("../../public/img/bg/bj.jpg");
   background-position: 0 -70px;
 }
 #banner {

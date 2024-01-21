@@ -6,15 +6,8 @@
           <img src="img/logo.png" alt="" />
         </div>
         <div class="nav">
-          <el-menu
-            default-active="/home"
-            background-color="rgba(0,0,0,0.0)"
-            text-color="#fff"
-            active-text-color="#4886ff"
-            class="el-menu-demo"
-            mode="horizontal"
-            router
-          >
+          <el-menu default-active="/home" background-color="rgba(0,0,0,0.0)" text-color="#fff" active-text-color="#4886ff"
+            class="el-menu-demo" mode="horizontal" router>
             <el-menu-item index="/home">首页</el-menu-item>
             <el-menu-item index="/marketplace">饰品市场</el-menu-item>
             <el-menu-item index="/gameInfo">游戏资讯</el-menu-item>
@@ -23,15 +16,10 @@
         <div class="login" v-if="user == null">
           <div class="loginRegister" @click="dialogForm = true">登录/注册</div>
         </div>
+
         <div class="nav nav_entries" v-else>
-          <el-menu
-            background-color="rgba(0,0,0,0.0)"
-            text-color="#fff"
-            active-text-color="#4886ff"
-            class="el-menu-demo"
-            mode="horizontal"
-            router
-          >
+          <el-menu background-color="rgba(0,0,0,0.0)" text-color="#fff" active-text-color="#4886ff" class="el-menu-demo"
+            mode="horizontal" router>
             <el-menu-item index="/myBackpack">我的库存</el-menu-item>
             <el-menu-item index="/mySell">我的出售</el-menu-item>
           </el-menu>
@@ -46,25 +34,21 @@
             <div class="drop-store">
               <div class="store-user">
                 <span class="store-tx">
-                  <el-avatar
-                    :size="60"
-                    icon="el-icon-user-solid"
-                    class="tx"
-                  ></el-avatar>
+                  <el-avatar :size="60" icon="el-icon-user-solid" class="tx-margin"></el-avatar>
                 </span>
 
                 <span class="store-info">
-                  <p>{{ user.nickName }}</p>
-                  <p>退出登录</p>
+                  <p @click="goUserCenter">{{ user.nickName }}</p>
+                  <p @click="logout">退出登录</p>
                 </span>
               </div>
               <div class="store-account">
-                <h3>余额<b>￥xxx</b></h3>
+                <h3>
+                  余额<b>￥{{ user.money }}</b>
+                </h3>
                 <p>
                   <a class="i_Btn_small">充值</a>
-                  <a class="i_Btn_small" style="background-color: #4773c8"
-                    >提现</a
-                  >
+                  <a class="i_Btn_small" style="background-color: #4773c8">提现</a>
                 </p>
               </div>
             </div>
@@ -75,23 +59,9 @@
     <div class="container" v-show="dialogForm">
       <div class="heading">帐号登录/注册</div>
       <form action="" class="form">
-        <input
-          v-model="account"
-          required=""
-          class="input"
-          name="account"
-          id="account"
-          placeholder="请输入手机号"
-        />
-        <input
-          v-model="pwd"
-          required=""
-          class="input"
-          type="password"
-          name="password"
-          id="password"
-          placeholder="请输入密码"
-        />
+        <input v-model="account" required="" class="input" name="account" id="account" placeholder="请输入手机号" />
+        <input v-model="pwd" required="" class="input" type="password" name="password" id="password"
+          placeholder="请输入密码" />
         <span class="forgot-password"><a href="#">忘记密码?</a></span>
         <input class="login-button" type="button" value="登录" @click="login" />
       </form>
@@ -114,7 +84,7 @@ export default {
       user: {},
     };
   },
-  create() {},
+  create() { },
   mounted() {
     this.isExistUserInfo();
   },
@@ -123,7 +93,6 @@ export default {
   methods: {
     isExistUserInfo() {
       this.user = JSON.parse(localStorage.getItem("BuffuserInfo"));
-      console.log("this.user：", this.user);
     },
     login() {
       axios
@@ -138,7 +107,7 @@ export default {
             case "200":
               this.dialogForm = false;
               this.user = res.data.data[0];
-              console.log("user.nickName", this.user.nickName);
+              console.log("user", this.user);
               localStorage.setItem(
                 "BuffuserInfo",
                 JSON.stringify(res.data.data[0])
@@ -164,6 +133,19 @@ export default {
           }
         });
     },
+    logout() {
+      localStorage.removeItem("BuffuserInfo");
+      this.$message({
+        message: "退出成功！",
+        type: "success",
+      });
+      this.isExistUserInfo();
+    },
+    goUserCenter() {
+      this.$router.push({
+        path: "/user-center",
+      });
+    },
   },
 };
 </script>
@@ -172,12 +154,12 @@ export default {
 .bg {
   width: 100%;
   height: 70px;
-  background-image: url("../../public/img/bj.jpg");
+  background-image: url("../../public/img/bg/bj.jpg");
 
   #topHeader {
     height: 70px;
     width: 100%;
-    background-image: url("../../public/img/top-bg.png");
+    background-image: url("../../public/img/bg/top-bg.png");
     background-position: -210px 0;
 
     .PageCenter {
@@ -244,7 +226,7 @@ export default {
         color: #fff;
 
         .tx {
-          margin: 15px 0;
+          margin-left: 15px;
         }
 
         .userInfo {
@@ -253,6 +235,7 @@ export default {
           cursor: pointer;
 
           position: relative;
+
           .userName {
             line-height: 70px;
           }
@@ -278,6 +261,10 @@ export default {
               .store-tx {
                 height: 100%;
                 flex-basis: 35%;
+
+                .tx-margin{
+                  margin: 15px 0;
+                }
               }
 
               .store-info {
@@ -285,15 +272,18 @@ export default {
                 flex-basis: 65%;
                 text-align: left;
                 line-height: 10px;
+
                 p {
                   height: 20px;
                   line-height: 20px;
                   margin-top: 10px;
                   cursor: pointer;
                 }
+
                 p:nth-child(1) {
                   margin-top: 20px;
                 }
+
                 p:nth-child(2) {
                   display: inline-block;
                   color: #0099ff;
@@ -330,6 +320,7 @@ export default {
             }
           }
         }
+
         .userInfo:hover {
           .drop-store {
             display: inherit;
@@ -342,11 +333,9 @@ export default {
   .container {
     max-width: 350px;
     background: #f8f9fd;
-    background: linear-gradient(
-      0deg,
-      rgb(255, 255, 255) 0%,
-      rgb(244, 247, 251) 100%
-    );
+    background: linear-gradient(0deg,
+        rgb(255, 255, 255) 0%,
+        rgb(244, 247, 251) 100%);
     border-radius: 40px;
     padding: 25px 35px;
     border: 5px solid rgb(255, 255, 255);
@@ -409,11 +398,9 @@ export default {
   display: block;
   width: 100%;
   font-weight: bold;
-  background: linear-gradient(
-    45deg,
-    rgb(16, 137, 211) 0%,
-    rgb(18, 177, 209) 100%
-  );
+  background: linear-gradient(45deg,
+      rgb(16, 137, 211) 0%,
+      rgb(18, 177, 209) 100%);
   color: white;
   padding-block: 15px;
   margin: 20px auto;

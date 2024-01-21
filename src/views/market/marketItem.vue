@@ -62,7 +62,7 @@ export default {
     .item_bg {
       height: 70%;
       width: 100%;
-      background-image: url("../../../public/img/item_bg.png");
+      background-image: url("../../../public/img/bg/item_bg.png");
     }
 
     .marketImg {

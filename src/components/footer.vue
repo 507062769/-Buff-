@@ -66,7 +66,7 @@ export default {
 
 <style scoped lang="less">
 #footer-bg {
-  background-image: url("../../public/img/footer-bg.jpg");
+  background-image: url("../../public/img/bg/footer-bg.jpg");
   height: 250px;
   width: 100%;
 

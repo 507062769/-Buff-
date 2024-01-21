@@ -31,7 +31,7 @@ export default {
 #marketList {
   height: fit-content;
   width: 100%;
-  background-image: url("../../../public/img/list-bj.jpg");
+  background-image: url("../../../public/img/bg/list-bj.jpg");
   padding: 55px 0 0 0;
 
   .center {
