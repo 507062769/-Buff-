@@ -1,3 +1,4 @@
+<!-- 用户中心导航栏（我的钱包、账号设置、消息中心） -->
 <template>
   <div id="userNav">
     <div class="my-thum">
@@ -6,10 +7,10 @@
     </div>
     <div class="my-menu">
       <ul @click="toggleTab">
-        <li :tabIndex="1" :class="tabIndex == 1 ? 'on' : ''" >
+        <li :tabIndex="1" :class="tabIndex == 1 ? 'on' : ''">
           <a><i class="el-icon-money"> </i> 我的钱包</a>
         </li>
-        <li :tabIndex="2" :class="tabIndex == 2 ? 'on' : ''" >
+        <li :tabIndex="2" :class="tabIndex == 2 ? 'on' : ''">
           <a><i class="el-icon-setting"> </i> 账号设置</a>
         </li>
         <li :tabIndex="3" :class="tabIndex == 3 ? 'on' : ''">
@@ -67,7 +68,7 @@ export default {
 <style scoped lang="less">
 #userNav {
   width: 20%;
-  height: 530px;
+  height: 670px;
   color: #fff;
 
   .my-thum {

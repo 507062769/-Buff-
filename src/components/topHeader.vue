@@ -1,5 +1,5 @@
 <template>
-  <div class="bg" :class="$route.path!=='/home'?'notHomeBg':'homeBg'">
+  <div class="bg" :class="$route.path !== '/home' ? 'notHomeBg' : 'homeBg'">
     <div id="topHeader">
       <div class="PageCenter">
         <div class="logo">
@@ -11,26 +11,21 @@
             <el-menu-item index="/home">首页</el-menu-item>
             <el-menu-item index="/marketplace">饰品市场</el-menu-item>
             <el-menu-item index="/gameInfo">游戏资讯</el-menu-item>
+            <div class="right-menu-items">
+              <el-menu-item index="/myBackpack/inventory" v-show="user !== null">我的库存</el-menu-item>
+              <el-menu-item index="/mySell" v-show="user !== null">我的出售</el-menu-item>
+            </div>
           </el-menu>
         </div>
         <div class="login" v-if="user == null">
           <div class="loginRegister" @click="dialogForm = true">登录/注册</div>
         </div>
-
         <div class="nav nav_entries" v-else>
-          <el-menu background-color="rgba(0,0,0,0.0)" text-color="#fff" active-text-color="#4886ff" class="el-menu-demo"
-            mode="horizontal" router>
-            <el-menu-item index="/myBackpack">我的库存</el-menu-item>
-            <el-menu-item index="/mySell">我的出售</el-menu-item>
-          </el-menu>
-
           <el-avatar icon="el-icon-user-solid" class="tx"></el-avatar>
-
           <div class="userInfo">
             <p class="userName">
               {{ user.nickName }}
             </p>
-
             <div class="drop-store">
               <div class="store-user">
                 <span class="store-tx">
@@ -143,227 +138,233 @@ export default {
     },
     goUserCenter() {
       this.$router.push({
-        name:"recharge"
+        name: "recharge"
       });
     },
   },
 };
 </script>
 
-<style scoped lang="less">、
-.bg{
+<style scoped lang="less">
+、 .bg {
   width: 100%;
   height: 70px;
 }
+
 .homeBg {
   background-image: url("../../public/img/bg/bj.jpg");
 }
 
-.notHomeBg{
+.notHomeBg {
   background-image: url("../../public/img/bg/header-bg_csgo.jpg");
   background-position: -204px 0;
 }
 
 #topHeader {
-    height: 70px;
-    width: 100%;
-    background-image: url("../../public/img/bg/top-bg.png");
-    background-position: -210px 0;
+  height: 70px;
+  width: 100%;
+  background-image: url("../../public/img/bg/top-bg.png");
+  background-position: -210px 0;
 
-    .PageCenter {
+  .PageCenter {
+    height: 100%;
+    width: 80%;
+    margin: 0 auto;
+    align-content: center;
+    display: flex;
+
+    .logo {
+      width: 77px;
+      margin-top: 25px;
+    }
+
+    .nav {
       height: 100%;
-      width: 80%;
-      margin: 0 auto;
-      align-content: center;
-      display: flex;
+      margin-left: 20px;
+      width: 988px;
 
-      .logo {
-        width: 77px;
-        margin-top: 25px;
+      /deep/ .el-menu {
+        border-bottom: none;
       }
 
-      .nav {
+      /deep/ .el-menu-item {
+        height: 70px;
+        line-height: 70px;
+      }
+
+      /deep/.el-menu-item:hover {
+        background-color: rgba(98, 127, 173, 0.4) !important;
+      }
+
+      .right-menu-items {
+        display: flex;
+        float: right;
+      }
+    }
+
+    .login {
+      height: 100%;
+      width: 80px;
+      line-height: 70px;
+      font-size: 14px;
+      text-align: center;
+      margin-left: auto;
+
+      .loginRegister {
+        display: inline-block;
+        color: white;
+        text-decoration: none;
         height: 100%;
-        margin-left: 20px;
+        width: 100%;
+      }
+    }
 
-        /deep/ .el-menu {
-          border-bottom: none;
-        }
+    .login:hover {
+      background-color: rgba(98, 127, 173, 0.4);
+      cursor: pointer;
+    }
 
-        /deep/ .el-menu-item {
-          height: 70px;
+    .nav_entries {
+      margin-left: auto;
+      text-align: center;
+      height: 70px;
+      width: fit-content;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+
+      .tx {
+        margin-left: 15px;
+      }
+
+      .userInfo {
+        height: 100%;
+        margin-left: 10px;
+        cursor: pointer;
+
+        position: relative;
+
+        .userName {
           line-height: 70px;
         }
 
-        /deep/.el-menu-item:hover {
-          background-color: rgba(98, 127, 173, 0.4) !important;
-        }
-      }
+        .drop-store {
+          position: absolute;
+          display: none;
+          height: 200px;
+          width: 300px;
+          left: -236px;
+          top: 70px;
+          background-color: #313a45;
+          z-index: 2;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 
-      .login {
-        height: 100%;
-        width: 80px;
-        line-height: 70px;
-        font-size: 14px;
-        text-align: center;
-        // margin-left: 778px;
-        margin-left: auto;
-
-        .loginRegister {
-          display: inline-block;
-          color: white;
-          text-decoration: none;
-          height: 100%;
-          width: 100%;
-        }
-      }
-
-      .login:hover {
-        background-color: rgba(98, 127, 173, 0.4);
-        cursor: pointer;
-      }
-
-      .nav_entries {
-        margin-left: auto;
-        text-align: center;
-        height: 70px;
-        width: fit-content;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: #fff;
-
-        .tx {
-          margin-left: 15px;
-        }
-
-        .userInfo {
-          height: 100%;
-          margin-left: 10px;
-          cursor: pointer;
-
-          position: relative;
-
-          .userName {
-            line-height: 70px;
-          }
-
-          .drop-store {
-            position: absolute;
-            display: none;
-            height: 200px;
-            width: 300px;
-            left: -236px;
-            top: 70px;
+          .store-user {
+            height: 50%;
+            width: 100%;
             background-color: #313a45;
-            z-index: 2;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-wrap: wrap;
 
-            .store-user {
-              height: 50%;
-              width: 100%;
-              background-color: #313a45;
-              display: flex;
-              flex-wrap: wrap;
+            .store-tx {
+              height: 100%;
+              flex-basis: 35%;
 
-              .store-tx {
-                height: 100%;
-                flex-basis: 35%;
-
-                .tx-margin{
-                  margin: 15px 0;
-                }
-              }
-
-              .store-info {
-                height: 100%;
-                flex-basis: 65%;
-                text-align: left;
-                line-height: 10px;
-
-                p {
-                  height: 20px;
-                  line-height: 20px;
-                  margin-top: 10px;
-                  cursor: pointer;
-                }
-
-                p:nth-child(1) {
-                  margin-top: 20px;
-                }
-
-                p:nth-child(2) {
-                  display: inline-block;
-                  color: #0099ff;
-                  font-size: 12px;
-                }
+              .tx-margin {
+                margin: 15px 0;
               }
             }
 
-            .store-account {
-              height: 50%;
-              width: 100%;
-              background-color: #3a4452;
+            .store-info {
+              height: 100%;
+              flex-basis: 65%;
+              text-align: left;
+              line-height: 10px;
 
-              h3 {
-                text-align: center;
-                padding: 10px 0;
-
-                b {
-                  color: #eea20e;
-                }
-              }
-
-              .i_Btn_small {
-                display: inline-block;
-                height: 25px;
-                width: 80px;
-                background-color: #45536c;
-                margin: 10px 10px;
-                font-size: 14px;
-                line-height: 25px;
-                border-radius: 5px;
+              p {
+                height: 20px;
+                line-height: 20px;
+                margin-top: 10px;
                 cursor: pointer;
               }
+
+              p:nth-child(1) {
+                margin-top: 20px;
+              }
+
+              p:nth-child(2) {
+                display: inline-block;
+                color: #0099ff;
+                font-size: 12px;
+              }
+            }
+          }
+
+          .store-account {
+            height: 50%;
+            width: 100%;
+            background-color: #3a4452;
+
+            h3 {
+              text-align: center;
+              padding: 10px 0;
+
+              b {
+                color: #eea20e;
+              }
+            }
+
+            .i_Btn_small {
+              display: inline-block;
+              height: 25px;
+              width: 80px;
+              background-color: #45536c;
+              margin: 10px 10px;
+              font-size: 14px;
+              line-height: 25px;
+              border-radius: 5px;
+              cursor: pointer;
             }
           }
         }
+      }
 
-        .userInfo:hover {
-          .drop-store {
-            display: inherit;
-          }
+      .userInfo:hover {
+        .drop-store {
+          display: inherit;
         }
       }
     }
   }
+}
 
-  .container {
-    max-width: 350px;
-    background: #f8f9fd;
-    background: linear-gradient(0deg,
-        rgb(255, 255, 255) 0%,
-        rgb(244, 247, 251) 100%);
-    border-radius: 40px;
-    padding: 25px 35px;
-    border: 5px solid rgb(255, 255, 255);
-    box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 30px 30px -20px;
-    position: relative;
-    top: 50%;
-    left: 34%;
-    z-index: 2;
+.container {
+  max-width: 350px;
+  background: #f8f9fd;
+  background: linear-gradient(0deg,
+      rgb(255, 255, 255) 0%,
+      rgb(244, 247, 251) 100%);
+  border-radius: 40px;
+  padding: 25px 35px;
+  border: 5px solid rgb(255, 255, 255);
+  box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 30px 30px -20px;
+  position: relative;
+  top: 50%;
+  left: 34%;
+  z-index: 2;
 
-    .heading {
-      text-align: center;
-      font-weight: 900;
-      font-size: 30px;
-      color: rgb(16, 137, 211);
+  .heading {
+    text-align: center;
+    font-weight: 900;
+    font-size: 30px;
+    color: rgb(16, 137, 211);
 
-      .form {
-        margin-top: 20px;
-      }
+    .form {
+      margin-top: 20px;
     }
   }
+}
 
 
 .form .input {

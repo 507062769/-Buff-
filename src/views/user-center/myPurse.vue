@@ -1,3 +1,4 @@
+<!-- 我的钱包 -->
 <template>
   <div id="myPurse">
     <div class="purse-head">
@@ -94,7 +95,6 @@ export default {
 #myPurse {
   height: fit-content;
   width: 100%;
-  margin-left: 20px;
 
   .purse-head {
     height: 80px;

@@ -14,6 +14,7 @@
           <b>￥{{ item.Price }}</b>
           <span>1000件在售</span>
         </p>
+        <span class="tag">崭新出厂</span>
       </div>
     </div>
     <!-- <div class="paging">
@@ -37,8 +38,8 @@ export default {
   data() {
     return {};
   },
-  create() {},
-  mounted() {},
+  create() { },
+  mounted() { },
   watch: {},
   computed: {},
   methods: {},
@@ -59,6 +60,10 @@ export default {
     // width: 19%;
     margin-bottom: 16px;
     background-color: white;
+    position: relative;
+    border: 1px solid #e4e4e4;
+
+
     .item_bg {
       height: 70%;
       width: 100%;
@@ -70,33 +75,55 @@ export default {
       height: 100%;
       object-fit: contain;
     }
+
     h3 {
       margin: 6px 10px 0;
       height: 26px;
       overflow: hidden;
     }
+
     p {
       margin: 6px 10px 0;
       font-size: 16px;
       color: #eea20e;
     }
+
     span {
       color: #959595;
       float: right;
       font-size: 14px;
     }
+
     h3 a:hover {
       color: #f5b50e;
     }
+
     a {
       color: #111;
       text-decoration: none;
     }
+
+    .tag {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: #397439;
+      font-size: 12px;
+      display: inline-block;
+      height: 18px;
+      border-radius: 2px;
+      line-height: 18px;
+      padding: 0 6px;
+      color: white;
+
+    }
   }
+
   .market:hover {
     background-color: #fefcf7;
   }
 }
+
 .paging {
   width: fit-content;
   height: 50px;

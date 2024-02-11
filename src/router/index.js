@@ -68,6 +68,33 @@ const routes = [
       },
     ],
   },
+  {
+    name: "MyBackpack",
+    path: "/myBackpack",
+    component: () => import("../views/myBackpack/myBackpack.vue"),
+    children: [
+      {
+        name: "Inventory",
+        path: "inventory",
+        component: () => import("../views/myBackpack/inventory.vue"),
+      },
+      {
+        name: "BuyHistory",
+        path: "buyHistory",
+        component: () => import("../views/myBackpack/buyHistory.vue"),
+      },
+      {
+        name: "ToReceive",
+        path: "toReceive",
+        component: () => import("../views/myBackpack/toReceive.vue"),
+      },
+    ],
+  },
+  {
+    name: "MySell",
+    path: "/mySell",
+    component: () => import("../views/mySell/mySell.vue"),
+  },
 
   {
     name: "Defualt",

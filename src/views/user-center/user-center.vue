@@ -1,7 +1,9 @@
+<!-- 用户中心整体页面 -->
 <template>
   <div id="userCenter">
     <UserNav></UserNav>
-    <router-view></router-view>
+    <router-view style="margin-left: 20px;"></router-view>
+
   </div>
 </template>
 
@@ -13,8 +15,8 @@ export default {
   data() {
     return {};
   },
-  create() {},
-  mounted() {},
+  create() { },
+  mounted() { },
   watch: {},
   computed: {},
   methods: {},

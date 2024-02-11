@@ -182,11 +182,7 @@
             </ul>
           </div>
           <div class="criteria-search">
-            <el-input
-              placeholder="请输入物品名称"
-              v-model="marketName"
-              clearable
-            >
+            <el-input placeholder="请输入物品名称" v-model="marketName" clearable>
               <el-button slot="append" icon="el-icon-search">搜索</el-button>
             </el-input>
           </div>
@@ -202,15 +198,9 @@
           <div class="right">
             <div class="counter">
               ￥
-              <el-input
-                v-model.number="minPrice"
-                placeholder="最低价"
-              ></el-input>
+              <el-input v-model.number="minPrice" placeholder="最低价"></el-input>
               -￥
-              <el-input
-                v-model.number="maxPrice"
-                placeholder="最高价"
-              ></el-input>
+              <el-input v-model.number="maxPrice" placeholder="最高价"></el-input>
             </div>
             <div class="counter-submit"></div>
           </div>
@@ -316,8 +306,8 @@ export default {
       ],
     };
   },
-  create() {},
-  mounted() {},
+  create() { },
+  mounted() { },
   watch: {},
   computed: {},
   methods: {},
@@ -351,6 +341,7 @@ export default {
         .cate-item {
           width: 7%;
           height: 100%;
+
           .icon {
             background-image: url("../../../public/img/serch/dao.png");
             height: 40px;
@@ -359,6 +350,7 @@ export default {
             background-size: cover;
             margin: 30px 20px 0;
           }
+
           p {
             height: 52px;
             text-align: center;
@@ -366,6 +358,7 @@ export default {
             line-height: 45px;
             color: #666;
           }
+
           ul {
             width: 200px;
             position: relative;
@@ -373,6 +366,7 @@ export default {
             background-color: #2d2f3e;
             padding: 5px;
             display: none;
+
             li {
               height: 32px;
               width: 90px;
@@ -469,6 +463,7 @@ export default {
           /deep/ .el-input-group__append:hover {
             background-color: #4773c8;
           }
+
           /deep/ .el-input-group__append {
             background-color: #3f5d97;
             color: #fff;
@@ -494,9 +489,11 @@ export default {
     }
 
     .list {
+      box-sizing: border-box;
       width: 100%;
       height: fit-content;
-      background-color: skyblue;
+      background-color: #fff;
+      padding: 0 30px;
     }
   }
 }

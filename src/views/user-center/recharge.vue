@@ -1,3 +1,4 @@
+<!-- 我的钱包--充值 -->
 <template>
   <div id="recharge">
     <form action="#">
@@ -204,7 +205,7 @@ export default {
     height: fit-content;
     background-color: #fefcf7;
 
-    ul{
+    ul {
       margin-left: 30px;
     }
 
@@ -220,10 +221,10 @@ export default {
       overflow: hidden;
     }
 
-    .line{
+    .line {
       height: 1px;
       overflow: hidden;
-      background-image: linear-gradient(-90deg,rgba(250,250,250,0) 0,#eea20e 49%,rgba(250,250,250,0) 100%);
+      background-image: linear-gradient(-90deg, rgba(250, 250, 250, 0) 0, #eea20e 49%, rgba(250, 250, 250, 0) 100%);
     }
   }
 
