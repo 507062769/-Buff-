@@ -7,7 +7,6 @@
                     <div class="pic-cont">
                         <img src="~@img/hdd.png" alt="" class="goodsImg">
                     </div>
-
                     <div class="goodsName">
                         {{ scope.row.GoodsName }}
                     </div>

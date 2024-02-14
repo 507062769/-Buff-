@@ -13,7 +13,7 @@
             <el-menu-item index="/gameInfo">游戏资讯</el-menu-item>
             <div class="right-menu-items">
               <el-menu-item index="/myBackpack/inventory" v-show="user !== null">我的库存</el-menu-item>
-              <el-menu-item index="/mySell" v-show="user !== null">我的出售</el-menu-item>
+              <el-menu-item index="/mySell/sellManage/onSell" v-show="user !== null">我的出售</el-menu-item>
             </div>
           </el-menu>
         </div>

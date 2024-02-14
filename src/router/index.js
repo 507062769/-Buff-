@@ -83,17 +83,41 @@ const routes = [
         path: "buyHistory",
         component: () => import("../views/myBackpack/buyHistory.vue"),
       },
-      {
-        name: "ToReceive",
-        path: "toReceive",
-        component: () => import("../views/myBackpack/toReceive.vue"),
-      },
     ],
   },
   {
     name: "MySell",
     path: "/mySell",
     component: () => import("../views/mySell/mySell.vue"),
+    children: [
+      {
+        name: "SellManage",
+        path: "sellManage",
+        component: () => import("../views/mySell/sellManage.vue"),
+        children: [
+          {
+            name: "OnSell",
+            path: "onSell",
+            component: () => import("../views/mySell/onSell.vue"),
+          },
+          {
+            name: "WaitDelivery",
+            path: "waitDelivery",
+            component: () => import("../views/mySell/waitDelivery.vue"),
+          },
+        ],
+      },
+      {
+        name: "SellHistory",
+        path: "sellHistory",
+        component: () => import("../views/mySell/sellHistory.vue"),
+      },
+      {
+        name: "SellStatistics",
+        path: "sellStatistics",
+        component: () => import("../views/mySell/sellStatistics.vue"),
+      },
+    ],
   },
 
   {

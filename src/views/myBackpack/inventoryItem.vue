@@ -31,7 +31,6 @@ export default {
     },
     methods: {
         isSelect(id) {
-            console.log('dianji :', id)
             if (this.checkedItem.includes(id)) {
                 this.checkedItem = this.checkedItem.filter(itemId => itemId !== id);
             } else {

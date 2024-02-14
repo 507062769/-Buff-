@@ -5,7 +5,6 @@
                 <ul @click="toggleTab">
                     <li :tabIndex="1" :class="tabIndex == 1 ? 'on' : ''">我的库存</li>
                     <li :tabIndex="2" :class="tabIndex == 2 ? 'on' : ''">购买记录</li>
-                    <li :tabIndex="3" :class="tabIndex == 3 ? 'on' : ''">等待收货</li>
                 </ul>
                 <span class="right">件数 : <span style="color: #eea20e">48 </span> 估值 :
                     <span style="color: #eea20e">￥88</span></span>
@@ -46,8 +45,6 @@
                 </div>
             </div>
         </div>
-
-
         <router-view></router-view>
     </div>
 </template>
@@ -106,7 +103,7 @@ export default {
         .cont-tab {
             height: 50%;
             width: 100%;
-            color: #fff;
+            color: #999;
             border-bottom: 2px solid #4773c8;
 
             li {
@@ -129,6 +126,11 @@ export default {
                 background-image: url(~@img/up.png);
                 background-repeat: no-repeat;
                 background-position: 25px 37px;
+                color: white;
+            }
+
+            li:hover {
+                color: white
             }
         }
 
@@ -208,6 +210,10 @@ export default {
                     width: 50px;
                     height: 30px;
                     border: none;
+                }
+
+                /deep/ .el-input__suffix {
+                    transform: translate(-90px, -4px) !important;
                 }
             }
 

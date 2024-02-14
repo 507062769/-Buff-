@@ -170,8 +170,6 @@ export default {
     }
   }
 
-
-
   .purse-main {
     height: 400px;
     width: 100%;

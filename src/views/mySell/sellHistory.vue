@@ -1,10 +1,10 @@
 <template>
-    <div id="">等待收货内容</div>
+    <div id="sellHistory">出售记录</div>
 </template>
 
 <script>
 export default {
-    name: "",
+    name: "sellHistory",
     components: {},
     data() {
         return {
