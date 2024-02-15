@@ -5,9 +5,9 @@
             <p class="tipText">你还没有在出售的饰品，快去库存中上架一些吧</p>
             <el-button type="primary" plain @click="gotoInventory">前往库存</el-button>
         </template>
-        <template>
-            <Item :marketInfo="marketInfo" :checkedItem="checkedItem"></Item>
-        </template>
+        <div class="list">
+            <Item v-for="item in marketInfo" :key="item.Id" :item="item"></Item>
+        </div>
     </div>
 </template>
 
@@ -16,26 +16,13 @@ import Item from '../myBackpack/inventoryItem.vue'
 export default {
     name: "onSell",
     components: { Item },
+    props: ["marketInfo"],
     data() {
         return {
-            marketInfo: [
-                {
-                    Id: 1,
-                    Title: "Tec-9 | 叛逆（久经沙场）",
-                    Img: "img/hdd.png",
-                    Price: 2.0,
-                },
-                {
-                    Id: 2,
-                    Title: "蝴蝶刀（★） | 森林",
-                    Img: "img/hdd.png",
-                    Price: 999.0,
-                },
-            ],
-            checkedItem: [],
         }
     },
     methods: {
+        // 跳转到库存页
         gotoInventory() {
             this.$router.push({
                 name: "Inventory",
@@ -49,7 +36,6 @@ export default {
 #onSell {
     height: fit-content;
     width: 100%;
-    padding: 0 30px;
 
     .tipImg {
         height: 110px;
@@ -66,6 +52,16 @@ export default {
 
     /deep/ .el-button {
         margin: 20px 555px;
+    }
+
+    .list {
+        margin: 20px 30px;
+        height: fit-content;
+        box-sizing: border-box;
+        display: inline-grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        column-gap: 20px;
+        row-gap: 20px;
     }
 }
 </style>

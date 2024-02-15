@@ -3,9 +3,9 @@
         <div class="header">
             <div class="cont-tab">
                 <ul @click="toggleTab">
-                    <li :tabIndex="1" :class="tabIndex == 1 ? 'on' : ''">出售管理</li>
-                    <li :tabIndex="2" :class="tabIndex == 2 ? 'on' : ''">出售记录</li>
-                    <li :tabIndex="3" :class="tabIndex == 3 ? 'on' : ''">出售统计</li>
+                    <li tabIndex="1" :class="tabIndex == 1 ? 'on' : ''">出售管理</li>
+                    <li tabIndex="2" :class="tabIndex == 2 ? 'on' : ''">出售记录</li>
+                    <li tabIndex="3" :class="tabIndex == 3 ? 'on' : ''">出售统计</li>
                 </ul>
                 <span class="right">件数 : <span style="color: #eea20e">48 </span> 估值 :
                     <span style="color: #eea20e">￥88</span></span>

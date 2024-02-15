@@ -29,9 +29,8 @@
                 <el-button type="primary">上架</el-button>
             </div>
         </div>
-
         <div class="list">
-            <Item :marketInfo="marketInfo" :checkedItem="checkedItem"></Item>
+            <Item v-for="item in marketInfo" :key="item.Id" :item="item"></Item>
         </div>
     </div>
 </template>
@@ -239,7 +238,13 @@ export default {
     }
 
     .list {
-        margin: 0 30px;
+        margin: 20px 30px;
+        height: fit-content;
+        box-sizing: border-box;
+        display: inline-grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        column-gap: 20px;
+        row-gap: 20px;
     }
 }
 </style>

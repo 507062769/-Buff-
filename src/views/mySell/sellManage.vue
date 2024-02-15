@@ -3,8 +3,8 @@
         <div class="header">
             <div class="left">
                 <ul @click="toggleTab">
-                    <li :tabIndex="1" :class="tabIndex == 1 ? 'on' : ''">出售中</li>
-                    <li :tabIndex="2" :class="tabIndex == 2 ? 'on' : ''">等待发货(0)</li>
+                    <li tabIndex="1" :class="tabIndex == 1 ? 'on' : ''">出售中</li>
+                    <li tabIndex="2" :class="tabIndex == 2 ? 'on' : ''">等待发货(0)</li>
                 </ul>
             </div>
             <div class="right">
@@ -13,7 +13,7 @@
                 <el-button type="primary">下架</el-button>
             </div>
         </div>
-        <router-view></router-view>
+        <router-view :marketInfo="marketInfo"></router-view>
     </div>
 </template>
 
@@ -25,20 +25,36 @@ export default {
         return {
             isSelect: false,
             tabIndex: 1,
-            checkedItem: [],
+            // checkedItem: [],
+            marketInfo: [
+                {
+                    Id: 1,
+                    Title: "Tec-9 | 叛逆（久经沙场）",
+                    Img: "img/hdd.png",
+                    Price: 2.0,
+                },
+                {
+                    Id: 2,
+                    Title: "蝴蝶刀（★） | 森林",
+                    Img: "img/hdd.png",
+                    Price: 999.0,
+                },
+            ],
         }
     },
     methods: {
         allSelect() {
             if (this.isSelect) {
-                this.marketInfo.forEach(item => {
-                    if (!this.checkedItem.includes(item.Id))
-                        this.checkedItem.push(item.Id);
-                });
+                this.$store.dispatch("allSellSelect", this.marketInfo)
             } else {
-                this.checkedItem = []
+                this.$store.dispatch("resetSellAll")
             }
         },
+
+        isChecked(id) {
+            this.$store.dispatch("toggleSellCheckedItem", id)
+        },
+
         toggleTab({ target }) {
             if (target.tagName === "LI") {
                 this.tabIndex = target.tabIndex;
@@ -56,7 +72,6 @@ export default {
                     break;
             }
         }
-
     },
 }
 </script>
