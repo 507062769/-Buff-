@@ -119,6 +119,11 @@ const routes = [
       },
     ],
   },
+  {
+    name: "Goods",
+    path: "/goods/:id",
+    component:()=> import("../views/goods/goodsDetail.vue"),
+  },
 
   {
     name: "Defualt",

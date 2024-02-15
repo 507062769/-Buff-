@@ -208,7 +208,7 @@
       </div>
 
       <div class="list">
-        <Item :marketInfo="marketInfo" />
+        <Item :item="item" v-for="item in marketInfo" :key="item.Id" />
       </div>
     </div>
   </div>
@@ -286,19 +286,19 @@ export default {
           Price: 999.0,
         },
         {
-          Id: 8,
+          Id: 11,
           Title: "蝴蝶刀（★） | 自由之手",
           Img: "img/hdd.png",
           Price: 999.0,
         },
         {
-          Id: 9,
+          Id: 12,
           Title: "蝴蝶刀（★） | 深红之网",
           Img: "img/hdd.png",
           Price: 999.0,
         },
         {
-          Id: 10,
+          Id: 13,
           Title: "蝴蝶刀（★） | 大马士革刚",
           Img: "img/hdd.png",
           Price: 999.0,
@@ -493,7 +493,11 @@ export default {
       width: 100%;
       height: fit-content;
       background-color: #fff;
-      padding: 0 30px;
+      padding: 20px 30px;
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      column-gap: 20px;
+      row-gap: 20px;
     }
   }
 }
