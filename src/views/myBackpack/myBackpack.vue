@@ -61,7 +61,6 @@ export default {
     },
     methods: {
         toggleTab({ target }) {
-            console.log("target:", target);
             this.tabIndex = target.tabIndex;
             switch (this.tabIndex) {
                 case 1:

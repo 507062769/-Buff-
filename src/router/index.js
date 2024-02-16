@@ -122,7 +122,24 @@ const routes = [
   {
     name: "Goods",
     path: "/goods/:id",
-    component:()=> import("../views/goods/goodsDetail.vue"),
+    component: () => import("../views/goods/goodsDetail.vue"),
+    children: [
+      {
+        name: "CurrentSell",
+        path: "currentSell",
+        component: () => import("../views/goods/currentSell.vue"),
+      },
+      {
+        name: "OkHistory",
+        path: "okHistory",
+        component: () => import("../views/goods/okHistory.vue"),
+      },
+      {
+        name: "PriceTrend",
+        path: "priceTrend",
+        component: () => import("../views/goods/priceTrend.vue"),
+      },
+    ],
   },
 
   {

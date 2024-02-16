@@ -58,10 +58,10 @@
 
         <div class="market-header">
             <div class="cont-tab">
-                <ul>
-                    <li>当前在售</li>
-                    <li>成交记录</li>
-                    <li>价格趋势</li>
+                <ul @click="toggleTab">
+                    <li :tabIndex="1" :class="tabIndex == 1 ? 'on' : ''">当前在售</li>
+                    <li :tabIndex="2" :class="tabIndex == 2 ? 'on' : ''">成交记录</li>
+                    <li :tabIndex="3" :class="tabIndex == 3 ? 'on' : ''">价格趋势</li>
                 </ul>
             </div>
             <div class="criteria">
@@ -95,6 +95,8 @@
                 </div>
             </div>
         </div>
+        <router-view></router-view>
+
     </div>
 </template>
 
@@ -107,16 +109,42 @@ export default {
             marketName: "",
             minPrice: "",
             maxPrice: "",
+            tabIndex: 1,
 
         }
     },
-    methods: {},
+    methods: {
+        toggleTab({ target }) {
+            if (target.tagName === "LI") {
+                this.tabIndex = target.tabIndex;
+                switch (this.tabIndex) {
+                    case 1:
+                        this.$router.push({
+                            name: "CurrentSell",
+                        });
+                        break;
+                    case 2:
+                        this.$router.push({
+                            name: "OkHistory",
+                        });
+                        break;
+                    case 3:
+                        this.$router.push({
+                            name: "PriceTrend",
+                        });
+                        break;
+                }
+            }
+
+        },
+
+    },
 }
 </script>
 
 <style scoped lang="less">
 #goodsDetail {
-    height: 500px;
+    height: fit-content;
     width: 80%;
     margin: 0 auto;
 
@@ -274,6 +302,10 @@ export default {
                 li:hover {
                     color: #fff;
                 }
+
+                .on {
+                    color: white;
+                }
             }
         }
 
@@ -347,6 +379,8 @@ export default {
             }
         }
     }
+
+
 
 
 }
