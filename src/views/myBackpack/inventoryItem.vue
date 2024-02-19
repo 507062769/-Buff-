@@ -1,17 +1,22 @@
 <template>
-    <div class="market" @click="handleChecked(item.Id)" :class="{ iconChecked: isChecked }">
+    <div class="market" @click="handleChecked(item.gid)" :class="{ iconChecked: isChecked }">
         <a href="javascript:void(0)">
             <div class="item_bg">
                 <img class="marketImg" :src="item.Img" alt="" />
             </div>
         </a>
         <h3>
-            <a href="javascript:void(0)">{{ item.Title }}</a>
+            <a href="javascript:void(0)">{{ item.name }}</a>
         </h3>
         <p>
-            <b>￥{{ item.Price }}</b>
+            <b>￥{{ item.price }}</b>
         </p>
-        <span class="tag">崭新出厂</span>
+        <span class="tag w1" v-show="item.wid === 1">崭新出厂</span>
+        <span class="tag w2" v-show="item.wid === 2">略有磨损</span>
+        <span class="tag w3" v-show="item.wid === 3">久经沙场</span>
+        <span class="tag w4" v-show="item.wid === 4">破损不堪</span>
+        <span class="tag w5" v-show="item.wid === 5">战痕累累</span>
+
         <i class="icon"></i>
     </div>
 </template>
@@ -26,15 +31,16 @@ export default {
         }
     },
     methods: {
-        handleChecked(id) {
-            this.$store.dispatch("toggleSellCheckedItem", id);
+        // 判断是否选中
+        handleChecked(gid) {
+            this.$store.dispatch("toggleSellCheckedItem", gid);
         },
     },
     computed: {
         // 使用计算属性来根据 item.Id 判断是否被选中  
         isChecked() {
             // 通过 this.$store.getters.isChecked(item.Id) 调用 getter  
-            return this.$store.getters.isChecked(this.item.Id);
+            return this.$store.getters.isChecked(this.item.gid);
         }
     },
     mounted() {
@@ -92,7 +98,6 @@ export default {
         position: absolute;
         top: 0;
         left: 0;
-        background-color: #397439;
         font-size: 12px;
         display: inline-block;
         height: 18px;
@@ -101,6 +106,26 @@ export default {
         padding: 0 6px;
         color: white;
 
+    }
+
+    .w1 {
+        background-color: #397439;
+    }
+
+    .w2 {
+        background-color: #488b48;
+    }
+
+    .w3 {
+        background-color: #f1ad4d;
+    }
+
+    .w4 {
+        background-color: #b7625f;
+    }
+
+    .w5 {
+        background-color: #993a38;
     }
 
     .icon {
@@ -131,5 +156,4 @@ export default {
     .icon {
         display: inline-block;
     }
-}
-</style>
+}</style>

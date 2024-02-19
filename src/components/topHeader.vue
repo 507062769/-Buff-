@@ -87,7 +87,7 @@ export default {
   computed: {},
   methods: {
     isExistUserInfo() {
-      this.user = JSON.parse(localStorage.getItem("BuffuserInfo"));
+      this.user = JSON.parse(localStorage.getItem("BuffUserInfo"));
     },
     login() {
       axios
@@ -98,14 +98,14 @@ export default {
           },
         })
         .then((res) => {
+          console.log('res:', res)
           switch (res.data.status) {
             case "200":
               this.dialogForm = false;
-              this.user = res.data.data[0];
-              console.log("user", this.user);
+              this.user = res.data.data;
               localStorage.setItem(
-                "BuffuserInfo",
-                JSON.stringify(res.data.data[0])
+                "BuffUserInfo",
+                JSON.stringify(this.user)
               );
               this.$message({
                 message: "登录成功！",
@@ -129,7 +129,7 @@ export default {
         });
     },
     logout() {
-      localStorage.removeItem("BuffuserInfo");
+      localStorage.removeItem("BuffUserInfo");
       this.$message({
         message: "退出成功！",
         type: "success",

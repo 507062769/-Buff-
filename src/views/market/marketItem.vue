@@ -25,10 +25,10 @@ export default {
     return {};
   },
   create() { },
-  mounted() { },
+  mounted() {
+  },
   methods: {
     goDetail() {
-      console.log('获取到了id：', this.item.Id)
       this.$router.push({
         name: "Goods",
         params: {

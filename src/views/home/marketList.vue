@@ -5,7 +5,9 @@
         <span class="kind">{{ title }}</span>
         <router-link to="/marketplace" class="goShop">进入市场></router-link>
       </div>
-      <Item :marketInfo="marketInfo" />
+      <div class="list">
+        <Item :item="item" v-for="item in marketInfo" :key="item.Id" />
+      </div>
     </div>
   </div>
 </template>
@@ -19,8 +21,8 @@ export default {
   data() {
     return {};
   },
-  create() {},
-  mounted() {},
+  create() { },
+  mounted() { },
   watch: {},
   computed: {},
   methods: {},
@@ -70,6 +72,17 @@ export default {
       .goShop:hover {
         color: #aa7f25;
       }
+    }
+
+    .list {
+      box-sizing: border-box;
+      width: 100%;
+      height: fit-content;
+      padding: 20px 0;
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      column-gap: 20px;
+      row-gap: 20px;
     }
   }
 }

@@ -6,60 +6,99 @@
                     <li :tabIndex="1" :class="tabIndex == 1 ? 'on' : ''">我的库存</li>
                     <li :tabIndex="2" :class="tabIndex == 2 ? 'on' : ''">购买记录</li>
                 </ul>
-                <span class="right">件数 : <span style="color: #eea20e">48 </span> 估值 :
-                    <span style="color: #eea20e">￥88</span></span>
+                <span class="right">
+                    件数 : <span style="color: #eea20e">{{ marketInfo.length }} </span>
+                    估值 : <span style="color: #eea20e">￥{{ priceTotal }}</span>
+                </span>
             </div>
 
             <div class="criteria">
                 <div class="criteria-item">
-                    <h5>筛选</h5>
-                    <ul>
-                        <li>不限</li>
-                        <li>匕首</li>
-                        <li>手套</li>
-                        <li>步枪</li>
+                    <h5>{{ kindName }}</h5>
+                    <ul @click="selectkind">
+                        <li>
+                            <h6 data-kID="0">不限</h6>
+                        </li>
+                        <li v-for="kind in Kind" :key="kind.kid">
+                            <h6 :data-kID="kind.kid">{{ kind.name }}</h6>
+                            <div>
+                                <p v-for="kItem in kind.kindItem" :key="kItem.kiID" :data-kiID="kItem.kiID">
+                                    {{ kItem.name }}
+                                </p>
+                            </div>
+                        </li>
                     </ul>
                 </div>
                 <div class="criteria-item">
-                    <h5>品质</h5>
-                    <ul>
-                        <li>不限品质</li>
-                        <li>违禁</li>
-                        <li>保密</li>
-                        <li>受限</li>
+                    <h5>{{ qualityName }}</h5>
+                    <ul @click="selectQuality">
+                        <li>
+                            <h6 data-qualityID="0">不限品质</h6>
+                        </li>
+                        <li v-for="q in quality" :key="q.qid">
+                            <h6 :data-qualityID="q.qid">
+                                {{ q.name }}
+                            </h6>
+                        </li>
                     </ul>
                 </div>
                 <div class="criteria-item">
-                    <h5>外观</h5>
-                    <ul>
-                        <li>不限</li>
-                        <li>崭新出厂</li>
-                        <li>略有磨损</li>
-                        <li>久经沙场</li>
+                    <h5>{{ wearName }}</h5>
+                    <ul @click="selectWear">
+                        <li>
+                            <h6 :data-wearID="0">不限</h6>
+                        </li>
+                        <li v-for="w in wear" :key="w.wid">
+                            <h6 :data-wearID="w.wid">
+                                {{ w.name }}
+                            </h6>
+                        </li>
                     </ul>
                 </div>
                 <div class="criteria-search">
-                    <el-input placeholder="请输入物品名称" v-model="marketName" clearable>
-                        <el-button slot="append" icon="el-icon-search">搜索</el-button>
+                    <el-input placeholder="请输入物品名称" v-model="searchName" clearable>
+                        <el-button slot="append" icon="el-icon-search" @click="serach">搜索</el-button>
                     </el-input>
                 </div>
             </div>
         </div>
-        <router-view></router-view>
+        <router-view :marketInfo="marketInfo" :getInventory="getInventory"></router-view>
     </div>
 </template>
 
 <script>
+import axios from "axios";
 export default {
     name: "myBackpack",
     components: {},
     data() {
         return {
             tabIndex: 1,
-            marketName: "",
+            searchName: "",
+            kindName: "筛选",
+            qualityName: "品质",
+            wearName: "外观",
+            Kind: [],
+            quality: [],
+            wear: [],
+            marketInfo: [],
         };
     },
     methods: {
+        // 初始化
+        init() {
+            this.getInventory(this.$store.state.sortord);
+            axios.get("http://localhost:8081/tool/getKind").then((res) => {
+                this.Kind = res.data.data;
+            });
+            axios.get("http://localhost:8081/tool/getQuality").then((res) => {
+                this.quality = res.data.data;
+            });
+            axios.get("http://localhost:8081/tool/getWear").then((res) => {
+                this.wear = res.data.data;
+            });
+        },
+        // 切换tab（我的库存/购买记录）
         toggleTab({ target }) {
             this.tabIndex = target.tabIndex;
             switch (this.tabIndex) {
@@ -80,6 +119,107 @@ export default {
                     break;
             }
         },
+        // 切换种类(步枪、手枪、手套、匕首)
+        selectkind({ target }) {
+            this.kindName = target.innerText;
+            let user = JSON.parse(localStorage.getItem("BuffUserInfo"));
+            let kID = target.dataset.kid;
+            let kiID = target.dataset.kiid;
+            if (kID == null) {
+                kID = 0;
+            } else if (kiID == null) {
+                kiID = 0;
+            } else if (kID === 0) {
+                kID = 0;
+                kiID = 0;
+            }
+
+            axios
+                .get("http://localhost:8081/tool/toggleKind", {
+                    params: {
+                        uID: user.uid,
+                        sort: this.$store.state.sortord,
+                        kID: kID,
+                        kiID: kiID,
+                    },
+                })
+                .then((res) => {
+                    this.marketInfo = res.data.data;
+                });
+        },
+        // 切换品质（隐秘、保密、军规）
+        selectQuality({ target }) {
+            this.qualityName = target.innerText;
+            let user = JSON.parse(localStorage.getItem("BuffUserInfo"));
+            let qualityID = target.dataset.qualityid;
+
+            axios
+                .get("http://localhost:8081/tool/toggleQuality", {
+                    params: {
+                        uID: user.uid,
+                        sort: this.$store.state.sortord,
+                        qualityID: qualityID,
+                    },
+                })
+                .then((res) => {
+                    this.marketInfo = res.data.data;
+                });
+        },
+        // 切换磨损
+        selectWear({ target }) {
+            this.wearName = target.innerText;
+            let user = JSON.parse(localStorage.getItem("BuffUserInfo"));
+            let wearID = target.dataset.wearid;
+
+            axios
+                .get("http://localhost:8081/tool/toggleWear", {
+                    params: {
+                        uID: user.uid,
+                        sort: this.$store.state.sortord,
+                        wearID: wearID,
+                    },
+                })
+                .then((res) => {
+                    this.marketInfo = res.data.data;
+                });
+        },
+        // 获取所有库存商品
+        getInventory(sort) {
+            let userInfo = JSON.parse(localStorage.getItem("BuffUserInfo"));
+            axios
+                .get("http://localhost:8081/inventory/getInventory", {
+                    params: {
+                        uID: userInfo.uid,
+                        sort: sort,
+                    },
+                })
+                .then((res) => {
+                    this.marketInfo = res.data.data;
+                });
+        },
+        // 搜索框
+        serach() {
+            let user = JSON.parse(localStorage.getItem("BuffUserInfo"));
+            axios
+                .get("http://localhost:8081/tool/search", {
+                    params: {
+                        uID: user.uid,
+                        sort: this.$store.state.sortord,
+                        searchName: this.searchName,
+                    },
+                })
+                .then((res) => {
+                    this.marketInfo = res.data.data;
+                });
+        },
+    },
+    computed: {
+        priceTotal() {
+            return this.marketInfo.reduce((total, item) => total + item.price, 0)
+        }
+    },
+    mounted() {
+        this.init();
     },
 };
 </script>
@@ -129,7 +269,7 @@ export default {
             }
 
             li:hover {
-                color: white
+                color: white;
             }
         }
 
@@ -174,6 +314,23 @@ export default {
                         border-top: solid #36394b 1px;
                         color: #fff;
                         cursor: pointer;
+                        position: relative;
+
+                        div {
+                            display: none;
+                            height: fit-content;
+                            width: 70px;
+                            position: absolute;
+                            background-color: #3a455a;
+                            left: 70px;
+                            top: 0;
+                        }
+                    }
+
+                    li:hover {
+                        div {
+                            display: block;
+                        }
                     }
                 }
             }
@@ -230,6 +387,5 @@ export default {
             }
         }
     }
-
 }
 </style>
