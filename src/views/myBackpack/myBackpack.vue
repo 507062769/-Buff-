@@ -56,7 +56,7 @@
                     </ul>
                 </div>
                 <div class="criteria-search">
-                    <el-input placeholder="请输入物品名称" v-model="searchName" clearable>
+                    <el-input placeholder="请输入物品名称" v-model="searchName" clearable @change="serach">
                         <el-button slot="append" icon="el-icon-search" @click="serach">搜索</el-button>
                     </el-input>
                 </div>
@@ -88,6 +88,7 @@ export default {
         // 初始化
         init() {
             this.getInventory(this.$store.state.sortord);
+            // 获取种类、品质、外观的值
             axios.get("http://localhost:8081/tool/getKind").then((res) => {
                 this.Kind = res.data.data;
             });
@@ -112,17 +113,11 @@ export default {
                         name: "BuyHistory",
                     });
                     break;
-                case 3:
-                    this.$router.push({
-                        name: "ToReceive",
-                    });
-                    break;
             }
         },
         // 切换种类(步枪、手枪、手套、匕首)
         selectkind({ target }) {
             this.kindName = target.innerText;
-            let user = JSON.parse(localStorage.getItem("BuffUserInfo"));
             let kID = target.dataset.kid;
             let kiID = target.dataset.kiid;
             if (kID == null) {
@@ -137,7 +132,7 @@ export default {
             axios
                 .get("http://localhost:8081/tool/toggleKind", {
                     params: {
-                        uID: user.uid,
+                        uID: this.$store.state.userInfo.uid,
                         sort: this.$store.state.sortord,
                         kID: kID,
                         kiID: kiID,
@@ -150,13 +145,11 @@ export default {
         // 切换品质（隐秘、保密、军规）
         selectQuality({ target }) {
             this.qualityName = target.innerText;
-            let user = JSON.parse(localStorage.getItem("BuffUserInfo"));
             let qualityID = target.dataset.qualityid;
-
             axios
                 .get("http://localhost:8081/tool/toggleQuality", {
                     params: {
-                        uID: user.uid,
+                        uID: this.$store.state.userInfo.uid,
                         sort: this.$store.state.sortord,
                         qualityID: qualityID,
                     },
@@ -168,13 +161,11 @@ export default {
         // 切换磨损
         selectWear({ target }) {
             this.wearName = target.innerText;
-            let user = JSON.parse(localStorage.getItem("BuffUserInfo"));
             let wearID = target.dataset.wearid;
-
             axios
                 .get("http://localhost:8081/tool/toggleWear", {
                     params: {
-                        uID: user.uid,
+                        uID: this.$store.state.userInfo.uid,
                         sort: this.$store.state.sortord,
                         wearID: wearID,
                     },
@@ -185,11 +176,10 @@ export default {
         },
         // 获取所有库存商品
         getInventory(sort) {
-            let userInfo = JSON.parse(localStorage.getItem("BuffUserInfo"));
             axios
                 .get("http://localhost:8081/inventory/getInventory", {
                     params: {
-                        uID: userInfo.uid,
+                        uID: this.$store.state.userInfo.uid,
                         sort: sort,
                     },
                 })
@@ -199,11 +189,10 @@ export default {
         },
         // 搜索框
         serach() {
-            let user = JSON.parse(localStorage.getItem("BuffUserInfo"));
             axios
                 .get("http://localhost:8081/tool/search", {
                     params: {
-                        uID: user.uid,
+                        uID: this.$store.state.userInfo.uid,
                         sort: this.$store.state.sortord,
                         searchName: this.searchName,
                     },
@@ -215,7 +204,7 @@ export default {
     },
     computed: {
         priceTotal() {
-            return this.marketInfo.reduce((total, item) => total + item.price, 0)
+            return this.marketInfo.reduce((total, item) => total + item.price, 0).toFixed(2)
         }
     },
     mounted() {

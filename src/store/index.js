@@ -1,5 +1,6 @@
 import Vuex from "vuex";
 import Vue from "vue";
+import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex);
 
@@ -45,14 +46,22 @@ const mutations = {
   // 切换排序方式(时间、价格、磨损)
   toggleSortord(state, val) {
     state.sortord = val;
-  }
-  ,
+  },
+  // 添加用户信息
+  addUserInfo(state, info) {
+    state.userInfo = info;
+  },
+  // 删除用户信息
+  removeUserInfo(state) {
+    state.userInfo={}
+  },
 };
 
 // 用于存放数据
 const state = {
   checkedSellItem: [],
   sortord: "gainTime",
+  userInfo:{},
 };
 
 const getters = {
@@ -67,4 +76,16 @@ export default new Vuex.Store({
   mutations,
   state,
   getters,
+  plugins: [
+    createPersistedState({
+      // 存储方式：localStorage、sessionStorage、cookies
+      storage: window.localStorage,
+      // 存储的 key 的key值
+      key: "store",
+      render(state) {
+        // 要存储的数据：采用es6扩展运算符的方式存储了state中所有的数据
+        return { ...state };
+      },
+    }),
+  ],
 });

@@ -12,19 +12,16 @@
             <el-menu-item index="/marketplace">饰品市场</el-menu-item>
             <el-menu-item index="/gameInfo">游戏资讯</el-menu-item>
             <div class="right-menu-items">
-              <el-menu-item index="/myBackpack/inventory" v-show="user !== null">我的库存</el-menu-item>
-              <el-menu-item index="/mySell/sellManage/onSell" v-show="user !== null">我的出售</el-menu-item>
+              <el-menu-item index="/myBackpack/inventory" v-show="isExistUser">我的库存</el-menu-item>
+              <el-menu-item index="/mySell/sellManage/onSell" v-show="isExistUser">我的出售</el-menu-item>
             </div>
           </el-menu>
         </div>
-        <div class="login" v-if="user == null">
-          <div class="loginRegister" @click="dialogForm = true">登录/注册</div>
-        </div>
-        <div class="nav nav_entries" v-else>
+        <div class="nav nav_entries" v-if="isExistUser">
           <el-avatar icon="el-icon-user-solid" class="tx"></el-avatar>
           <div class="userInfo">
             <p class="userName">
-              {{ user.nickName }}
+              {{ $store.state.userInfo.nickName }}
             </p>
             <div class="drop-store">
               <div class="store-user">
@@ -33,13 +30,13 @@
                 </span>
 
                 <span class="store-info">
-                  <p @click="goUserCenter">{{ user.nickName }}</p>
+                  <p @click="goUserCenter">{{ $store.state.userInfo.nickName }}</p>
                   <p @click="logout">退出登录</p>
                 </span>
               </div>
               <div class="store-account">
                 <h3>
-                  余额<b>￥{{ user.money }}</b>
+                  余额<b>￥{{ $store.state.userInfo.money }}</b>
                 </h3>
                 <p>
                   <a class="i_Btn_small">充值</a>
@@ -48,6 +45,9 @@
               </div>
             </div>
           </div>
+        </div>
+        <div class="login" v-else>
+          <div class="loginRegister" @click="dialogForm = true">登录/注册</div>
         </div>
       </div>
     </div>
@@ -76,19 +76,10 @@ export default {
       dialogForm: false,
       account: "",
       pwd: "",
-      user: {},
     };
   },
-  create() { },
-  mounted() {
-    this.isExistUserInfo();
-  },
-  watch: {},
-  computed: {},
   methods: {
-    isExistUserInfo() {
-      this.user = JSON.parse(localStorage.getItem("BuffUserInfo"));
-    },
+    // 登录
     login() {
       axios
         .get("http://localhost:8081/user/findUserByTel", {
@@ -98,20 +89,14 @@ export default {
           },
         })
         .then((res) => {
-          console.log('res:', res)
           switch (res.data.status) {
             case "200":
               this.dialogForm = false;
-              this.user = res.data.data;
-              localStorage.setItem(
-                "BuffUserInfo",
-                JSON.stringify(this.user)
-              );
+              this.$store.commit("addUserInfo", res.data.data);
               this.$message({
                 message: "登录成功！",
                 type: "success",
               });
-              this.isExistUserInfo();
               break;
             case "201":
               this.$message({
@@ -128,19 +113,31 @@ export default {
           }
         });
     },
+    // 退出登录
     logout() {
-      localStorage.removeItem("BuffUserInfo");
+      // localStorage.removeItem("BuffUserInfo");
+      this.$store.commit("removeUserInfo");
       this.$message({
         message: "退出成功！",
         type: "success",
       });
-      this.isExistUserInfo();
     },
+    // 跳转至个人中心
     goUserCenter() {
       this.$router.push({
-        name: "recharge"
+        name: "recharge",
       });
     },
+  },
+  computed: {
+    //判断用户是否存在
+    isExistUser() {
+      return Object.keys(this.$store.state.userInfo).length > 0;
+    }
+
+  },
+  mounted() {
+
   },
 };
 </script>
@@ -365,7 +362,6 @@ export default {
     }
   }
 }
-
 
 .form .input {
   width: 90%;
