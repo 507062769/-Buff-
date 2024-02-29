@@ -37,7 +37,10 @@
                         上架饰品
                         <span>(1件)</span>
                     </h3>
-                    <span class="popup-close" @click="isGoSell = false">x</span>
+                    <span class="popup-close" @click="
+                        isGoSell = false;
+                    isShowBody = false;
+                    ">x</span>
                 </div>
                 <div class="pupop_cont">
                     <el-table :data="sellData" style="width: 100%">
@@ -76,9 +79,7 @@
                     <div class="bootom_left">
                         <p class="tip1">
                             预计收入|
-                            <span>
-                                ￥{{ totalPrice }}
-                            </span>
+                            <span> ￥{{ totalPrice }} </span>
                             <span> (已扣除 ¥ 0 手续费)</span>
                         </p>
                         <p class="tip2">
@@ -90,7 +91,10 @@
                     </div>
                 </div>
             </div>
-            <div class="mask" v-show="isGoSell" @click="isGoSell = false"></div>
+            <div class="mask" v-show="isGoSell" @click="
+                isGoSell = false;
+            isShowBody = false;
+            "></div>
         </div>
         <div class="list" v-loading.lock="fullscreenLoading">
             <Item v-for="item in marketInfo" :key="item.Id" :item="item" :sellingData="sellingData"></Item>
@@ -117,6 +121,8 @@ export default {
             sellData: [],
             // 正在出售中的商品
             sellingData: [],
+            // 是否禁用body滚动条
+            isShowBody: false,
         };
     },
     methods: {
@@ -147,42 +153,45 @@ export default {
         },
         // 打开上架前的准备页面，并设置金额
         openGoSell() {
-            // 明天来写这一块
             this.isGoSell = true;
-            axios.post("http://localhost:8081/inventory/getInventoryByItemList", {
-                uID: this.$store.state.userInfo.uid,
-                itemIDList: this.$store.state.checkedSellItem,
-            }).then(res => {
-                res.data.data.forEach(e => {
-                    e.sellPrice = null,
-                        e.actualPrice = null
+            this.isShowBody = !this.isShowBody;
+            this.showBody();
+            axios
+                .post("http://localhost:8081/inventory/getInventoryByItemList", {
+                    uID: this.$store.state.userInfo.uid,
+                    itemIDList: this.$store.state.checkedSellItem,
+                })
+                .then((res) => {
+                    res.data.data.forEach((e) => {
+                        (e.sellPrice = null), (e.actualPrice = null);
+                    });
+                    this.sellData = res.data.data;
                 });
-                this.sellData = res.data.data
-            })
         },
         // 提交数据到我的出售表
         goSell() {
-            console.log('要提交的数据：', this.sellData)
-            axios.post("http://localhost:8081/sell/addSellInfo", {
-                infoList: this.sellData,
-                uID: this.$store.state.userInfo.uid,
-            }).then(res => {
-                console.log('mg', res.data)
-                if (res.data.status === "200") {
-                    this.$message({
-                        message: '上传成功',
-                        type: 'success'
-                    });
-                    this.isGoSell = false
-                    this.$store.commit("resetSellCheckedItem")
-                }
-            })
+            this.isShowBody = !this.isShowBody;
+            axios
+                .post("http://localhost:8081/sell/addSellInfo", {
+                    infoList: this.sellData,
+                    uID: this.$store.state.userInfo.uid,
+                })
+                .then((res) => {
+                    if (res.data.status === "200") {
+                        this.$message({
+                            message: "上传成功",
+                            type: "success",
+                        });
+                        this.isGoSell = false;
+                        this.$store.commit("resetSellCheckedItem");
+                    }
+                });
         },
         // 根据输入的值来调整金额
         updateActualPrice(row) {
             if (row.sellPrice) {
                 row.actualPrice = row.sellPrice * 0.9;
-                row.actualPrice = parseFloat(row.actualPrice).toFixed(2)
+                row.actualPrice = parseFloat(row.actualPrice).toFixed(2);
             } else {
                 row.actualPrice = null;
             }
@@ -190,22 +199,30 @@ export default {
         updateSellPrice(row) {
             if (row.actualPrice) {
                 row.sellPrice = row.actualPrice / 0.9;
-                row.sellPrice = parseFloat(row.sellPrice).toFixed(2)
+                row.sellPrice = parseFloat(row.sellPrice).toFixed(2);
             } else {
                 row.sellPrice = null;
             }
         },
         // 获取我的出售中的商品id
         getSellInfo() {
-            axios.get("http://localhost:8081/sell/getSell", {
-                params: {
-                    uID: this.$store.state.userInfo.uid,
-                }
-            }).then(res => {
-                res.data.data.forEach(ele => {
-                    this.sellingData.push(ele.gid)
+            axios
+                .get("http://localhost:8081/sell/getSell", {
+                    params: {
+                        uID: this.$store.state.userInfo.uid,
+                    },
                 })
-            })
+                .then((res) => {
+                    res.data.data.forEach((ele) => {
+                        this.sellingData.push(ele.gid);
+                    });
+                });
+        },
+        // 是否显示body的滚动条
+        showBody() {
+            this.isShowBody
+                ? (document.body.style.overflow = "hidden")
+                : (document.body.style.overflow = "auto");
         },
     },
     computed: {
@@ -219,10 +236,15 @@ export default {
                     return acc;
                 }
             }, 0.0);
-        }
+        },
     },
     mounted() {
-        this.getSellInfo()
+        this.getSellInfo();
+    },
+    watch: {
+        isShowBody(newVal, oldVal) {
+            this.showBody();
+        },
     },
 };
 </script>
@@ -357,6 +379,7 @@ export default {
 
             .pupop_cont {
                 height: 340px;
+                overflow: auto;
 
                 .pic-cont {
                     height: 66px;
@@ -377,6 +400,10 @@ export default {
                     height: 73px;
                     line-height: 73px;
                     margin-left: 10px;
+                }
+
+                /deep/.el-table__body-wrapper {
+                    overflow-x: hidden !important;
                 }
             }
 

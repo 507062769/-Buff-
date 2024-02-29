@@ -7,8 +7,6 @@
                     <li tabIndex="2" :class="tabIndex == 2 ? 'on' : ''">出售记录</li>
                     <li tabIndex="3" :class="tabIndex == 3 ? 'on' : ''">出售统计</li>
                 </ul>
-                <span class="right">件数 : <span style="color: #eea20e">48 </span> 估值 :
-                    <span style="color: #eea20e">￥88</span></span>
             </div>
 
             <div class="criteria">
@@ -47,7 +45,7 @@
             </div>
         </div>
 
-        <router-view :marketInfo="marketInfo"></router-view>
+        <router-view :marketInfo="marketInfo" :getSellInfo="getSellInfo"></router-view>
     </div>
 </template>
 
@@ -86,6 +84,7 @@ export default {
                     break;
             }
         },
+        // 获取出售的商品
         getSellInfo() {
             axios.get("http://localhost:8081/sell/getSell", {
                 params: {
@@ -133,11 +132,6 @@ export default {
                 line-height: 40px;
             }
 
-            .right {
-                float: right;
-                line-height: 40px;
-                font-size: 12px;
-            }
 
             .on {
                 background-image: url(~@img/up.png);
