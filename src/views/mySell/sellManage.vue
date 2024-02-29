@@ -9,40 +9,90 @@
             </div>
             <div class="right">
                 <el-checkbox v-model="isSelect" @change="allSelect">全选</el-checkbox>
-                <el-button type="info">改价</el-button>
+                <el-button type="info" @click="openChangePrice">改价</el-button>
                 <el-button type="primary">下架</el-button>
             </div>
+            <div class="pupop_container" v-show="isChange">
+                <div class="pupop_header">
+                    <h3>
+                        上架饰品
+                        <span>(1件)</span>
+                    </h3>
+                    <span class="popup-close" @click="isChange = false">x</span>
+                </div>
+                <div class="pupop_cont">
+                    <el-table :data="sellData" style="width: 100%">
+                        <el-table-column width="15"></el-table-column>
+                        <el-table-column prop="name" label="饰品" width="335">
+                            <template slot-scope="scope">
+                                <div class="pic-cont">
+                                    <img src="~@img/hdd.png" alt="" class="goodsImg" />
+                                </div>
+                                <div class="goodsName">
+                                    {{ scope.row.name }}
+                                </div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="price" label="市场价" width="132">
+                            <template slot-scope="scope">
+                                <b style="color: #eea20e">￥{{ scope.row.price }}</b>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="price" label="买家支付金额" width="201">
+                            <template slot-scope="scope">
+                                <el-input type="number" v-model="scope.row.price" placeholder="买家支付金额"
+                                    @blur="updateActualPrice(scope.row)"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="actualPrice" label="实收金额" width="201">
+                            <template slot-scope="scope">
+                                <el-input type="number" v-model="scope.row.actualPrice" placeholder="实收金额"
+                                    @blur="updateSellPrice(scope.row)"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column width="15"></el-table-column>
+                    </el-table>
+                </div>
+                <div class="pupop_bottom">
+                    <div class="bootom_left">
+                        <p class="tip1">
+                            预计收入|
+                            <span>
+                                ￥{{ totalPrice }}
+                            </span>
+                            <span> (已扣除 ¥ 0 手续费)</span>
+                        </p>
+                        <p class="tip2">
+                            请在买家付款后12小时内发货，否则将下架该类饰品并取消出售权限。
+                        </p>
+                    </div>
+                    <div class="bootom_right">
+                        <el-button type="primary" @click="changPrice">确定改价</el-button>
+                    </div>
+                </div>
+            </div>
+            <div class="mask" v-show="isChange" @click="isChange = false"></div>
         </div>
         <router-view :marketInfo="marketInfo"></router-view>
     </div>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
     name: "sellManage",
     components: {},
+    props: ["marketInfo"],
     data() {
         return {
             isSelect: false,
             tabIndex: 1,
-            // checkedItem: [],
-            marketInfo: [
-                {
-                    Id: 1,
-                    Title: "Tec-9 | 叛逆（久经沙场）",
-                    Img: "img/hdd.png",
-                    Price: 2.0,
-                },
-                {
-                    Id: 2,
-                    Title: "蝴蝶刀（★） | 森林",
-                    Img: "img/hdd.png",
-                    Price: 999.0,
-                },
-            ],
+            isChange: false,
+            sellData: [],
         }
     },
     methods: {
+        // 全选
         allSelect() {
             if (this.isSelect) {
                 this.$store.dispatch("allSellSelect", this.marketInfo)
@@ -50,11 +100,11 @@ export default {
                 this.$store.dispatch("resetSellAll")
             }
         },
-
+        // 判断单个商品是否选中
         isChecked(id) {
             this.$store.dispatch("toggleSellCheckedItem", id)
         },
-
+        // 切换tab
         toggleTab({ target }) {
             if (target.tagName === "LI") {
                 this.tabIndex = target.tabIndex;
@@ -71,8 +121,58 @@ export default {
                     })
                     break;
             }
+        },
+        // 根据输入的值来调整金额
+        updateActualPrice(row) {
+            if (row.price) {
+                row.actualPrice = row.price * 0.9;
+                row.actualPrice = parseFloat(row.actualPrice).toFixed(2)
+            } else {
+                row.actualPrice = null;
+            }
+        },
+        updateSellPrice(row) {
+            if (row.actualPrice) {
+                row.price = row.actualPrice / 0.9;
+                row.price = parseFloat(row.price).toFixed(2)
+            } else {
+                row.price = null;
+            }
+        },
+        // 点击改价前的准备
+        openChangePrice() {
+            this.isChange = true;
+            this.sellData = this.marketInfo.filter(item => this.$store.state.checkedSellItem.includes(item.gid))
+        },
+        changPrice() {
+            axios.post("http://localhost:8081/sell/changePrice", {
+                uID: this.$store.state.userInfo.uid,
+                data: this.sellData,
+            }).then(res => {
+                console.log('re', res)
+                this.$message({
+                    message: '修改成功',
+                    type: 'success'
+                });
+            })
         }
     },
+    mounted() {
+    },
+    computed: {
+        // 预计收入
+        totalPrice() {
+            return this.sellData.reduce((acc, item) => {
+                const price = parseFloat(item.actualPrice);
+                if (!isNaN(price)) {
+                    return acc + price;
+                } else {
+                    return acc;
+                }
+            }, 0.0);
+        }
+    },
+
 }
 </script>
 
@@ -159,6 +259,138 @@ export default {
 
 
 
+        }
+
+        .pupop_container {
+            width: 900px;
+            height: 480px;
+            position: fixed;
+            z-index: 10;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ccc;
+
+            .pupop_header {
+                height: 50px;
+                width: 100%;
+                background-color: white;
+                position: relative;
+
+                h3 {
+                    height: 50px;
+                    text-align: center;
+                    font-size: 18px;
+                    color: #515151;
+                    line-height: 50px;
+
+                    span {
+                        font-size: 12px;
+                        letter-spacing: 2px;
+                        color: #959595;
+                    }
+                }
+
+                .popup-close {
+                    display: inline-block;
+                    height: 20px;
+                    width: 20px;
+                    text-align: center;
+                    line-height: 15px;
+                    font-size: 18px;
+                    position: absolute;
+                    top: 50%;
+                    right: 10px;
+                    transform: translate(0, -50%);
+                    cursor: pointer;
+                }
+            }
+
+            .pupop_cont {
+                height: 340px;
+
+                .pic-cont {
+                    height: 66px;
+                    width: 88px;
+                    background-image: url(~@img/bg/item_bg.png);
+                    float: left;
+                    background-size: cover;
+
+                    .goodsImg {
+                        height: 66px;
+                        width: 88px;
+                        object-fit: contain;
+                    }
+                }
+
+                .goodsName {
+                    display: inline-block;
+                    height: 73px;
+                    line-height: 73px;
+                    margin-left: 10px;
+                }
+            }
+
+            .pupop_bottom {
+                height: 90px;
+                width: 100%;
+                background-color: #33363a;
+
+                .bootom_left,
+                .bootom_right {
+                    display: inline-block;
+                    height: 100%;
+                }
+
+                .bootom_left {
+                    width: 80%;
+                    box-sizing: border-box;
+                    padding: 10px 20px;
+
+                    .tip1 {
+                        line-height: 40px;
+                        color: #9a9b9e;
+                    }
+
+                    .tip1 :nth-child(1) {
+                        color: #eea20e;
+                        font-size: 24px;
+                    }
+
+                    .tip1 :nth-child(2) {
+                        font-size: 12px;
+                    }
+
+                    .tip2 {
+                        color: #eea20e;
+                        font-size: 12px;
+                    }
+                }
+
+                .bootom_right {
+                    width: 20%;
+                    float: right;
+
+                    /deep/.el-button {
+                        width: 120px;
+                        margin: 25px 30px;
+                    }
+
+                    /deep/.el-button+.el-button {
+                        margin-left: 20px;
+                    }
+                }
+            }
+        }
+
+        .mask {
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            background: rgba(0, 0, 0, 0.6);
         }
     }
 }

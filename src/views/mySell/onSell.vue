@@ -1,11 +1,11 @@
 <template>
     <div id="onSell">
-        <template v-if="1 === 0">
+        <template v-if="!marketInfo.length">
             <p class="tipImg"></p>
             <p class="tipText">你还没有在出售的饰品，快去库存中上架一些吧</p>
             <el-button type="primary" plain @click="gotoInventory">前往库存</el-button>
         </template>
-        <div class="list">
+        <div class="list" v-else>
             <Item v-for="item in marketInfo" :key="item.Id" :item="item"></Item>
         </div>
     </div>
@@ -28,6 +28,13 @@ export default {
                 name: "Inventory",
             })
         },
+    },
+    mounted() {
+        // this.marketInfo.forEach(ele => {
+        //     ele = ele.replace("sellPrice", "price")
+        // });
+        console.log('this.marketInfo:', this.marketInfo)
+
     },
 }
 </script>

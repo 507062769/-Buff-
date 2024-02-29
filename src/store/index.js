@@ -18,23 +18,24 @@ const actions = {
   // 点击单个item
   toggleSellCheckedItem(cont, id) {
     // 获取正在出售中的商品
-    axios
-      .get("http://localhost:8081/sell/getSell", {
-        params: {
-          uID: cont.state.userInfo.uid,
-        },
-      })
-      .then((res) => {
-        let IDList = res.data.data;
-        let sellIDList = [];
-        IDList.forEach((ele) => {
-          sellIDList.push(ele.gid);
-        });
-        // 当点击的id未被出售时，才能触发点击
-        if (!sellIDList.includes(id)) {
-          cont.commit("toggleSellCheckedItem", id);
-        }
-      });
+    // axios
+    //   .get("http://localhost:8081/sell/getSell", {
+    //     params: {
+    //       uID: cont.state.userInfo.uid,
+    //     },
+    //   })
+    //   .then((res) => {
+    //     let IDList = res.data.data;
+    //     let sellIDList = [];
+    //     IDList.forEach((ele) => {
+    //       sellIDList.push(ele.gid);
+    //     });
+    //     // 当点击的id未被出售时，才能触发点击
+    //     if (!sellIDList.includes(id)) {
+    //       cont.commit("toggleSellCheckedItem", id);
+    //     }
+    //   });
+    cont.commit("toggleSellCheckedItem", id);
   },
 };
 

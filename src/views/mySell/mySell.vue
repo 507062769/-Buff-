@@ -46,11 +46,14 @@
                 </div>
             </div>
         </div>
-        <router-view></router-view>
+
+        <router-view :marketInfo="marketInfo"></router-view>
     </div>
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
     name: "Mysell",
     components: {},
@@ -58,9 +61,11 @@ export default {
         return {
             tabIndex: 1,
             marketName: "",
+            marketInfo: [],
         };
     },
     methods: {
+        // 切换tab
         toggleTab({ target }) {
             this.tabIndex = target.tabIndex;
             switch (this.tabIndex) {
@@ -81,7 +86,19 @@ export default {
                     break;
             }
         },
+        getSellInfo() {
+            axios.get("http://localhost:8081/sell/getSell", {
+                params: {
+                    uID: this.$store.state.userInfo.uid,
+                }
+            }).then(res => {
+                this.marketInfo = res.data.data;
+            })
+        },
     },
+    mounted() {
+        this.getSellInfo()
+    }
 };
 </script>
 

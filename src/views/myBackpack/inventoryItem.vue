@@ -10,7 +10,9 @@
         </h3>
         <p>
             <b>￥{{ item.price }}</b>
-            <span class="selling" :class="{ isShow: isSelling }">出售中</span>
+            <!-- <span class="selling" :class="{ isShow: isSelling }">出售中</span> -->
+            <!-- <span class="selling" :class="{ isShow: isSelling }">出售中</span> -->
+
         </p>
         <span class="tag w1" v-show="item.wid === 1">崭新出厂</span>
         <span class="tag w2" v-show="item.wid === 2">略有磨损</span>
@@ -42,12 +44,12 @@ export default {
             return this.$store.getters.isChecked(this.item.gid);
         },
         // 判断当前的商品是否在出售中
-        isSelling() {
-            return this.sellingData.includes(this.item.gid);
-        },
+        // isSelling() {
+        //     return this.sellingData.includes(this.item.gid);
+        // },
     },
     mounted() {
-        console.log('sellingData', this.sellingData)
+
     },
 };
 </script>

@@ -153,7 +153,6 @@ export default {
                 uID: this.$store.state.userInfo.uid,
                 itemIDList: this.$store.state.checkedSellItem,
             }).then(res => {
-                console.log('获取上架数据', res)
                 res.data.data.forEach(e => {
                     e.sellPrice = null,
                         e.actualPrice = null
