@@ -1,6 +1,7 @@
 import Vuex from "vuex";
 import Vue from "vue";
 import createPersistedState from "vuex-persistedstate";
+import axios from "axios";
 
 Vue.use(Vuex);
 
@@ -15,8 +16,25 @@ const actions = {
     commit("resetSellCheckedItem");
   },
   // 点击单个item
-  toggleSellCheckedItem({ commit }, id) {
-    commit("toggleSellCheckedItem", id); // 确保这里调用的是正确的 mutation 名称
+  toggleSellCheckedItem(cont, id) {
+    // 获取正在出售中的商品
+    axios
+      .get("http://localhost:8081/sell/getSell", {
+        params: {
+          uID: cont.state.userInfo.uid,
+        },
+      })
+      .then((res) => {
+        let IDList = res.data.data;
+        let sellIDList = [];
+        IDList.forEach((ele) => {
+          sellIDList.push(ele.gid);
+        });
+        // 当点击的id未被出售时，才能触发点击
+        if (!sellIDList.includes(id)) {
+          cont.commit("toggleSellCheckedItem", id);
+        }
+      });
   },
 };
 
@@ -53,7 +71,7 @@ const mutations = {
   },
   // 删除用户信息
   removeUserInfo(state) {
-    state.userInfo={}
+    state.userInfo = {};
   },
 };
 
@@ -61,7 +79,7 @@ const mutations = {
 const state = {
   checkedSellItem: [],
   sortord: "gainTime",
-  userInfo:{},
+  userInfo: {},
 };
 
 const getters = {

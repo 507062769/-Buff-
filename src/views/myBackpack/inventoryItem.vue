@@ -10,6 +10,7 @@
         </h3>
         <p>
             <b>￥{{ item.price }}</b>
+            <span class="selling" :class="{ isShow: isSelling }">出售中</span>
         </p>
         <span class="tag w1" v-show="item.wid === 1">崭新出厂</span>
         <span class="tag w2" v-show="item.wid === 2">略有磨损</span>
@@ -25,10 +26,9 @@
 export default {
     name: "inventoryItem",
     components: {},
-    props: ["item"],
+    props: ["item", "sellingData"],
     data() {
-        return {
-        }
+        return {};
     },
     methods: {
         // 判断是否选中
@@ -37,15 +37,19 @@ export default {
         },
     },
     computed: {
-        // 使用计算属性来根据 item.Id 判断是否被选中  
+        // 使用计算属性来根据 item.Id 判断是否被选中
         isChecked() {
-            // 通过 this.$store.getters.isChecked(item.Id) 调用 getter  
             return this.$store.getters.isChecked(this.item.gid);
-        }
+        },
+        // 判断当前的商品是否在出售中
+        isSelling() {
+            return this.sellingData.includes(this.item.gid);
+        },
     },
     mounted() {
-    }
-}
+        console.log('sellingData', this.sellingData)
+    },
+};
 </script>
 
 <style scoped lang="less">
@@ -79,6 +83,16 @@ export default {
         color: #eea20e;
     }
 
+    .selling {
+        font-size: 12px;
+        line-height: 20px;
+        display: none;
+    }
+
+    .isShow {
+        display: inline-block;
+    }
+
     span {
         color: #959595;
         float: right;
@@ -105,7 +119,6 @@ export default {
         line-height: 18px;
         padding: 0 6px;
         color: white;
-
     }
 
     .w1 {
@@ -156,4 +169,5 @@ export default {
     .icon {
         display: inline-block;
     }
-}</style>
+}
+</style>

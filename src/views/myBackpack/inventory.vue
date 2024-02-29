@@ -42,29 +42,31 @@
                 <div class="pupop_cont">
                     <el-table :data="sellData" style="width: 100%">
                         <el-table-column width="15"></el-table-column>
-                        <el-table-column prop="GoodsName" label="饰品" width="335">
+                        <el-table-column prop="name" label="饰品" width="335">
                             <template slot-scope="scope">
                                 <div class="pic-cont">
                                     <img src="~@img/hdd.png" alt="" class="goodsImg" />
                                 </div>
                                 <div class="goodsName">
-                                    {{ scope.row.GoodsName }}
+                                    {{ scope.row.name }}
                                 </div>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="Price" label="市场价" width="132">
+                        <el-table-column prop="price" label="市场价" width="132">
                             <template slot-scope="scope">
-                                <b style="color: #eea20e">￥{{ scope.row.Price }}</b>
+                                <b style="color: #eea20e">￥{{ scope.row.price }}</b>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="SellPrice" label="买家支付金额" width="201">
+                        <el-table-column prop="sellPrice" label="买家支付金额" width="201">
                             <template slot-scope="scope">
-                                <el-input v-model="scope.row.SellPrice" placeholder="买家支付金额"></el-input>
+                                <el-input type="number" v-model="scope.row.sellPrice" placeholder="买家支付金额"
+                                    @blur="updateActualPrice(scope.row)"></el-input>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="basalPrice" label="实收金额" width="201">
+                        <el-table-column prop="actualPrice" label="实收金额" width="201">
                             <template slot-scope="scope">
-                                <el-input v-model="scope.row.basalPrice" placeholder="实收金额"></el-input>
+                                <el-input type="number" v-model="scope.row.actualPrice" placeholder="实收金额"
+                                    @blur="updateSellPrice(scope.row)"></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column width="15"></el-table-column>
@@ -75,7 +77,7 @@
                         <p class="tip1">
                             预计收入|
                             <span>
-                                ￥4.87
+                                ￥{{ totalPrice }}
                             </span>
                             <span> (已扣除 ¥ 0 手续费)</span>
                         </p>
@@ -91,7 +93,7 @@
             <div class="mask" v-show="isGoSell" @click="isGoSell = false"></div>
         </div>
         <div class="list" v-loading.lock="fullscreenLoading">
-            <Item v-for="item in marketInfo" :key="item.Id" :item="item"></Item>
+            <Item v-for="item in marketInfo" :key="item.Id" :item="item" :sellingData="sellingData"></Item>
         </div>
     </div>
 </template>
@@ -105,30 +107,16 @@ export default {
     props: ["marketInfo", "getInventory"],
     data() {
         return {
-            sortord: "gainTime",
+            // 是否全选
             isSelect: false,
-            checkedItem: [],
-            userInfo: {},
+            // 加载动画
             fullscreenLoading: false,
+            // 是否打开要出售商品的页面
             isGoSell: false,
-            sellData: [
-                {
-                    Id: 1,
-                    GoodsName: "蝴蝶刀|虎牙(久经沙场)",
-                    Img: "~@img/hdd.png",
-                    Price: 999.0,
-                    SellPrice: '',
-                    basalPrice: '',
-                },
-                {
-                    Id: 2,
-                    GoodsName: "蝴蝶刀|虎牙(久经沙场)",
-                    Img: "~@img/hdd.png",
-                    Price: 999.0,
-                    SellPrice: '',
-                    basalPrice: '',
-                },
-            ],
+            // 需要出售的商品
+            sellData: [],
+            // 正在出售中的商品
+            sellingData: [],
         };
     },
     methods: {
@@ -157,6 +145,7 @@ export default {
                 this.getInventory(this.$store.state.sortord);
             }, 1000);
         },
+        // 打开上架前的准备页面，并设置金额
         openGoSell() {
             // 明天来写这一块
             this.isGoSell = true;
@@ -165,18 +154,77 @@ export default {
                 itemIDList: this.$store.state.checkedSellItem,
             }).then(res => {
                 console.log('获取上架数据', res)
+                res.data.data.forEach(e => {
+                    e.sellPrice = null,
+                        e.actualPrice = null
+                });
+                this.sellData = res.data.data
             })
         },
+        // 提交数据到我的出售表
         goSell() {
-            // axios.get("http://localhost:8081/inventory/goSell", {
-            //     params: {
-            //         itemID: this.$store.state.checkedSellItem,
-            //         uID: this.$store.state.userInfo.uid,
-            //     }
-            // })
+            console.log('要提交的数据：', this.sellData)
+            axios.post("http://localhost:8081/sell/addSellInfo", {
+                infoList: this.sellData,
+                uID: this.$store.state.userInfo.uid,
+            }).then(res => {
+                console.log('mg', res.data)
+                if (res.data.status === "200") {
+                    this.$message({
+                        message: '上传成功',
+                        type: 'success'
+                    });
+                    this.isGoSell = false
+                    this.$store.commit("resetSellCheckedItem")
+                }
+            })
+        },
+        // 根据输入的值来调整金额
+        updateActualPrice(row) {
+            if (row.sellPrice) {
+                row.actualPrice = row.sellPrice * 0.9;
+                row.actualPrice = parseFloat(row.actualPrice).toFixed(2)
+            } else {
+                row.actualPrice = null;
+            }
+        },
+        updateSellPrice(row) {
+            if (row.actualPrice) {
+                row.sellPrice = row.actualPrice / 0.9;
+                row.sellPrice = parseFloat(row.sellPrice).toFixed(2)
+            } else {
+                row.sellPrice = null;
+            }
+        },
+        // 获取我的出售中的商品id
+        getSellInfo() {
+            axios.get("http://localhost:8081/sell/getSell", {
+                params: {
+                    uID: this.$store.state.userInfo.uid,
+                }
+            }).then(res => {
+                res.data.data.forEach(ele => {
+                    this.sellingData.push(ele.gid)
+                })
+            })
         },
     },
-    mounted() { },
+    computed: {
+        // 预计收入
+        totalPrice() {
+            return this.sellData.reduce((acc, item) => {
+                const price = parseFloat(item.actualPrice);
+                if (!isNaN(price)) {
+                    return acc + price;
+                } else {
+                    return acc;
+                }
+            }, 0.0);
+        }
+    },
+    mounted() {
+        this.getSellInfo()
+    },
 };
 </script>
 
