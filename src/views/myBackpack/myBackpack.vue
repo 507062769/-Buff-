@@ -136,6 +136,7 @@ export default {
                         sort: this.$store.state.sortord,
                         kID: kID,
                         kiID: kiID,
+                        group: "Inventory",
                     },
                 })
                 .then((res) => {
@@ -152,6 +153,7 @@ export default {
                         uID: this.$store.state.userInfo.uid,
                         sort: this.$store.state.sortord,
                         qualityID: qualityID,
+                        group: "Inventory",
                     },
                 })
                 .then((res) => {
@@ -168,6 +170,7 @@ export default {
                         uID: this.$store.state.userInfo.uid,
                         sort: this.$store.state.sortord,
                         wearID: wearID,
+                        group: "Inventory",
                     },
                 })
                 .then((res) => {

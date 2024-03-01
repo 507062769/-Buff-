@@ -80,6 +80,7 @@ const mutations = {
 const state = {
   checkedSellItem: [],
   sortord: "gainTime",
+  group:"sell",
   userInfo: {},
 };
 
