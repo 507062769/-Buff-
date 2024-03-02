@@ -3,189 +3,40 @@
     <div class="center">
       <div class="market-header">
         <div class="category">
-          <div class="cate-item">
+          <div class="cate-item" v-for="k in Kind" :key="k.kid">
             <img class="icon" alt="" />
-            <p>匕首</p>
+            <p>{{ k.name }}</p>
             <ul>
-              <li>蝴蝶刀</li>
-              <li>M9刺刀</li>
-              <li>爪子刀</li>
-              <li>流浪者匕首</li>
-              <li>骷髅匕首</li>
-              <li>刺刀</li>
-              <li>锯齿抓刀</li>
-              <li>折叠刀</li>
-              <li>熊刀</li>
-            </ul>
-          </div>
-
-          <div class="cate-item">
-            <img class="icon" alt="" />
-            <p>匕首</p>
-            <ul>
-              <li>蝴蝶刀</li>
-              <li>M9刺刀</li>
-              <li>爪子刀</li>
-              <li>骷髅匕首</li>
-              <li>刺刀</li>
-              <li>锯齿抓刀</li>
-              <li>折叠刀</li>
-              <li>熊刀</li>
-            </ul>
-          </div>
-
-          <div class="cate-item">
-            <img class="icon" alt="" />
-            <p>匕首</p>
-            <ul>
-              <li>蝴蝶刀</li>
-              <li>M9刺刀</li>
-              <li>爪子刀</li>
-              <li>骷髅匕首</li>
-              <li>刺刀</li>
-              <li>锯齿抓刀</li>
-              <li>折叠刀</li>
-              <li>熊刀</li>
-            </ul>
-          </div>
-
-          <div class="cate-item">
-            <img class="icon" alt="" />
-            <p>匕首</p>
-            <ul>
-              <li>蝴蝶刀</li>
-              <li>M9刺刀</li>
-              <li>爪子刀</li>
-              <li>骷髅匕首</li>
-              <li>刺刀</li>
-              <li>锯齿抓刀</li>
-              <li>折叠刀</li>
-              <li>熊刀</li>
-            </ul>
-          </div>
-
-          <div class="cate-item">
-            <img class="icon" alt="" />
-            <p>匕首</p>
-            <ul>
-              <li>蝴蝶刀</li>
-              <li>M9刺刀</li>
-              <li>爪子刀</li>
-              <li>骷髅匕首</li>
-              <li>刺刀</li>
-              <li>锯齿抓刀</li>
-              <li>折叠刀</li>
-              <li>熊刀</li>
-            </ul>
-          </div>
-
-          <div class="cate-item">
-            <img class="icon" alt="" />
-            <p>匕首</p>
-            <ul>
-              <li>蝴蝶刀</li>
-              <li>M9刺刀</li>
-              <li>爪子刀</li>
-              <li>骷髅匕首</li>
-              <li>刺刀</li>
-              <li>锯齿抓刀</li>
-              <li>折叠刀</li>
-              <li>熊刀</li>
-            </ul>
-          </div>
-          <div class="cate-item">
-            <img class="icon" alt="" />
-            <p>匕首</p>
-            <ul>
-              <li>蝴蝶刀</li>
-              <li>M9刺刀</li>
-              <li>爪子刀</li>
-              <li>骷髅匕首</li>
-              <li>刺刀</li>
-              <li>锯齿抓刀</li>
-              <li>折叠刀</li>
-              <li>熊刀</li>
-            </ul>
-          </div>
-
-          <div class="cate-item">
-            <img class="icon" alt="" />
-            <p>匕首</p>
-            <ul>
-              <li>蝴蝶刀</li>
-              <li>M9刺刀</li>
-              <li>爪子刀</li>
-              <li>骷髅匕首</li>
-              <li>刺刀</li>
-              <li>锯齿抓刀</li>
-              <li>折叠刀</li>
-              <li>熊刀</li>
-            </ul>
-          </div>
-
-          <div class="cate-item">
-            <img class="icon" alt="" />
-            <p>匕首</p>
-            <ul>
-              <li>蝴蝶刀</li>
-              <li>M9刺刀</li>
-              <li>爪子刀</li>
-              <li>骷髅匕首</li>
-              <li>刺刀</li>
-              <li>锯齿抓刀</li>
-              <li>折叠刀</li>
-              <li>熊刀</li>
-            </ul>
-          </div>
-
-          <div class="cate-item">
-            <img class="icon" alt="" />
-            <p>匕首</p>
-            <ul>
-              <li>蝴蝶刀</li>
-              <li>M9刺刀</li>
-              <li>爪子刀</li>
-              <li>骷髅匕首</li>
-              <li>刺刀</li>
-              <li>锯齿抓刀</li>
-              <li>折叠刀</li>
-              <li>熊刀</li>
+              <li v-for="kItem in k.kindItem" :key="kItem.kiID">
+                {{ kItem.name }}
+              </li>
             </ul>
           </div>
         </div>
+
         <div class="criteria">
           <div class="criteria-item">
-            <h5>品质</h5>
-            <ul>
+            <h5>{{ qualityName }}</h5>
+            <ul @click="selectQuality">
               <li>不限品质</li>
-              <li>违禁</li>
-              <li>保密</li>
-              <li>受限</li>
+              <li v-for="q in quality" :key="q.qid">{{ q.name }}</li>
             </ul>
           </div>
+
           <div class="criteria-item">
-            <h5>品质</h5>
+            <h5>{{ wearName }}</h5>
             <ul>
-              <li>不限品质</li>
-              <li>违禁</li>
-              <li>保密</li>
-              <li>受限</li>
+              <li>不限外观</li>
+              <li v-for="w in wear" :key="w.wid">{{ w.name }}</li>
             </ul>
           </div>
-          <div class="criteria-item">
-            <h5>品质</h5>
-            <ul>
-              <li>不限品质</li>
-              <li>违禁</li>
-              <li>保密</li>
-              <li>受限</li>
-            </ul>
-          </div>
+
           <div class="criteria-search">
-            <el-input placeholder="请输入物品名称" v-model="marketName" clearable>
+            <el-input placeholder="请输入物品名称" v-model="searchName" clearable>
               <el-button slot="append" icon="el-icon-search">搜索</el-button>
             </el-input>
           </div>
+
           <div class="criteria-item right">
             <h5>排序</h5>
             <ul>
@@ -195,6 +46,7 @@
               <li>受限</li>
             </ul>
           </div>
+
           <div class="right">
             <div class="counter">
               ￥
@@ -215,102 +67,55 @@
 </template>
 
 <script>
+import axios from "axios";
 import Item from "./marketItem.vue";
+
 export default {
   name: "",
   components: { Item },
   data() {
     return {
-      marketName: "",
+      searchName: "",
       minPrice: "",
       maxPrice: "",
-      marketInfo: [
-        {
-          Id: 1,
-          Title: "蝴蝶刀（★） | 都市伪装",
-          Img: "img/hdd.png",
-          Price: 999.0,
-        },
-        {
-          Id: 2,
-          Title: "蝴蝶刀（★） | 森林",
-          Img: "img/hdd.png",
-          Price: 999.0,
-        },
-        {
-          Id: 3,
-          Title: "蝴蝶刀（★） | 虎牙",
-          Img: "img/hdd.png",
-          Price: 999.0,
-        },
-        {
-          Id: 4,
-          Title: "蝴蝶刀（★） | 多普勒",
-          Img: "img/hdd.png",
-          Price: 999.0,
-        },
-        {
-          Id: 5,
-          Title: "蝴蝶刀（★） | 外表生锈",
-          Img: "img/hdd.png",
-          Price: 999.0,
-        },
-        {
-          Id: 6,
-          Title: "蝴蝶刀（★） | 传说",
-          Img: "img/hdd.png",
-          Price: 999.0,
-        },
-        {
-          Id: 7,
-          Title: "蝴蝶刀（★） | 黑色层压板",
-          Img: "img/hdd.png",
-          Price: 999.0,
-        },
-        {
-          Id: 8,
-          Title: "蝴蝶刀（★） | 自由之手",
-          Img: "img/hdd.png",
-          Price: 999.0,
-        },
-        {
-          Id: 9,
-          Title: "蝴蝶刀（★） | 深红之网",
-          Img: "img/hdd.png",
-          Price: 999.0,
-        },
-        {
-          Id: 10,
-          Title: "蝴蝶刀（★） | 大马士革刚",
-          Img: "img/hdd.png",
-          Price: 999.0,
-        },
-        {
-          Id: 11,
-          Title: "蝴蝶刀（★） | 自由之手",
-          Img: "img/hdd.png",
-          Price: 999.0,
-        },
-        {
-          Id: 12,
-          Title: "蝴蝶刀（★） | 深红之网",
-          Img: "img/hdd.png",
-          Price: 999.0,
-        },
-        {
-          Id: 13,
-          Title: "蝴蝶刀（★） | 大马士革刚",
-          Img: "img/hdd.png",
-          Price: 999.0,
-        },
-      ],
+      marketInfo: [],
+
+      qualityName: "品质",
+      wearName: "外观",
+      Kind: [],
+      quality: [],
+      wear: [],
     };
   },
-  create() { },
-  mounted() { },
-  watch: {},
-  computed: {},
-  methods: {},
+  methods: {
+    // 初始化
+    init() {
+      // 获取种类、品质、外观的值
+      axios.get("http://localhost:8081/tool/getKind").then((res) => {
+        this.Kind = res.data.data;
+      });
+      axios.get("http://localhost:8081/tool/getQuality").then((res) => {
+        this.quality = res.data.data;
+      });
+      axios.get("http://localhost:8081/tool/getWear").then((res) => {
+        this.wear = res.data.data;
+      });
+      axios.get("http://localhost:8081/sell/getUniqueGoods", {
+        params: {
+          sort: "sellingTime"
+        }
+      }).then(res => {
+        this.marketInfo = res.data.data
+      })
+    },
+    // 切换品质
+    selectQuality({ target }) {
+
+    }
+  },
+  mounted() {
+    this.init();
+  },
 };
 </script>
 

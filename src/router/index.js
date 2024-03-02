@@ -121,7 +121,7 @@ const routes = [
   },
   {
     name: "Goods",
-    path: "/goods/:id",
+    path: "/goods/:goodsID",
     component: () => import("../views/goods/goodsDetail.vue"),
     children: [
       {

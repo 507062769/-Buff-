@@ -30,10 +30,6 @@ export default {
         },
     },
     mounted() {
-        // this.marketInfo.forEach(ele => {
-        //     ele = ele.replace("sellPrice", "price")
-        // });
-        console.log('this.marketInfo:', this.marketInfo)
 
     },
 }

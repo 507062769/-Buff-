@@ -31,26 +31,10 @@
 
         </div>
         <div class="relative-goods">
-            <ul>
-                <li>
-                    <span>崭新出厂</span>
-                    <span>￥3.68</span>
-                </li>
-                <li>
-                    <span>略有磨损</span>
-                    <span>￥2.68</span>
-                </li>
-                <li>
-                    <span>久经沙场</span>
-                    <span>￥1.68</span>
-                </li>
-                <li>
-                    <span>破损不堪</span>
-                    <span>￥0.68</span>
-                </li>
-                <li>
-                    <span>战痕累累</span>
-                    <span>￥0.28</span>
+            <ul @click="toggleWearTab">
+                <li :dataWIndex="w.wid" v-for="w in wear" :key="w.wid" :class="wearIndex === w.wid ? 'on' : ''">
+                    <span :dataWIndex="w.wid">{{ w.name }}</span>
+                    <span :dataWIndex="w.wid">￥3.68</span>
                 </li>
             </ul>
 
@@ -101,6 +85,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
     name: "goodsDetail",
     components: {},
@@ -110,10 +96,19 @@ export default {
             minPrice: "",
             maxPrice: "",
             tabIndex: 1,
-
+            wear: [],
+            wearIndex: 1,
         }
     },
     methods: {
+        // 初始化
+        init() {
+            axios.get("http://localhost:8081/tool/getWear").then((res) => {
+                this.wear = res.data.data;
+            });
+            this.wearIndex = this.$route.params.item.wID;
+
+        },
         toggleTab({ target }) {
             if (target.tagName === "LI") {
                 this.tabIndex = target.tabIndex;
@@ -137,8 +132,14 @@ export default {
             }
 
         },
+        toggleWearTab({ target }) {
+            this.wearIndex = parseInt(target.getAttribute("dataWIndex"))
+        }
 
     },
+    mounted() {
+        this.init()
+    }
 }
 </script>
 

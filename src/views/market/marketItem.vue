@@ -6,13 +6,17 @@
       </div>
     </a>
     <h3>
-      <a href="javascript:void(0)">{{ item.Title }}</a>
+      <a href="javascript:void(0)">{{ item.name }}</a>
     </h3>
     <p>
-      <b>￥{{ item.Price }}</b>
-      <span>1000件在售</span>
+      <b>￥{{ item.price }}</b>
+      <span>{{ item.total_count }} 件在售</span>
     </p>
-    <span class="tag">崭新出厂</span>
+    <span class="tag w1" v-show="item.wid === 1">崭新出厂</span>
+    <span class="tag w2" v-show="item.wid === 2">略有磨损</span>
+    <span class="tag w3" v-show="item.wid === 3">久经沙场</span>
+    <span class="tag w4" v-show="item.wid === 4">破损不堪</span>
+    <span class="tag w5" v-show="item.wid === 5">战痕累累</span>
   </div>
 </template>
 
@@ -32,7 +36,8 @@ export default {
       this.$router.push({
         name: "Goods",
         params: {
-          id: this.item.Id
+          goodsID: this.item.sID,
+          item: this.item
         }
       })
     }
@@ -100,6 +105,26 @@ export default {
     padding: 0 6px;
     color: white;
 
+  }
+
+  .w1 {
+    background-color: #397439;
+  }
+
+  .w2 {
+    background-color: #488b48;
+  }
+
+  .w3 {
+    background-color: #f1ad4d;
+  }
+
+  .w4 {
+    background-color: #b7625f;
+  }
+
+  .w5 {
+    background-color: #993a38;
   }
 }
 

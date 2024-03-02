@@ -140,6 +140,7 @@ export default {
                         uID: this.$store.state.userInfo.uid,
                         kID: kID,
                         kiID: kiID,
+                        sort: this.$store.state.sortord,
                         group: "sell"
 
                     },

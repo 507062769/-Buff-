@@ -239,7 +239,6 @@ export default {
 
 <style scoped lang="less">
 #sellManage {
-    height: 500px;
     width: 100%;
     background-color: white;
 
