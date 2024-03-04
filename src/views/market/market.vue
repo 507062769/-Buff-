@@ -100,6 +100,7 @@ export default {
       axios.get("http://localhost:8081/tool/getWear").then((res) => {
         this.wear = res.data.data;
       });
+      // 获取含有当前磨损在售总量的结构数据
       axios.get("http://localhost:8081/sell/getUniqueGoods", {
         params: {
           sort: "sellingTime"
@@ -226,10 +227,11 @@ export default {
           ul {
             display: none;
             position: relative;
+            z-index: 10;
 
             li {
               height: 30px;
-              width: 70px;
+              width: 90px;
               font-size: 16px;
               line-height: 30px;
               background-color: #2d2f3e;
@@ -307,4 +309,3 @@ export default {
   }
 }
 </style>
-

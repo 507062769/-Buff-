@@ -7,21 +7,24 @@
                     <img src="~@img/hdd.png" alt="" class="goodsImg">
                 </div>
             </el-table-column>
-            <el-table-column prop="Wear" label="磨损度" width="380">
+            <el-table-column prop="wear" label="磨损度" width="380">
             </el-table-column>
 
-            <el-table-column prop="Seller" label="卖家" width="300">
+            <el-table-column label="卖家" width="300">
                 <template slot-scope="scope">
                     <el-avatar icon="el-icon-user-solid" :size="30"></el-avatar>
-                    <span>{{ scope.row.Seller }}</span>
+                    <span>{{ scope.row.nickName }}</span>
                 </template>
             </el-table-column>
+
             <el-table-column prop="Price" label="价格" width="150">
+
                 <template slot-scope="scope">
-                    <b style="color:#eea20e">￥{{ scope.row.Price }}</b>
+                    <b style="color:#eea20e">￥{{ scope.row.price }}</b>
                 </template>
             </el-table-column>
             <el-table-column label="操作" width="145">
+
                 <template slot-scope="scope">
                     <el-button @click.native.prevent="deleteRow(scope.$index, tableData)" type="primary" size="small">
                         购买
@@ -34,61 +37,22 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
     name: "currentSell",
     components: {},
+    props: ["goodsInfo"],
     data() {
         return {
-            goodsInfo: [
-                {
-                    Id: 1,
-                    GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/hdd.png',
-                    Price: 999.00,
-                    Seller: '匿名用户2231',
-                    Date: '2023-12-31 15:25:38',
-                    Wear: '0.00612323',
-                },
-                {
-                    Id: 2,
-                    GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/hdd.png',
-                    Price: 999.00,
-                    Seller: '匿名用户2231',
-                    Date: '2023-12-31 15:25:38',
-                    Wear: '0.00612323',
-                },
-                {
-                    Id: 3,
-                    GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/hdd.png',
-                    Price: 999.00,
-                    Seller: '匿名用户2231',
-                    Date: '2023-12-31 15:25:38',
-                    Wear: '0.00612323',
-                },
-                {
-                    Id: 4,
-                    GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/hdd.png',
-                    Price: 999.00,
-                    Seller: '匿名用户2231',
-                    Date: '2023-12-31 15:25:38',
-                    Wear: '0.00612323',
-                },
-                {
-                    Id: 5,
-                    GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/hdd.png',
-                    Price: 999.00,
-                    Seller: '匿名用户2231',
-                    Date: '2023-12-31 15:25:38',
-                    Wear: '0.00612323',
-                },
-            ],
+
         }
     },
-    methods: {},
+    methods: {
+
+    },
+    mounted() {
+        console.log('当前再卖的：goodInfo', this.goodsInfo)
+    }
 }
 </script>
 
