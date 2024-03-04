@@ -46,9 +46,9 @@
             <div class="criteria">
                 <div class="criteria-item">
                     <h5>磨损区间</h5>
-                    <ul>
+                    <ul @click="selectByWear">
                         <li>不限</li>
-                        <li>0.15-0.18</li>
+                        <li data-wear="1">0.15-0.18</li>
                         <li>0.18-0.21</li>
                         <li>0.21-0.24</li>
                     </ul>
@@ -67,9 +67,11 @@
                 <div class="right">
                     <div class="counter">
                         ￥
-                        <el-input v-model.number="minPrice" placeholder="最低价"></el-input>
+                        <el-input v-model="minPrice" placeholder="最低价" v-limit-input-number
+                            @blur="selectByPrice"></el-input>
                         -￥
-                        <el-input v-model.number="maxPrice" placeholder="最高价"></el-input>
+                        <el-input v-model="maxPrice" placeholder="最高价" v-limit-input-number
+                            @blur="selectByPrice"></el-input>
                     </div>
                     <div class="counter-submit"></div>
                 </div>
@@ -98,7 +100,6 @@ export default {
             kind: [],
             quality: [],
             goodsInfo: [],
-            // goods: {},
         };
     },
     methods: {
@@ -211,6 +212,36 @@ export default {
                 });
             })
         },
+        selectByWear({ target }) {
+
+        },
+        selectByPrice() {
+            if (this.maxPrice === '' && this.minPrice !== '') {
+                this.goodsInfo = this.goodsInfo.filter(item => {
+                    return item.price > this.minPrice
+                })
+            } else if (this.maxPrice !== '' && this.minPrice === '') {
+                this.goodsInfo = this.goodsInfo.filter(item => {
+                    return item.price < this.maxPrice
+                })
+            } else if (this.maxPrice !== '' && this.minPrice !== '') {
+                this.goodsInfo = this.goodsInfo.filter(item => {
+                    return item.price < this.maxPrice && item.price > this.minPrice
+                })
+            } else {
+                axios.get("http://localhost:8081/sell/toggleGoodsWear", {
+                    params: {
+                        goodsName: this.$route.params.item.name.replace(/\(.*?\)/, ''),
+                        wearIndex: this.$route.params.item.wID
+                    }
+                }).then(res => {
+                    this.goodsInfo = res.data.data;
+                })
+            }
+
+        },
+
+
     },
     computed: {
         // 展示商品的品质
@@ -231,6 +262,16 @@ export default {
             //     return (cheapest < item.price) ? cheapest : item;
             // }).price
             return 1
+        }
+    },
+    directives: {
+        LimitInputNumber: {
+            //指令与元素成功绑定时（一上来）用
+            bind(el) {
+                el.oninput = () => {
+                    el.children[0].value = el.children[0].value.replace(/[^\d.\d]/g, '')
+                }
+            }
         }
     },
     beforeMount() {
@@ -437,6 +478,7 @@ export default {
                 ul {
                     display: none;
                     position: relative;
+                    z-index: 10;
 
                     li {
                         height: 30px;

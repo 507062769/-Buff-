@@ -50,9 +50,11 @@
           <div class="right">
             <div class="counter">
               ￥
-              <el-input v-model.number="minPrice" placeholder="最低价"></el-input>
+              <el-input v-model.number="minPrice" placeholder="最低价" v-limit-input-number
+                @blur="selectByPrice"></el-input>
               -￥
-              <el-input v-model.number="maxPrice" placeholder="最高价"></el-input>
+              <el-input v-model.number="maxPrice" placeholder="最高价" v-limit-input-number
+                @blur="selectByPrice"></el-input>
             </div>
             <div class="counter-submit"></div>
           </div>
@@ -112,6 +114,40 @@ export default {
     // 切换品质
     selectQuality({ target }) {
 
+    },
+    selectByPrice() {
+      if (this.maxPrice === '' && this.minPrice !== '') {
+        this.marketInfo = this.marketInfo.filter(item => {
+          return item.price > this.minPrice
+        })
+      } else if (this.maxPrice !== '' && this.minPrice === '') {
+        this.marketInfo = this.marketInfo.filter(item => {
+          return item.price < this.maxPrice
+        })
+      } else if (this.maxPrice !== '' && this.minPrice !== '') {
+        this.marketInfo = this.marketInfo.filter(item => {
+          return item.price < this.maxPrice && item.price > this.minPrice
+        })
+      } else {
+        axios.get("http://localhost:8081/sell/getUniqueGoods", {
+          params: {
+            sort: "sellingTime"
+          }
+        }).then(res => {
+          this.marketInfo = res.data.data;
+        })
+      }
+
+    },
+  },
+  directives: {
+    LimitInputNumber: {
+      //指令与元素成功绑定时（一上来）用
+      bind(el) {
+        el.oninput = () => {
+          el.children[0].value = el.children[0].value.replace(/[^\d.\d]/g, '')
+        }
+      }
     }
   },
   mounted() {
