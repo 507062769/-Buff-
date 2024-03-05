@@ -192,12 +192,14 @@ export default {
         },
         // 搜索框
         serach() {
+            console.log('uid,paixu,name,', this.$store.state.userInfo.uid, this.$store.state.sortord, this.searchName)
             axios
                 .get("http://localhost:8081/tool/search", {
                     params: {
                         uID: this.$store.state.userInfo.uid,
                         sort: this.$store.state.sortord,
                         searchName: this.searchName,
+                        group: "inventory"
                     },
                 })
                 .then((res) => {

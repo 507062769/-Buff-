@@ -3,11 +3,11 @@
     <div class="center">
       <div class="market-header">
         <div class="category">
-          <div class="cate-item" v-for="k in Kind" :key="k.kid">
-            <img class="icon" alt="" />
-            <p>{{ k.name }}</p>
+          <div class="cate-item" v-for="k in Kind" :key="k.kid" :data-kID="k.kid" @click="filter">
+            <img class="icon" alt="" :data-kID="k.kid" />
+            <p :data-kID="k.kid">{{ k.name }}</p>
             <ul>
-              <li v-for="kItem in k.kindItem" :key="kItem.kiID">
+              <li v-for="kItem in k.kindItem" :key="kItem.kiID" :data-kiID="kItem.kiID">
                 {{ kItem.name }}
               </li>
             </ul>
@@ -17,33 +17,37 @@
         <div class="criteria">
           <div class="criteria-item">
             <h5>{{ qualityName }}</h5>
-            <ul @click="selectQuality">
-              <li>不限品质</li>
-              <li v-for="q in quality" :key="q.qid">{{ q.name }}</li>
+            <ul @click="filter">
+              <li data-qualityID="0">不限品质</li>
+              <li v-for="q in quality" :key="q.qid" :data-qualityID="q.qid">
+                {{ q.name }}
+              </li>
             </ul>
           </div>
 
           <div class="criteria-item">
             <h5>{{ wearName }}</h5>
-            <ul>
-              <li>不限外观</li>
-              <li v-for="w in wear" :key="w.wid">{{ w.name }}</li>
+            <ul @click="filter">
+              <li data-wearID="0">不限外观</li>
+              <li v-for="w in wear" :key="w.wid" :data-wearID="w.wid">
+                {{ w.name }}
+              </li>
             </ul>
           </div>
 
           <div class="criteria-search">
-            <el-input placeholder="请输入物品名称" v-model="searchName" clearable>
-              <el-button slot="append" icon="el-icon-search">搜索</el-button>
+            <el-input placeholder="请输入物品名称" v-model="searchName" clearable @change="searchByName">
+              <el-button slot="append" icon="el-icon-search" @click="searchByName">搜索</el-button>
             </el-input>
           </div>
 
           <div class="criteria-item right">
             <h5>排序</h5>
-            <ul>
-              <li>默认</li>
-              <li>价格↑</li>
-              <li>价格↓</li>
-              <li>受限</li>
+            <ul @click="filter">
+              <li data-sort="sellingTime desc">默认</li>
+              <li data-sort="price asc">价格↑</li>
+              <li data-sort="price desc">价格↓</li>
+              <li data-sort="total_count desc">在售数量↓</li>
             </ul>
           </div>
 
@@ -82,11 +86,16 @@ export default {
       maxPrice: "",
       marketInfo: [],
 
+      kID: 0,
+      kiID: 0,
       qualityName: "品质",
+      qualityID: 0,
       wearName: "外观",
+      wearID: 0,
       Kind: [],
       quality: [],
       wear: [],
+      sort: 'sellingTime',
     };
   },
   methods: {
@@ -103,41 +112,106 @@ export default {
         this.wear = res.data.data;
       });
       // 获取含有当前磨损在售总量的结构数据
-      axios.get("http://localhost:8081/sell/getUniqueGoods", {
-        params: {
-          sort: "sellingTime"
-        }
-      }).then(res => {
-        this.marketInfo = res.data.data
-      })
+      axios
+        .get("http://localhost:8081/sell/getUniqueGoods", {
+          params: {
+            sort: "sellingTime",
+          },
+        })
+        .then((res) => {
+          this.marketInfo = res.data.data;
+        });
     },
     // 切换品质
-    selectQuality({ target }) {
-
-    },
-    selectByPrice() {
-      if (this.maxPrice === '' && this.minPrice !== '') {
-        this.marketInfo = this.marketInfo.filter(item => {
-          return item.price > this.minPrice
-        })
-      } else if (this.maxPrice !== '' && this.minPrice === '') {
-        this.marketInfo = this.marketInfo.filter(item => {
-          return item.price < this.maxPrice
-        })
-      } else if (this.maxPrice !== '' && this.minPrice !== '') {
-        this.marketInfo = this.marketInfo.filter(item => {
-          return item.price < this.maxPrice && item.price > this.minPrice
-        })
-      } else {
-        axios.get("http://localhost:8081/sell/getUniqueGoods", {
-          params: {
-            sort: "sellingTime"
-          }
-        }).then(res => {
-          this.marketInfo = res.data.data;
-        })
+    filter({ target }) {
+      if (target.dataset.kid || target.dataset.kiid) {
+        this.kID = target.dataset.kid;
+        this.kiID = target.dataset.kiid;
+        if (this.kID == undefined && this.kiID !== undefined) {
+          this.kID = 0;
+        }
+        else if (this.kID !== undefined && this.kiID == undefined) {
+          this.kiID = 0;
+        }
+        else {
+          this.kID = 0;
+          this.kiID = 0;
+        }
+      }
+      else if (target.dataset.qualityid) {
+        this.qualityID = target.dataset.qualityid
+          ? target.dataset.qualityid
+          : this.qualityID;
+        this.qualityName = this.qualityID ? target.innerText : this.qualityName;
+      }
+      else if (target.dataset.wearid) {
+        this.wearID = target.dataset.wearid
+          ? target.dataset.wearid
+          : this.wearID;
+        this.wearName = this.wearID ? target.innerText : this.wearName;
+      }
+      else if (target.dataset.sort) {
+        this.sort = target.dataset.sort
       }
 
+      axios.get("http://localhost:8081/sell/filterByKind", {
+        params: {
+          sort: this.sort,
+          kID: this.kID,
+          kiID: this.kiID,
+          qualityID: this.qualityID,
+          wearID: this.wearID
+        },
+      })
+        .then((res) => {
+          console.log('res:', res)
+          this.marketInfo = res.data.data;
+        });
+
+    },
+    // 根据价格筛选
+    selectByPrice() {
+      if (this.maxPrice === "" && this.minPrice !== "") {
+        this.marketInfo = this.marketInfo.filter((item) => {
+          return item.price > this.minPrice;
+        });
+      } else if (this.maxPrice !== "" && this.minPrice === "") {
+        this.marketInfo = this.marketInfo.filter((item) => {
+          return item.price < this.maxPrice;
+        });
+      } else if (this.maxPrice !== "" && this.minPrice !== "") {
+        this.marketInfo = this.marketInfo.filter((item) => {
+          return item.price < this.maxPrice && item.price > this.minPrice;
+        });
+      } else {
+        axios
+          .get("http://localhost:8081/sell/getUniqueGoods", {
+            params: {
+              sort: "sellingTime",
+            },
+          })
+          .then((res) => {
+            this.marketInfo = res.data.data;
+          });
+      }
+    },
+    // 根据商品名称查询
+    searchByName() {
+      if (this.searchName === "") {
+        axios
+          .get("http://localhost:8081/sell/getUniqueGoods", {
+            params: {
+              sort: "sellingTime",
+            },
+          })
+          .then((res) => {
+            this.marketInfo = res.data.data;
+          });
+      } else {
+        this.marketInfo = this.marketInfo.filter((item) =>
+          item.name.includes(this.searchName)
+        );
+      }
     },
   },
   directives: {
@@ -145,10 +219,10 @@ export default {
       //指令与元素成功绑定时（一上来）用
       bind(el) {
         el.oninput = () => {
-          el.children[0].value = el.children[0].value.replace(/[^\d.\d]/g, '')
-        }
-      }
-    }
+          el.children[0].value = el.children[0].value.replace(/[^\d.\d]/g, "");
+        };
+      },
+    },
   },
   mounted() {
     this.init();
