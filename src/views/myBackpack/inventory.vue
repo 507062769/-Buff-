@@ -3,15 +3,16 @@
         <div class="header">
             <div class="left">
                 <div class="group" @click="toggleTab">
-                    <div data-sortord="gainTime" :class="$store.state.sortord === 'gainTime' ? 'on' : ''">
+                    <div data-inventorySortord="gainTime"
+                        :class="$store.state.inventorySortord === 'gainTime' ? 'on' : ''">
                         <span>时间</span>
                         <i class="el-icon-bottom"></i>
                     </div>
-                    <div data-sortord="price" :class="$store.state.sortord === 'price' ? 'on' : ''">
+                    <div data-inventorySortord="price" :class="$store.state.inventorySortord === 'price' ? 'on' : ''">
                         <span>价格</span>
                         <i class="el-icon-bottom"></i>
                     </div>
-                    <div data-sortord="wear" :class="$store.state.sortord === 'wear' ? 'on' : ''">
+                    <div data-inventorySortord="wear" :class="$store.state.inventorySortord === 'wear' ? 'on' : ''">
                         <span>磨损</span>
                         <i class="el-icon-bottom"></i>
                     </div>
@@ -19,8 +20,8 @@
                 <span class="total">
                     已选
                     <b style="color: #eea20e">{{
-                        $store.state.checkedSellItem.length
-                    }}</b>
+                    $store.state.checkedSellItem.length
+                }}</b>
                     /
                     <span>{{ marketInfo.length }}</span>
                 </span>
@@ -38,9 +39,9 @@
                         <span>(1件)</span>
                     </h3>
                     <span class="popup-close" @click="
-                        isGoSell = false;
-                    isShowBody = false;
-                    ">x</span>
+                    isGoSell = false;
+                isShowBody = false;
+                ">x</span>
                 </div>
                 <div class="pupop_cont">
                     <el-table :data="sellData" style="width: 100%">
@@ -56,17 +57,20 @@
                             </template>
                         </el-table-column>
                         <el-table-column prop="price" label="市场价" width="132">
+
                             <template slot-scope="scope">
                                 <b style="color: #eea20e">￥{{ scope.row.price }}</b>
                             </template>
                         </el-table-column>
                         <el-table-column prop="sellPrice" label="买家支付金额" width="201">
+
                             <template slot-scope="scope">
                                 <el-input type="number" v-model="scope.row.sellPrice" placeholder="买家支付金额"
                                     @blur="updateActualPrice(scope.row)"></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column prop="actualPrice" label="实收金额" width="201">
+
                             <template slot-scope="scope">
                                 <el-input type="number" v-model="scope.row.actualPrice" placeholder="实收金额"
                                     @blur="updateSellPrice(scope.row)"></el-input>
@@ -92,9 +96,9 @@
                 </div>
             </div>
             <div class="mask" v-show="isGoSell" @click="
-                isGoSell = false;
-            isShowBody = false;
-            "></div>
+                    isGoSell = false;
+                isShowBody = false;
+                "></div>
         </div>
         <div class="list" v-loading.lock="fullscreenLoading">
             <Item v-for="item in marketInfo" :key="item.Id" :item="item" :sellingData="sellingData"></Item>
@@ -128,14 +132,15 @@ export default {
     methods: {
         // 切换tab栏
         toggleTab({ target }) {
-            if (target.tagName === "DIV")
-                this.$store.commit("toggleSortord", target.dataset.sortord);
+            if (target.tagName === "DIV") {
+                this.$store.commit("toggleInventorySortord", target.dataset.inventorysortord);
+            }
             else
                 this.$store.commit(
-                    "toggleSortord",
-                    target.closest("div").dataset.sortord
+                    "toggleInventorySortord",
+                    target.closest("div").dataset.inventorysortord
                 );
-            this.getInventory(this.$store.state.sortord);
+            this.getInventory();
         },
         // 全选
         allSelect() {
@@ -148,7 +153,7 @@ export default {
             this.fullscreenLoading = true;
             setTimeout(() => {
                 this.fullscreenLoading = false;
-                this.getInventory(this.$store.state.sortord);
+                this.getInventory();
             }, 1000);
         },
         // 打开上架前的准备页面，并设置金额

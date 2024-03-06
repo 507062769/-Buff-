@@ -1,5 +1,5 @@
 <template>
-  <div class="market" @click="goDetail">
+  <div class="market" @click="goDetail" :data-id="item.gid">
     <a href="javascript:void(0)">
       <div class="item_bg">
         <img class="marketImg" :src="item.Img" alt="" />

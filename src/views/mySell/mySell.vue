@@ -12,7 +12,7 @@
             <div class="criteria">
                 <div class="criteria-item">
                     <h5>{{ kindName }}</h5>
-                    <ul @click="selectkind">
+                    <ul @click="filter">
                         <li>
                             <h6 data-kID="0">不限</h6>
                         </li>
@@ -28,7 +28,7 @@
                 </div>
                 <div class="criteria-item">
                     <h5>{{ qualityName }}</h5>
-                    <ul @click="selectQuality">
+                    <ul @click="filter">
                         <li>
                             <h6 data-qualityID="0">不限品质</h6>
                         </li>
@@ -41,7 +41,7 @@
                 </div>
                 <div class="criteria-item">
                     <h5>{{ wearName }}</h5>
-                    <ul @click="selectWear">
+                    <ul @click="filter">
                         <li>
                             <h6 :data-wearID="0">不限</h6>
                         </li>
@@ -53,8 +53,8 @@
                     </ul>
                 </div>
                 <div class="criteria-search">
-                    <el-input placeholder="请输入物品名称" v-model="searchName" clearable @change="serach">
-                        <el-button slot="append" icon="el-icon-search" @click="serach">搜索</el-button>
+                    <el-input placeholder="请输入物品名称" v-model="searchName" clearable @change="getSellInfo">
+                        <el-button slot="append" icon="el-icon-search" @click="getSellInfo">搜索</el-button>
                     </el-input>
                 </div>
             </div>
@@ -75,14 +75,18 @@ export default {
             tabIndex: 1,
             marketName: "",
             marketInfo: [],
-            searchName: "",
             kindName: "筛选",
             qualityName: "品质",
             wearName: "外观",
             Kind: [],
+            kID: 0,
+            kiID: 0,
             quality: [],
+            qualityID: 0,
             wear: [],
-            group: "sell"
+            wearID: 0,
+            searchName: "",
+
         };
     },
     methods: {
@@ -98,6 +102,22 @@ export default {
             axios.get("http://localhost:8081/tool/getWear").then((res) => {
                 this.wear = res.data.data;
             });
+            this.getSellInfo();
+        },
+        // 获取筛选后的商品
+        getSellInfo() {
+            axios.get("http://localhost:8081/sell/getSell", {
+                params: {
+                    uID: this.$store.state.userInfo.uid,
+                    kID: this.kID,
+                    kiID: this.kiID,
+                    qualityID: this.qualityID,
+                    wearID: this.wearID,
+                    searchName: this.searchName,
+                }
+            }).then(res => {
+                this.marketInfo = res.data.data;
+            })
         },
         // 切换tab
         toggleTab({ target }) {
@@ -120,98 +140,49 @@ export default {
                     break;
             }
         },
-        // 切换种类(步枪、手枪、手套、匕首)
-        selectkind({ target }) {
-            this.kindName = target.innerText;
-            let kID = target.dataset.kid;
-            let kiID = target.dataset.kiid;
-            if (kID == null) {
-                kID = 0;
-            } else if (kiID == null) {
-                kiID = 0;
-            } else if (kID === 0) {
-                kID = 0;
-                kiID = 0;
+        // 过滤
+        filter({ target }) {
+            // 判断点击的是否为kid与kiID，
+            if (target.dataset.kid || target.dataset.kiid) {
+                // 若为真，将他们分别赋值
+                this.kID = target.dataset.kid;
+                this.kiID = target.dataset.kiid;
+                this.kindName = target.innerText;
+                // 在进行判断点击的具体是一级分类或是二级分类
+                if (this.kID == undefined && this.kiID !== undefined) {
+                    this.kID = 0;
+                }
+                else if (this.kID !== undefined && this.kiID == undefined) {
+                    this.kiID = 0;
+                }
+                else {
+                    this.kID = 0;
+                    this.kiID = 0;
+                }
+            }
+            // 若点击的为品质
+            else if (target.dataset.qualityid) {
+                // 将点击的品质id进行赋值
+                this.qualityID = target.dataset.qualityid
+                    ? target.dataset.qualityid
+                    : this.qualityID;
+                this.qualityName = this.qualityID ? target.innerText : this.qualityName;
+            }
+            // 若点击的为磨损
+            else if (target.dataset.wearid) {
+                this.wearID = target.dataset.wearid
+                    ? target.dataset.wearid
+                    : this.wearID;
+                this.wearName = this.wearID ? target.innerText : this.wearName;
             }
 
-            axios
-                .get("http://localhost:8081/tool/toggleKind", {
-                    params: {
-                        uID: this.$store.state.userInfo.uid,
-                        kID: kID,
-                        kiID: kiID,
-                        sort: this.$store.state.sortord,
-                        group: "sell"
+            this.getSellInfo()
+        },
 
-                    },
-                })
-                .then((res) => {
-                    this.marketInfo = res.data.data;
-                });
-        },
-        // 切换品质（隐秘、保密、军规）
-        selectQuality({ target }) {
-            this.qualityName = target.innerText;
-            let qualityID = target.dataset.qualityid;
-            axios
-                .get("http://localhost:8081/tool/toggleQuality", {
-                    params: {
-                        uID: this.$store.state.userInfo.uid,
-                        sort: this.$store.state.sortord,
-                        qualityID: qualityID,
-                        group: "sell"
-                    },
-                })
-                .then((res) => {
-                    this.marketInfo = res.data.data;
-                });
-        },
-        // 切换磨损
-        selectWear({ target }) {
-            this.wearName = target.innerText;
-            let wearID = target.dataset.wearid;
-            axios
-                .get("http://localhost:8081/tool/toggleWear", {
-                    params: {
-                        uID: this.$store.state.userInfo.uid,
-                        sort: this.$store.state.sortord,
-                        wearID: wearID,
-                        group: "sell"
-                    },
-                })
-                .then((res) => {
-                    this.marketInfo = res.data.data;
-                });
-        },
-        // 获取出售的商品
-        getSellInfo() {
-            axios.get("http://localhost:8081/sell/getSell", {
-                params: {
-                    uID: this.$store.state.userInfo.uid,
-                }
-            }).then(res => {
-                this.marketInfo = res.data.data;
-            })
-        },
-        // 搜索功能
-        serach() {
-            axios
-                .get("http://localhost:8081/tool/search", {
-                    params: {
-                        uID: this.$store.state.userInfo.uid,
-                        sort: this.$store.state.sortord,
-                        searchName: this.searchName,
-                        group: "sell"
-                    },
-                })
-                .then((res) => {
-                    this.marketInfo = res.data.data;
-                });
-        },
+
     },
     mounted() {
         this.init()
-        this.getSellInfo()
     }
 };
 </script>

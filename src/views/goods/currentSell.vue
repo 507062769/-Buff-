@@ -51,7 +51,7 @@ export default {
 
     },
     mounted() {
-        console.log('当前再卖的：goodInfo', this.goodsInfo)
+
     }
 }
 </script>

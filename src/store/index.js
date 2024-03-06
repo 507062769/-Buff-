@@ -62,9 +62,13 @@ const mutations = {
       state.checkedSellItem.push(id);
     }
   },
-  // 切换排序方式(时间、价格、磨损)
-  toggleSortord(state, val) {
-    state.sortord = val;
+  // 切换库存的排序方式(时间、价格、磨损)
+  toggleInventorySortord(state, val) {
+    state.inventorySortord = val;
+  },
+  // 切换出售的排序方式(时间、价格、磨损)
+  toggleSellSortord(state, val) {
+    state.sellSortord = val;
   },
   // 添加用户信息
   addUserInfo(state, info) {
@@ -79,7 +83,8 @@ const mutations = {
 // 用于存放数据
 const state = {
   checkedSellItem: [],
-  sortord: "gainTime",
+  inventorySortord: "gainTime",
+  sellSortord:"sellingTime",
   group:"sell",
   userInfo: {},
 };

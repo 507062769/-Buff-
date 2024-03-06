@@ -50,17 +50,20 @@
                             </template>
                         </el-table-column>
                         <el-table-column prop="price" label="市场价" width="132">
+
                             <template slot-scope="scope">
                                 <b style="color: #eea20e">￥{{ scope.row.price }}</b>
                             </template>
                         </el-table-column>
                         <el-table-column prop="price" label="买家支付金额" width="201">
+
                             <template slot-scope="scope">
                                 <el-input type="number" v-model="scope.row.price" placeholder="买家支付金额"
                                     @blur="updateActualPrice(scope.row)"></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column prop="actualPrice" label="实收金额" width="201">
+
                             <template slot-scope="scope">
                                 <el-input type="number" v-model="scope.row.actualPrice" placeholder="实收金额"
                                     @blur="updateSellPrice(scope.row)"></el-input>
@@ -173,7 +176,6 @@ export default {
                     data: this.sellData,
                 })
                 .then((res) => {
-                    console.log("re", res);
                     this.$message({
                         message: "修改成功",
                         type: "success",

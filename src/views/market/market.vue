@@ -54,11 +54,9 @@
           <div class="right">
             <div class="counter">
               ￥
-              <el-input v-model.number="minPrice" placeholder="最低价" v-limit-input-number
-                @blur="selectByPrice"></el-input>
+              <el-input v-model.number="minPrice" placeholder="最低价" v-limit-input-number @blur="filter"></el-input>
               -￥
-              <el-input v-model.number="maxPrice" placeholder="最高价" v-limit-input-number
-                @blur="selectByPrice"></el-input>
+              <el-input v-model.number="maxPrice" placeholder="最高价" v-limit-input-number @blur="filter"></el-input>
             </div>
             <div class="counter-submit"></div>
           </div>
@@ -82,8 +80,8 @@ export default {
   data() {
     return {
       searchName: "",
-      minPrice: "",
-      maxPrice: "",
+      minPrice: '',
+      maxPrice: '',
       marketInfo: [],
 
       kID: 0,
@@ -111,22 +109,31 @@ export default {
       axios.get("http://localhost:8081/tool/getWear").then((res) => {
         this.wear = res.data.data;
       });
-      // 获取含有当前磨损在售总量的结构数据
+      // 获取含有当前磨损在售总量的结构数据 
       axios
-        .get("http://localhost:8081/sell/getUniqueGoods", {
+        .get("http://localhost:8081/sell/filter", {
           params: {
-            sort: "sellingTime",
+            sort: this.sort,
+            kID: this.kID,
+            kiID: this.kiID,
+            qualityID: this.qualityID,
+            wearID: this.wearID,
+            minPrice: this.minPrice === '' ? 0.0 : this.minPrice,
+            maxPrice: this.maxPrice === '' ? 0.0 : this.maxPrice,
+            searchName: this.searchName,
           },
         })
         .then((res) => {
           this.marketInfo = res.data.data;
         });
     },
-    // 切换品质
     filter({ target }) {
+      // 判断点击的是否为kid与kiID，
       if (target.dataset.kid || target.dataset.kiid) {
+        // 若为真，将他们分别赋值
         this.kID = target.dataset.kid;
         this.kiID = target.dataset.kiid;
+        // 在进行判断点击的具体是一级分类或是二级分类
         if (this.kID == undefined && this.kiID !== undefined) {
           this.kID = 0;
         }
@@ -138,81 +145,63 @@ export default {
           this.kiID = 0;
         }
       }
+      // 若点击的为品质
       else if (target.dataset.qualityid) {
+        // 将点击的品质id进行赋值
         this.qualityID = target.dataset.qualityid
           ? target.dataset.qualityid
           : this.qualityID;
         this.qualityName = this.qualityID ? target.innerText : this.qualityName;
       }
+      // 若点击的为磨损
       else if (target.dataset.wearid) {
         this.wearID = target.dataset.wearid
           ? target.dataset.wearid
           : this.wearID;
         this.wearName = this.wearID ? target.innerText : this.wearName;
       }
+      // 若点击的为排序方式
       else if (target.dataset.sort) {
         this.sort = target.dataset.sort
       }
 
-      axios.get("http://localhost:8081/sell/filterByKind", {
+      axios.get("http://localhost:8081/sell/filter", {
         params: {
           sort: this.sort,
           kID: this.kID,
           kiID: this.kiID,
           qualityID: this.qualityID,
-          wearID: this.wearID
+          wearID: this.wearID,
+          minPrice: this.minPrice === '' ? 0.0 : this.minPrice,
+          maxPrice: this.maxPrice === '' ? 0.0 : this.maxPrice,
+          searchName: this.searchName,
         },
       })
         .then((res) => {
-          console.log('res:', res)
           this.marketInfo = res.data.data;
         });
 
     },
-    // 根据价格筛选
-    selectByPrice() {
-      if (this.maxPrice === "" && this.minPrice !== "") {
-        this.marketInfo = this.marketInfo.filter((item) => {
-          return item.price > this.minPrice;
-        });
-      } else if (this.maxPrice !== "" && this.minPrice === "") {
-        this.marketInfo = this.marketInfo.filter((item) => {
-          return item.price < this.maxPrice;
-        });
-      } else if (this.maxPrice !== "" && this.minPrice !== "") {
-        this.marketInfo = this.marketInfo.filter((item) => {
-          return item.price < this.maxPrice && item.price > this.minPrice;
-        });
-      } else {
-        axios
-          .get("http://localhost:8081/sell/getUniqueGoods", {
-            params: {
-              sort: "sellingTime",
-            },
-          })
-          .then((res) => {
-            this.marketInfo = res.data.data;
-          });
-      }
-    },
+
     // 根据商品名称查询
     searchByName() {
-      if (this.searchName === "") {
-        axios
-          .get("http://localhost:8081/sell/getUniqueGoods", {
-            params: {
-              sort: "sellingTime",
-            },
-          })
-          .then((res) => {
-            this.marketInfo = res.data.data;
-          });
-      } else {
-        this.marketInfo = this.marketInfo.filter((item) =>
-          item.name.includes(this.searchName)
-        );
-      }
+      axios.get("http://localhost:8081/sell/filter", {
+        params: {
+          sort: this.sort,
+          kID: this.kID,
+          kiID: this.kiID,
+          qualityID: this.qualityID,
+          wearID: this.wearID,
+          minPrice: this.minPrice === '' ? 0.0 : this.minPrice,
+          maxPrice: this.maxPrice === '' ? 0.0 : this.maxPrice,
+          searchName: this.searchName,
+        },
+      })
+        .then((res) => {
+          this.marketInfo = res.data.data;
+        });
     },
+
   },
   directives: {
     LimitInputNumber: {
@@ -294,6 +283,7 @@ export default {
               text-align: center;
               margin: 5px;
               font-size: 14px;
+              cursor: pointer;
             }
           }
         }
