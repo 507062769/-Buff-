@@ -117,12 +117,12 @@ export default {
             });
 
             // 将点击的饰品的磨损id赋值
-            this.wearIndex = this.$route.params.item.wID
+            this.wearIndex = this.$route.params.item.wid
             // 获取当前名称+磨损的饰品list
             axios.get("http://localhost:8081/sell/toggleGoodsWear", {
                 params: {
                     goodsName: this.$route.params.item.name.replace(/\(.*?\)/, ''),
-                    wearIndex: this.$route.params.item.wID
+                    wearIndex: this.$route.params.item.wid
                 }
             }).then(res => {
                 this.goodsInfo = res.data.data;
@@ -246,7 +246,7 @@ export default {
     computed: {
         // 展示商品的品质
         qualityName() {
-            const q = this.quality.find((q) => q.qid === this.$route.params.item.qID);
+            const q = this.quality.find((q) => q.qid === this.$route.params.item.qid);
             return q ? q.name : null;
         },
         // 展示商品的类型

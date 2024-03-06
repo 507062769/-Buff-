@@ -83,7 +83,7 @@ const mutations = {
 // 用于存放数据
 const state = {
   checkedSellItem: [],
-  inventorySortord: "gainTime",
+  inventorySortord: "gainTime desc",
   sellSortord:"sellingTime",
   group:"sell",
   userInfo: {},

@@ -33,10 +33,11 @@ export default {
   },
   methods: {
     goDetail() {
+      console.log('this.item.sID:', this.item.sid, this.item)
       this.$router.push({
         name: "Goods",
         params: {
-          goodsID: this.item.sID,
+          goodsID: this.item.sid,
           item: this.item
         }
       })

@@ -28,7 +28,7 @@
 export default {
     name: "inventoryItem",
     components: {},
-    props: ["item", "sellingData"],
+    props: ["item",],
     data() {
         return {};
     },
@@ -43,10 +43,6 @@ export default {
         isChecked() {
             return this.$store.getters.isChecked(this.item.gid);
         },
-        // 判断当前的商品是否在出售中
-        // isSelling() {
-        //     return this.sellingData.includes(this.item.gid);
-        // },
     },
     mounted() {
 

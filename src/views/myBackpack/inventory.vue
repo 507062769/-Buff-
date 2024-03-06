@@ -3,18 +3,23 @@
         <div class="header">
             <div class="left">
                 <div class="group" @click="toggleTab">
-                    <div data-inventorySortord="gainTime"
-                        :class="$store.state.inventorySortord === 'gainTime' ? 'on' : ''">
+                    <div data-inventorySortord="gainTime" :class="startsWith($store.state.inventorySortord, 'gainTime') ? 'on' : ''
+                    ">
                         <span>时间</span>
-                        <i class="el-icon-bottom"></i>
+                        <i class="el-icon-bottom" v-if="sortOptions['gainTime'] === 'desc'"></i>
+                        <i class="el-icon-top" v-else></i>
                     </div>
-                    <div data-inventorySortord="price" :class="$store.state.inventorySortord === 'price' ? 'on' : ''">
+                    <div data-inventorySortord="price" :class="startsWith($store.state.inventorySortord, 'price') ? 'on' : ''
+                    ">
                         <span>价格</span>
-                        <i class="el-icon-bottom"></i>
+                        <i class="el-icon-bottom" v-if="sortOptions['price'] === 'desc'"></i>
+                        <i class="el-icon-top" v-else></i>
                     </div>
-                    <div data-inventorySortord="wear" :class="$store.state.inventorySortord === 'wear' ? 'on' : ''">
+                    <div data-inventorySortord="wear" :class="startsWith($store.state.inventorySortord, 'wear') ? 'on' : ''
+                    ">
                         <span>磨损</span>
-                        <i class="el-icon-bottom"></i>
+                        <i class="el-icon-bottom" v-if="sortOptions['wear'] === 'desc'"></i>
+                        <i class="el-icon-top" v-else></i>
                     </div>
                 </div>
                 <span class="total">
@@ -101,7 +106,7 @@
                 "></div>
         </div>
         <div class="list" v-loading.lock="fullscreenLoading">
-            <Item v-for="item in marketInfo" :key="item.Id" :item="item" :sellingData="sellingData"></Item>
+            <Item v-for="item in marketInfo" :key="item.Id" :item="item"></Item>
         </div>
     </div>
 </template>
@@ -127,20 +132,37 @@ export default {
             sellingData: [],
             // 是否禁用body滚动条
             isShowBody: false,
+            sortOptions: {
+                gainTime: "desc", // 初始设置为降序
+                price: "desc", // 初始设置为降序
+                wear: "desc", // 初始设置为降序
+            },
         };
     },
     methods: {
         // 切换tab栏
         toggleTab({ target }) {
             if (target.tagName === "DIV") {
-                this.$store.commit("toggleInventorySortord", target.dataset.inventorysortord);
-            }
-            else
+                const sortKey = target.dataset.inventorysortord;
+                this.sortOptions[sortKey] =
+                    this.sortOptions[sortKey] === "desc" ? "asc" : "desc";
                 this.$store.commit(
                     "toggleInventorySortord",
-                    target.closest("div").dataset.inventorysortord
+                    sortKey + " " + this.sortOptions[sortKey]
                 );
+            } else {
+                const sortKey = target.closest("div").dataset.inventorysortord;
+                this.sortOptions[sortKey] =
+                    this.sortOptions[sortKey] === "desc" ? "asc" : "desc";
+                this.$store.commit(
+                    "toggleInventorySortord",
+                    sortKey + " " + this.sortOptions[sortKey]
+                );
+            }
             this.getInventory();
+        },
+        startsWith(str, prefix) {
+            return str.startsWith(prefix);
         },
         // 全选
         allSelect() {
@@ -209,20 +231,6 @@ export default {
                 row.sellPrice = null;
             }
         },
-        // 获取我的出售中的商品id
-        getSellInfo() {
-            axios
-                .get("http://localhost:8081/sell/getSell", {
-                    params: {
-                        uID: this.$store.state.userInfo.uid,
-                    },
-                })
-                .then((res) => {
-                    res.data.data.forEach((ele) => {
-                        this.sellingData.push(ele.gid);
-                    });
-                });
-        },
         // 是否显示body的滚动条
         showBody() {
             this.isShowBody
@@ -243,9 +251,7 @@ export default {
             }, 0.0);
         },
     },
-    mounted() {
-        this.getSellInfo();
-    },
+    mounted() { },
     watch: {
         isShowBody(newVal, oldVal) {
             this.showBody();
