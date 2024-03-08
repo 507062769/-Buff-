@@ -5,7 +5,7 @@
             <el-table-column prop="GoodsName" label="饰品" width="445">
                 <template slot-scope="scope">
                     <div class="pic-cont">
-                        <img src="~@img/hdd.png" alt="" class="goodsImg">
+                        <img src="~@img/pf/akhs.png" alt="" class="goodsImg">
                     </div>
                     <div class="goodsName">
                         {{ scope.row.GoodsName }}
@@ -13,11 +13,13 @@
                 </template>
             </el-table-column>
             <el-table-column prop="Price" label="价格" width="150">
+
                 <template slot-scope="scope">
                     <b style="color:#eea20e">￥{{ scope.row.Price }}</b>
                 </template>
             </el-table-column>
             <el-table-column prop="Seller" label="卖家" width="200">
+
                 <template slot-scope="scope">
                     <el-avatar icon="el-icon-user-solid" :size="30"></el-avatar>
                     <span>{{ scope.row.Seller }}</span>
@@ -26,6 +28,7 @@
             <el-table-column prop="Date" label="时间" width="180">
             </el-table-column>
             <el-table-column prop="Detail" label="详情">
+
                 <template slot-scope="scope">
                     <p class="detail-status"><i class="icon"></i>出售成功</p>
                     <span>{{ scope.row.Detail }}</span>
@@ -46,7 +49,7 @@ export default {
                 {
                     Id: 1,
                     GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/hdd.png',
+                    Img: '~@img/pf/akhs.png',
                     Price: 999.00,
                     Seller: '匿名用户2231',
                     Date: '2023-12-31 15:25:38',
@@ -55,7 +58,7 @@ export default {
                 {
                     Id: 2,
                     GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/hdd.png',
+                    Img: '~@img/pf/akhs.png',
                     Price: 999.00,
                     Seller: '匿名用户2231',
                     Date: '2023-12-31 15:25:38',
@@ -64,7 +67,7 @@ export default {
                 {
                     Id: 3,
                     GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/hdd.png',
+                    Img: '~@img/pf/akhs.png',
                     Price: 999.00,
                     Seller: '匿名用户2231',
                     Date: '2023-12-31 15:25:38',
@@ -73,7 +76,7 @@ export default {
                 {
                     Id: 4,
                     GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/hdd.png',
+                    Img: '~@img/pf/akhs.png',
                     Price: 999.00,
                     Seller: '匿名用户2231',
                     Date: '2023-12-31 15:25:38',
@@ -82,7 +85,7 @@ export default {
                 {
                     Id: 5,
                     GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/hdd.png',
+                    Img: '~@img/pf/akhs.png',
                     Price: 999.00,
                     Seller: '匿名用户2231',
                     Date: '2023-12-31 15:25:38',

@@ -5,7 +5,7 @@
             <el-table-column width="30"></el-table-column>
             <el-table-column prop="GoodsName" label="饰品" width="180">
                 <div class="pic-cont">
-                    <img src="~@img/hdd.png" alt="" class="goodsImg">
+                    <img src="~@img/pf/akhs.png" alt="" class="goodsImg">
                 </div>
             </el-table-column>
             <el-table-column prop="wear" label="磨损度" width="380">
@@ -118,13 +118,21 @@ export default {
             }).then(res => {
                 this.isBuy = false;
                 this.$store.commit("updataUserPrice", { payment: this.selectedPayment, price: this.userInfo[this.selectedPayment] - parseFloat(this.selectData.price) })
-
                 this.$message({
                     message: "购买成功，等待卖家发货！",
                     type: "success",
                 })
+                this.hidden(this.selectData.sid, this.selectData.uid)
+            })
 
-                this.hidden(this.selectData.sid)
+            axios.post("http://localhost:8081/order/addBuyOrder", {
+                gID: this.selectData.gid,
+                sID: this.selectData.sid,
+                buyerID: this.userInfo.uid,
+                sellerID: this.selectData.uid,
+                statue: 1,
+            }).then(res => {
+
             })
         },
 

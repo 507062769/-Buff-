@@ -2,7 +2,7 @@
     <div id="goodsDetail">
         <div class="detail-header">
             <div class="detail-pic">
-                <img src="~@img/hdd.png" alt="" />
+                <img src="~@img/pf/akhs.png" alt="" />
             </div>
             <div class="detail-cont">
                 <h1 class="title">{{ $route.params.item.name }}</h1>
@@ -79,7 +79,6 @@
                 </div>
             </div>
         </div>
-
         <router-view :goodsInfo="filterData" :hidden="hidden"></router-view>
 
     </div>
@@ -282,10 +281,10 @@ export default {
                     break;
             }
         },
-
-        hidden(sid) {
+        // 当购买了饰品，隐藏它 
+        hidden(sid, uid) {
             axios.put("http://localhost:8081/sell/updateIsShow", {
-                uID: this.$store.state.userInfo.uid,
+                uID: uid,
                 sID: sid,
                 isShow: 0,
             })

@@ -54,7 +54,7 @@
                         <el-table-column prop="name" label="饰品" width="335">
                             <template slot-scope="scope">
                                 <div class="pic-cont">
-                                    <img src="~@img/hdd.png" alt="" class="goodsImg" />
+                                    <img src="~@img/pf/akhs.png" alt="" class="goodsImg" />
                                 </div>
                                 <div class="goodsName">
                                     {{ scope.row.name }}
@@ -105,7 +105,9 @@
                 isShowBody = false;
                 "></div>
         </div>
-        <div class="list" v-loading.lock="fullscreenLoading">
+
+        <el-empty description="暂无数据" v-if="marketInfo.length == 0"></el-empty>
+        <div class="list" v-loading.lock="fullscreenLoading" v-else>
             <Item v-for="item in marketInfo" :key="item.Id" :item="item"></Item>
         </div>
     </div>

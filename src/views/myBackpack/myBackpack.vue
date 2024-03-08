@@ -62,8 +62,8 @@
                 </div>
             </div>
         </div>
-        <el-empty description="暂无数据" v-if="marketInfo.length == 0"></el-empty>
-        <router-view :marketInfo="marketInfo" :getInventory="getInventory" v-else></router-view>
+
+        <router-view :marketInfo="marketInfo" :getInventory="getInventory"></router-view>
     </div>
 </template>
 
