@@ -17,6 +17,7 @@
     <span class="tag w3" v-show="item.wid === 3">久经沙场</span>
     <span class="tag w4" v-show="item.wid === 4">破损不堪</span>
     <span class="tag w5" v-show="item.wid === 5">战痕累累</span>
+
   </div>
 </template>
 
@@ -33,7 +34,6 @@ export default {
   },
   methods: {
     goDetail() {
-      console.log('this.item.sID:', this.item.sid, this.item)
       this.$router.push({
         name: "Goods",
         params: {

@@ -56,11 +56,13 @@
 
                 <div class="criteria-item right" style="margin-right: 0">
                     <h5>排序</h5>
-                    <ul>
-                        <li>默认</li>
-                        <li>价格↑</li>
-                        <li>价格↓</li>
-                        <li>受限</li>
+                    <ul @click="sort">
+                        <li data-sort="sellingTime desc">默认</li>
+                        <li data-sort="price asc">价格↑</li>
+                        <li data-sort="price desc">价格↓</li>
+                        <li data-sort="wear asc">磨损↑</li>
+                        <li data-sort="wear desc">磨损↓</li>
+
                     </ul>
                 </div>
 
@@ -78,7 +80,7 @@
             </div>
         </div>
 
-        <router-view :goodsInfo="goodsInfo"></router-view>
+        <router-view :goodsInfo="filterData" :hidden="hidden"></router-view>
 
     </div>
 </template>
@@ -100,6 +102,7 @@ export default {
             kind: [],
             quality: [],
             goodsInfo: [],
+            filterData: [],
         };
     },
     methods: {
@@ -126,6 +129,7 @@ export default {
                 }
             }).then(res => {
                 this.goodsInfo = res.data.data;
+
                 // 遍历饰品添加nickName项
                 this.goodsInfo.forEach(g => {
                     axios.get("http://localhost:8081/user/getNameByID", {
@@ -143,7 +147,9 @@ export default {
                         });
                     })
                 });
+                this.filterData = this.goodsInfo;
             })
+
 
         },
         // 切换当前在售、成交记录、价格趋势的tab
@@ -191,8 +197,9 @@ export default {
             }).then(res => {
                 // 将查询到的数据赋值
                 this.goodsInfo = res.data.data
+                this.filterData = this.goodsInfo
                 // 遍历查询到的值，并给他添加新项-nickname 
-                this.goodsInfo.forEach(g => {
+                this.filterData.forEach(g => {
                     axios.get("http://localhost:8081/user/getNameByID", {
                         params: {
                             uID: g.uid
@@ -212,34 +219,78 @@ export default {
                 });
             })
         },
+        // 磨损排序
         selectByWear({ target }) {
 
         },
+        // 最低价与最高价排序
         selectByPrice() {
             if (this.maxPrice === '' && this.minPrice !== '') {
-                this.goodsInfo = this.goodsInfo.filter(item => {
+                this.filterData = this.goodsInfo.filter(item => {
                     return item.price > this.minPrice
                 })
             } else if (this.maxPrice !== '' && this.minPrice === '') {
-                this.goodsInfo = this.goodsInfo.filter(item => {
+                this.filterData = this.goodsInfo.filter(item => {
                     return item.price < this.maxPrice
                 })
             } else if (this.maxPrice !== '' && this.minPrice !== '') {
-                this.goodsInfo = this.goodsInfo.filter(item => {
+                this.filterData = this.goodsInfo.filter(item => {
                     return item.price < this.maxPrice && item.price > this.minPrice
                 })
             } else {
-                axios.get("http://localhost:8081/sell/toggleGoodsWear", {
-                    params: {
-                        goodsName: this.$route.params.item.name.replace(/\(.*?\)/, ''),
-                        wearIndex: this.$route.params.item.wID
-                    }
-                }).then(res => {
-                    this.goodsInfo = res.data.data;
-                })
+                // axios.get("http://localhost:8081/sell/toggleGoodsWear", {
+                //     params: {
+                //         goodsName: this.$route.params.item.name.replace(/\(.*?\)/, ''),
+                //         wearIndex: this.wearIndex
+                //     }
+                // }).then(res => {
+                //     this.goodsInfo = res.data.data;
+                // })
+                this.filterData = this.goodsInfo
             }
 
         },
+        // 价格磨损排序
+        sort({ target }) {
+            switch (target.dataset.sort) {
+                case "sellingTime desc":
+                    this.filterData = this.filterData.sort((a, b) => {
+                        const dateA = new Date(a.sellingTime);
+                        const dateB = new Date(b.sellingTime);
+                        return dateA - dateB;
+                    })
+                    break;
+                case "price desc":
+                    this.filterData = this.filterData.sort((a, b) => {
+                        return b.price - a.price
+                    })
+                    break;
+                case "price asc":
+                    this.filterData = this.filterData.sort((a, b) => {
+                        return a.price - b.price
+                    })
+                    break;
+                case "wear desc":
+                    this.filterData = this.filterData.sort((a, b) => {
+                        return b.wear - a.wear
+                    })
+                    break;
+                case "wear asc":
+                    this.filterData = this.filterData.sort((a, b) => {
+                        return a.wear - b.wear
+                    })
+                    break;
+            }
+        },
+
+        hidden(sid) {
+            axios.put("http://localhost:8081/sell/updateIsShow", {
+                uID: this.$store.state.userInfo.uid,
+                sID: sid,
+                isShow: 0,
+            })
+            this.filterData = this.filterData.filter(item => item.sid != sid)
+        }
 
 
     },

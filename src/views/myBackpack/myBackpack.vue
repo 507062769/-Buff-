@@ -62,7 +62,8 @@
                 </div>
             </div>
         </div>
-        <router-view :marketInfo="marketInfo" :getInventory="getInventory"></router-view>
+        <el-empty description="暂无数据" v-if="marketInfo.length == 0"></el-empty>
+        <router-view :marketInfo="marketInfo" :getInventory="getInventory" v-else></router-view>
     </div>
 </template>
 
@@ -350,6 +351,10 @@ export default {
                 }
             }
         }
+    }
+
+    /deep/.el-empty {
+        background-color: white
     }
 }
 </style>

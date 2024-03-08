@@ -63,7 +63,8 @@
         </div>
       </div>
 
-      <div class="list">
+      <el-empty description="暂无数据" v-if="marketInfo.length == 0"></el-empty>
+      <div class="list" v-else>
         <Item :item="item" v-for="item in marketInfo" :key="item.Id" />
       </div>
     </div>
@@ -93,7 +94,7 @@ export default {
       Kind: [],
       quality: [],
       wear: [],
-      sort: 'sellingTime',
+      sort: 'sellingTime desc',
     };
   },
   methods: {
@@ -182,7 +183,6 @@ export default {
         });
 
     },
-
     // 根据商品名称查询
     searchByName() {
       axios.get("http://localhost:8081/sell/filter", {
@@ -393,6 +393,10 @@ export default {
           }
         }
       }
+    }
+
+    /deep/.el-empty {
+      background-color: white
     }
 
     .list {

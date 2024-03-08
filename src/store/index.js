@@ -78,6 +78,9 @@ const mutations = {
   removeUserInfo(state) {
     state.userInfo = {};
   },
+  updataUserPrice(state, val) {
+    state.userInfo[val.payment]=val.price
+  }
 };
 
 // 用于存放数据

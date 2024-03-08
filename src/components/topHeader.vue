@@ -6,8 +6,8 @@
           <img src="img/logo.png" alt="" />
         </div>
         <div class="nav">
-          <el-menu default-active="/home" background-color="rgba(0,0,0,0.0)" text-color="#fff" active-text-color="#4886ff"
-            class="el-menu-demo" mode="horizontal" router>
+          <el-menu default-active="/home" background-color="rgba(0,0,0,0.0)" text-color="#fff"
+            active-text-color="#4886ff" class="el-menu-demo" mode="horizontal" router>
             <el-menu-item index="/home">首页</el-menu-item>
             <el-menu-item index="/marketplace">饰品市场</el-menu-item>
             <el-menu-item index="/gameInfo">游戏资讯</el-menu-item>
@@ -36,7 +36,7 @@
               </div>
               <div class="store-account">
                 <h3>
-                  余额<b>￥{{ $store.state.userInfo.money }}</b>
+                  余额<b>￥{{ $store.state.userInfo.amount_zfb + $store.state.userInfo.amount_yhk }}</b>
                 </h3>
                 <p>
                   <a class="i_Btn_small">充值</a>
