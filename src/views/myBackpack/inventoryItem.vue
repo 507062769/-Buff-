@@ -1,5 +1,5 @@
 <template>
-    <div class="market" @click="handleChecked(item.gid)" :class="{ iconChecked: isChecked }">
+    <div class="market" @click="handleChecked(item.iid)" :class="{ iconChecked: isChecked }">
         <a href="javascript:void(0)">
             <div class="item_bg">
                 <img class="marketImg" :src="item.Img" alt="" />
@@ -34,14 +34,14 @@ export default {
     },
     methods: {
         // 判断是否选中
-        handleChecked(gid) {
-            this.$store.dispatch("toggleSellCheckedItem", gid);
+        handleChecked(iid) {
+            this.$store.dispatch("toggleSellCheckedItem", iid);
         },
     },
     computed: {
         // 使用计算属性来根据 item.Id 判断是否被选中
         isChecked() {
-            return this.$store.getters.isChecked(this.item.gid);
+            return this.$store.getters.isChecked(this.item.iid);
         },
     },
     mounted() {

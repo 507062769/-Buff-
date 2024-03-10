@@ -3,8 +3,8 @@
         <div class="header">
             <div class="cont-tab">
                 <ul @click="toggleTab">
-                    <li :tabIndex="1" :class="tabIndex == 1 ? 'on' : ''">我的库存</li>
-                    <li :tabIndex="2" :class="tabIndex == 2 ? 'on' : ''">购买记录</li>
+                    <li tabIndex="1" :class="tabIndex == 1 ? 'on' : ''">我的库存</li>
+                    <li tabIndex="2" :class="tabIndex == 2 ? 'on' : ''">购买记录</li>
                 </ul>
                 <span class="right">
                     件数 : <span style="color: #eea20e">{{ marketInfo.length }} </span>
@@ -63,7 +63,8 @@
             </div>
         </div>
 
-        <router-view :marketInfo="marketInfo" :getInventory="getInventory"></router-view>
+        <router-view :marketInfo="marketInfo" :getInventory="getInventory" :getBuyerOrder="getBuyerOrder"
+            :buyHistoryData="buyHistoryData"></router-view>
     </div>
 </template>
 
@@ -88,6 +89,7 @@ export default {
             searchName: "",
 
             marketInfo: [],
+            buyHistoryData: [],
         };
     },
     methods: {
@@ -121,6 +123,15 @@ export default {
                 .then((res) => {
                     this.marketInfo = res.data.data;
                 });
+        },
+        getBuyerOrder() {
+            axios.get("http://localhost:8081/order/getBuyerOrder", {
+                params: {
+                    buyerID: this.$store.state.userInfo.uid,
+                }
+            }).then(res => {
+                this.buyHistoryData = res.data.data
+            })
         },
         // 切换tab（我的库存/购买记录）
         toggleTab({ target }) {

@@ -90,7 +90,7 @@
             </div>
             <div class="mask" v-show="isChange" @click="isChange = false; isShowBody = false;"></div>
         </div>
-        <router-view :marketInfo="marketInfo"></router-view>
+        <router-view :marketInfo="marketInfo" :waiSellData="waiSellData"></router-view>
     </div>
 </template>
 
@@ -109,6 +109,7 @@ export default {
             isRemove: false,
             // 是否禁用body滚动条
             isShowBody: false,
+            waiSellData: [],
         };
     },
     methods: {
@@ -136,6 +137,8 @@ export default {
                     });
                     break;
                 case 2:
+                    this.getWaitSellData()
+                    console.log('waiSellData:', this.waiSellData)
                     this.$router.push({
                         name: "WaitDelivery",
                     });
@@ -215,6 +218,15 @@ export default {
             this.isShowBody
                 ? (document.body.style.overflow = "hidden")
                 : (document.body.style.overflow = "auto");
+        },
+        getWaitSellData() {
+            axios.get("http://localhost:8081/order/getWaitSellData", {
+                params: {
+                    sellerID: this.$store.state.userInfo.uid,
+                }
+            }).then(res => {
+                this.waiSellData = res.data.data
+            })
         },
     },
     mounted() { },

@@ -44,8 +44,8 @@ const mutations = {
   // 全选
   addAllSellToCheckedItem(state, items) {
     items.forEach((item) => {
-      if (!state.checkedSellItem.includes(item.gid)) {
-        state.checkedSellItem.push(item.gid);
+      if (!state.checkedSellItem.includes(item.iid)) {
+        state.checkedSellItem.push(item.iid);
       }
     });
   },
@@ -78,6 +78,7 @@ const mutations = {
   removeUserInfo(state) {
     state.userInfo = {};
   },
+  // 修改用户余额
   updataUserPrice(state, val) {
     state.userInfo[val.payment]=val.price
   }

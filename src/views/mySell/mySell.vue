@@ -60,7 +60,8 @@
             </div>
         </div>
 
-        <router-view :marketInfo="marketInfo" :getSellInfo="getSellInfo"></router-view>
+        <router-view :marketInfo="marketInfo" :getSellInfo="getSellInfo" :buyHistoryData="buyHistoryData"
+            :getSellOrder="getSellOrder"></router-view>
     </div>
 </template>
 
@@ -86,7 +87,7 @@ export default {
             wear: [],
             wearID: 0,
             searchName: "",
-
+            buyHistoryData: [],
         };
     },
     methods: {
@@ -103,6 +104,7 @@ export default {
                 this.wear = res.data.data;
             });
             this.getSellInfo();
+            this.getSellOrder()
         },
         // 获取筛选后的商品
         getSellInfo() {
@@ -177,6 +179,16 @@ export default {
             }
 
             this.getSellInfo()
+        },
+        // 获取出售记录
+        getSellOrder() {
+            axios.get("http://localhost:8081/order/getSellOrder", {
+                params: {
+                    sellerID: this.$store.state.userInfo.uid,
+                }
+            }).then(res => {
+                this.buyHistoryData = res.data.data
+            })
         },
 
 

@@ -1,37 +1,35 @@
 <template>
     <div id="sellHistory">
-        <el-table :data="sellHistoryData" style="width: 100%">
+        <el-table :data="buyHistoryData" style="width: 100%">
             <el-table-column width="30"></el-table-column>
-            <el-table-column prop="GoodsName" label="饰品" width="445">
+            <el-table-column label="饰品" width="445">
                 <template slot-scope="scope">
                     <div class="pic-cont">
-                        <img src="~@img/pf/akhs.png" alt="" class="goodsImg">
+                        <img :src="scope.row.img" alt="" class="goodsImg">
                     </div>
                     <div class="goodsName">
-                        {{ scope.row.GoodsName }}
+                        {{ scope.row.name }}
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="Price" label="价格" width="150">
+            <el-table-column label="价格" width="150">
 
                 <template slot-scope="scope">
-                    <b style="color:#eea20e">￥{{ scope.row.Price }}</b>
+                    <b style="color:#eea20e">￥{{ scope.row.actualPrice }}</b>
                 </template>
             </el-table-column>
-            <el-table-column prop="Seller" label="卖家" width="200">
-
+            <el-table-column label="买家" width="200">
                 <template slot-scope="scope">
                     <el-avatar icon="el-icon-user-solid" :size="30"></el-avatar>
-                    <span>{{ scope.row.Seller }}</span>
+                    <span>{{ scope.row.nickName }}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="Date" label="时间" width="180">
+            <el-table-column prop="formattedTime" label="时间" width="180">
             </el-table-column>
             <el-table-column prop="Detail" label="详情">
-
                 <template slot-scope="scope">
                     <p class="detail-status"><i class="icon"></i>出售成功</p>
-                    <span>{{ scope.row.Detail }}</span>
+                    <span>订单编号：{{ scope.row.oid }}</span>
                 </template>
             </el-table-column>
             <el-table-column width="30"></el-table-column>
@@ -43,55 +41,10 @@
 export default {
     name: "sellHistory",
     components: {},
+    props: ["buyHistoryData"],
     data() {
         return {
-            sellHistoryData: [
-                {
-                    Id: 1,
-                    GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/pf/akhs.png',
-                    Price: 999.00,
-                    Seller: '匿名用户2231',
-                    Date: '2023-12-31 15:25:38',
-                    Detail: "订单ID20231231152538",
-                },
-                {
-                    Id: 2,
-                    GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/pf/akhs.png',
-                    Price: 999.00,
-                    Seller: '匿名用户2231',
-                    Date: '2023-12-31 15:25:38',
-                    Detail: "订单ID20231231152538",
-                },
-                {
-                    Id: 3,
-                    GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/pf/akhs.png',
-                    Price: 999.00,
-                    Seller: '匿名用户2231',
-                    Date: '2023-12-31 15:25:38',
-                    Detail: "订单ID20231231152538",
-                },
-                {
-                    Id: 4,
-                    GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/pf/akhs.png',
-                    Price: 999.00,
-                    Seller: '匿名用户2231',
-                    Date: '2023-12-31 15:25:38',
-                    Detail: "订单ID20231231152538",
-                },
-                {
-                    Id: 5,
-                    GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/pf/akhs.png',
-                    Price: 999.00,
-                    Seller: '匿名用户2231',
-                    Date: '2023-12-31 15:25:38',
-                    Detail: "订单ID20231231152538",
-                },
-            ]
+
         }
     },
     methods: {},

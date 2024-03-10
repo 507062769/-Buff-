@@ -58,6 +58,7 @@ export default {
     }
 
     .list {
+        width: 1155px;
         margin: 20px 30px;
         height: fit-content;
         box-sizing: border-box;
