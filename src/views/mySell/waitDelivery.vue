@@ -1,8 +1,8 @@
 <template>
     <div id="waitDelivery">
-        <el-table :data="waiSellData" style="width: 100%">
+        <el-table :data="waitSellData" style="width: 100%">
             <el-table-column width="30"></el-table-column>
-            <el-table-column prop="GoodsName" label="饰品" width="445">
+            <el-table-column label="饰品" width="445">
                 <template slot-scope="scope">
                     <div class="pic-cont">
                         <img :src="scope.row.img" alt="" class="goodsImg" />
@@ -14,10 +14,10 @@
             </el-table-column>
             <el-table-column label="价格" width="150">
                 <template slot-scope="scope">
-                    <b style="color: #eea20e">￥{{ scope.row.actualPrice }}</b>
+                    <b style="color: #eea20e">￥{{ scope.row.price }}</b>
                 </template>
             </el-table-column>
-            <el-table-column prop="Seller" label="卖家" width="200">
+            <el-table-column label="卖家" width="200">
                 <template slot-scope="scope">
                     <el-avatar icon="el-icon-user-solid" :size="30"></el-avatar>
                     <span>{{ scope.row.nickName }}</span>
@@ -25,10 +25,14 @@
             </el-table-column>
             <el-table-column prop="formattedTime" label="时间" width="180">
             </el-table-column>
-            <el-table-column prop="Detail" label="详情">
+            <el-table-column label="状态" align="center">
                 <template slot-scope="scope">
-                    <p class="detail-status"><i class="icon"></i>购买成功</p>
-                    <span>订单ID：{{ scope.row.oid }}</span>
+                    <p class="detail-status"><i class="icon"></i> 等待您发货</p>
+                    <el-popconfirm title="确定要取消发货吗？" icon="el-icon-info" icon-color="red" confirm-button-type="danger"
+                        cancel-button-type="primary" @confirm="closeDeliverGoods(scope.row)">
+                        <span slot="reference" class="closeDeliverGoods">取消发货</span>
+                    </el-popconfirm>
+                    <span class="DeliverGoods" @click="handleDeliverGoods(scope.row)">发货</span>
                 </template>
             </el-table-column>
             <el-table-column width="30"></el-table-column>
@@ -37,14 +41,23 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
     name: "waitDelivery",
     components: {},
-    props: ["waiSellData"],
+    props: ["waitSellData"],
     data() {
         return {};
     },
-    methods: {},
+    methods: {
+        closeDeliverGoods(row) {
+            this.$bus.$emit('closeDeliverGoods', row)
+        },
+        handleDeliverGoods(row) {
+            this.$bus.$emit('deliverGoods', row)
+        },
+    },
 };
 </script>
 
@@ -87,7 +100,7 @@ export default {
     }
 
     .detail-status {
-        color: green;
+        color: #eca10e;
 
         .icon {
             display: inline-block;
@@ -95,8 +108,16 @@ export default {
             width: 11px;
 
             background-image: url(~@img/icon.png);
-            background-position: 615px -587px;
+            background-position: 602px -587px;
         }
+    }
+
+    .closeDeliverGoods,
+    .DeliverGoods {
+        color: #999;
+        border-bottom: 1px solid #999;
+        margin-right: 10px;
+        cursor: pointer;
     }
 }
 </style>

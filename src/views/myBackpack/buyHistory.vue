@@ -14,7 +14,7 @@
             </el-table-column>
             <el-table-column label="价格" width="150">
                 <template slot-scope="scope">
-                    <b style="color:#eea20e">￥{{ scope.row.actualPrice }}</b>
+                    <b style="color:#eea20e">￥{{ scope.row.price }}</b>
                 </template>
             </el-table-column>
             <el-table-column prop="Seller" label="卖家" width="200">
@@ -27,7 +27,9 @@
             </el-table-column>
             <el-table-column prop="Detail" label="详情">
                 <template slot-scope="scope">
-                    <p class="detail-status"><i class="icon"></i>购买成功</p>
+                    <p class="detail-status s1" v-if="scope.row.statue == 1"><i class="icon"></i> 等待卖家发货</p>
+                    <p class="detail-status s2" v-else-if="scope.row.statue == 2"><i class="icon"></i> 购买成功</p>
+
                     <span>订单ID：{{ scope.row.oid }}</span>
                 </template>
             </el-table-column>
@@ -42,7 +44,7 @@ import axios from "axios";
 export default {
     name: "buyHistory",
     components: {},
-    props: ["getBuyerOrder", "buyHistoryData"],
+    props: ["buyHistoryData"],
     data() {
         return {
 
@@ -51,7 +53,7 @@ export default {
     methods: {
     },
     mounted() {
-        this.getBuyerOrder()
+
     }
 }
 </script>
@@ -95,7 +97,6 @@ export default {
     }
 
     .detail-status {
-        color: green;
 
         .icon {
             display: inline-block;
@@ -106,6 +107,21 @@ export default {
             background-position: 615px -587px;
 
         }
+    }
+
+    .s1 {
+        color: #fda92b;
+
+        .icon {
+
+            background-position: 602px -587px;
+
+        }
+    }
+
+    .s2 {
+        color: green;
+
     }
 }
 </style>

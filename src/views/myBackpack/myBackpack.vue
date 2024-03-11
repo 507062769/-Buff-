@@ -63,7 +63,7 @@
             </div>
         </div>
 
-        <router-view :marketInfo="marketInfo" :getInventory="getInventory" :getBuyerOrder="getBuyerOrder"
+        <router-view :marketInfo="marketInfo" :getInventory="getInventory"
             :buyHistoryData="buyHistoryData"></router-view>
     </div>
 </template>
@@ -143,6 +143,7 @@ export default {
                     });
                     break;
                 case 2:
+                    this.getBuyerOrder();
                     this.$router.push({
                         name: "BuyHistory",
                     });

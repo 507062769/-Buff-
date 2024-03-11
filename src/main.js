@@ -16,3 +16,4 @@ new Vue({
     Vue.prototype.$bus = this;
   },
 }).$mount("#app");
+

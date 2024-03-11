@@ -60,8 +60,8 @@
             </div>
         </div>
 
-        <router-view :marketInfo="marketInfo" :getSellInfo="getSellInfo" :buyHistoryData="buyHistoryData"
-            :getSellOrder="getSellOrder"></router-view>
+        <router-view :marketInfo="marketInfo" :getSellInfo="getSellInfo"
+            :sellHistoryData="sellHistoryData"></router-view>
     </div>
 </template>
 
@@ -87,7 +87,7 @@ export default {
             wear: [],
             wearID: 0,
             searchName: "",
-            buyHistoryData: [],
+            sellHistoryData: [],
         };
     },
     methods: {
@@ -104,7 +104,9 @@ export default {
                 this.wear = res.data.data;
             });
             this.getSellInfo();
-            this.getSellOrder()
+            this.$bus.$on('closeDeliverGoods', this.closeDeliverGoods)
+            this.$bus.$on('deliverGoods', this.handleDeliverGoods)
+
         },
         // 获取筛选后的商品
         getSellInfo() {
@@ -131,6 +133,7 @@ export default {
                     });
                     break;
                 case 2:
+                    this.getSellOrder()
                     this.$router.push({
                         name: "SellHistory",
                     });
@@ -187,9 +190,72 @@ export default {
                     sellerID: this.$store.state.userInfo.uid,
                 }
             }).then(res => {
-                this.buyHistoryData = res.data.data
+                this.sellHistoryData = res.data.data
             })
         },
+        // 取消发货
+        closeDeliverGoods(row) {
+            axios.get("http://localhost:8081/order/updateOrderStatue", {
+                params: {
+                    statue: 3,
+                    oID: row.oid,
+                }
+            }).then(res => {
+                axios.put("http://localhost:8081/user/addPrice", {
+                    uID: row.buyerID,
+                    paymentMethod: row.paymentMethod,
+                    price: "price",
+                    sID: row.sid,
+                }).then(res => {
+                    // 当成功添加价格后，重新获取等待发货的数据
+                    this.$bus.$emit("getWaitSellData")
+                })
+            })
+            this.$message({
+                message: "取消成功！",
+                type: "success",
+            });
+        },
+        // 发货
+        handleDeliverGoods(row) {
+            console.log('row:', row)
+            axios.get("http://localhost:8081/order/updateOrderStatue", {
+                params: {
+                    statue: 2,
+                    oID: row.oid,
+                }
+            })
+            axios.put("http://localhost:8081/user/addPrice", {
+                uID: row.sellerID,
+                paymentMethod: row.paymentMethod,
+                price: "actualPrice",
+                sID: row.sid,
+            })
+
+            this.$store.commit("updataUserPrice", { payment: row.paymentMethod, price: this.$store.state.userInfo[row.paymentMethod] + parseFloat(row.actualPrice) })
+
+            axios.put("http://localhost:8081/sell/updateIsShow", {
+                uID: row.sellerID,
+                sID: row.sid,
+                isShow: 0,
+            })
+
+            axios.get("http://localhost:8081/inventory/toggleUser", {
+                params: {
+                    uID: row.buyerID,
+                    iID: row.iid
+                }
+            })
+
+            this.$bus.$emit("getWaitSellData")
+
+            this.$message({
+                message: "发货成功",
+                type: "success"
+            })
+
+
+        }
 
 
     },

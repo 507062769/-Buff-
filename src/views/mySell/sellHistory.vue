@@ -1,6 +1,6 @@
 <template>
     <div id="sellHistory">
-        <el-table :data="buyHistoryData" style="width: 100%">
+        <el-table :data="sellHistoryData" style="width: 100%">
             <el-table-column width="30"></el-table-column>
             <el-table-column label="饰品" width="445">
                 <template slot-scope="scope">
@@ -15,7 +15,7 @@
             <el-table-column label="价格" width="150">
 
                 <template slot-scope="scope">
-                    <b style="color:#eea20e">￥{{ scope.row.actualPrice }}</b>
+                    <b style="color:#eea20e">￥{{ scope.row.price }}</b>
                 </template>
             </el-table-column>
             <el-table-column label="买家" width="200">
@@ -41,7 +41,7 @@
 export default {
     name: "sellHistory",
     components: {},
-    props: ["buyHistoryData"],
+    props: ["sellHistoryData"],
     data() {
         return {
 

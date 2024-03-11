@@ -128,8 +128,10 @@ export default {
             axios.post("http://localhost:8081/order/addBuyOrder", {
                 gID: this.selectData.gid,
                 sID: this.selectData.sid,
+                iID: this.selectData.iid,
                 buyerID: this.userInfo.uid,
                 sellerID: this.selectData.uid,
+                paymentMethod: this.selectedPayment,
                 statue: 1,
             }).then(res => {
 

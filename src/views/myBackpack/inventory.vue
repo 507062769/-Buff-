@@ -185,6 +185,7 @@ export default {
             this.isGoSell = true;
             this.isShowBody = !this.isShowBody;
             this.showBody();
+            console.log('uid,itemIdLi::', this.$store.state.userInfo.uid, this.$store.state.checkedSellItem)
             axios
                 .post("http://localhost:8081/inventory/getInventoryByItemList", {
                     uID: this.$store.state.userInfo.uid,

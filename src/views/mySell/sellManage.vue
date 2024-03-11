@@ -4,7 +4,7 @@
             <div class="left">
                 <ul @click="toggleTab">
                     <li tabIndex="1" :class="tabIndex == 1 ? 'on' : ''">出售中</li>
-                    <li tabIndex="2" :class="tabIndex == 2 ? 'on' : ''">等待发货(0)</li>
+                    <li tabIndex="2" :class="tabIndex == 2 ? 'on' : ''">等待发货({{ waitSellData.length }})</li>
                 </ul>
             </div>
             <div class="right">
@@ -90,7 +90,7 @@
             </div>
             <div class="mask" v-show="isChange" @click="isChange = false; isShowBody = false;"></div>
         </div>
-        <router-view :marketInfo="marketInfo" :waiSellData="waiSellData"></router-view>
+        <router-view :marketInfo="marketInfo" :waitSellData="waitSellData"></router-view>
     </div>
 </template>
 
@@ -109,7 +109,7 @@ export default {
             isRemove: false,
             // 是否禁用body滚动条
             isShowBody: false,
-            waiSellData: [],
+            waitSellData: [],
         };
     },
     methods: {
@@ -137,8 +137,6 @@ export default {
                     });
                     break;
                 case 2:
-                    this.getWaitSellData()
-                    console.log('waiSellData:', this.waiSellData)
                     this.$router.push({
                         name: "WaitDelivery",
                     });
@@ -219,17 +217,21 @@ export default {
                 ? (document.body.style.overflow = "hidden")
                 : (document.body.style.overflow = "auto");
         },
+        // 获取等待发货的数据
         getWaitSellData() {
             axios.get("http://localhost:8081/order/getWaitSellData", {
                 params: {
                     sellerID: this.$store.state.userInfo.uid,
                 }
             }).then(res => {
-                this.waiSellData = res.data.data
+                this.waitSellData = res.data.data
             })
         },
     },
-    mounted() { },
+    mounted() {
+        this.getWaitSellData()
+        this.$bus.$on("getWaitSellData", this.getWaitSellData)
+    },
     computed: {
         // 预计收入
         totalPrice() {
