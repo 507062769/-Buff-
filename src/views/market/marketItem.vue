@@ -2,7 +2,7 @@
   <div class="market" @click="goDetail" :data-id="item.gid">
     <a href="javascript:void(0)">
       <div class="item_bg">
-        <img class="marketImg" :src="item.Img" alt="" />
+        <img class="marketImg" :src="item.img" alt="" />
       </div>
     </a>
     <h3>
