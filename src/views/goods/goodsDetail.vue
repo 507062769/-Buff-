@@ -2,7 +2,7 @@
     <div id="goodsDetail">
         <div class="detail-header">
             <div class="detail-pic">
-                <img src="~@img/pf/akhs.png" alt="" />
+                <img :src="$route.params.item.img" alt="" />
             </div>
             <div class="detail-cont">
                 <h1 class="title">{{ $route.params.item.name }}</h1>
@@ -102,6 +102,8 @@ export default {
             quality: [],
             goodsInfo: [],
             filterData: [],
+            qualityName: "",
+            kindName: "",
         };
     },
     methods: {
@@ -117,6 +119,21 @@ export default {
             axios.get("http://localhost:8081/tool/getWear").then((res) => {
                 this.wear = res.data.data;
             });
+            axios.get("http://localhost:8081/tool/getQualityNameBygID", {
+                params: {
+                    gID: this.$route.params.item.gid,
+                }
+            }).then(res => {
+                this.qualityName = res.data.msg;
+            })
+
+            axios.get("http://localhost:8081/tool/getWearNameBygID", {
+                params: {
+                    gID: this.$route.params.item.gid,
+                }
+            }).then(res => {
+                this.kindName = res.data.msg;
+            })
 
             // 将点击的饰品的磨损id赋值
             this.wearIndex = this.$route.params.item.wid
@@ -128,7 +145,6 @@ export default {
                 }
             }).then(res => {
                 this.goodsInfo = res.data.data;
-
                 // 遍历饰品添加nickName项
                 this.goodsInfo.forEach(g => {
                     axios.get("http://localhost:8081/user/getNameByID", {
@@ -148,6 +164,7 @@ export default {
                 });
                 this.filterData = this.goodsInfo;
             })
+
 
 
         },
@@ -294,19 +311,6 @@ export default {
 
     },
     computed: {
-        // 展示商品的品质
-        qualityName() {
-            const q = this.quality.find((q) => q.qid === this.$route.params.item.qid);
-            return q ? q.name : null;
-        },
-        // 展示商品的类型
-        kindName() {
-            const kind = this.kind.find((k) => {
-                const subItem = k.kindItem[this.$route.params.item.kiID];
-                return subItem ? k : null;
-            });
-            return kind ? kind.name : null;
-        },
         actualPrice() {
             // return this.goodsInfo.reduce((cheapest, item) => {
             //     return (cheapest < item.price) ? cheapest : item;
