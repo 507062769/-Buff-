@@ -29,6 +29,7 @@
                 <template slot-scope="scope">
                     <p class="detail-status s1" v-if="scope.row.statue == 1"><i class="icon"></i> 等待卖家发货</p>
                     <p class="detail-status s2" v-else-if="scope.row.statue == 2"><i class="icon"></i> 购买成功</p>
+                    <p class="detail-status s3" v-else><i class="icon"></i> 购买失败</p>
 
                     <span>订单ID：{{ scope.row.oid }}</span>
                 </template>
@@ -113,15 +114,21 @@ export default {
         color: #fda92b;
 
         .icon {
-
             background-position: 602px -587px;
-
         }
     }
 
     .s2 {
         color: green;
 
+    }
+
+    .s3 {
+        color: red;
+
+        .icon {
+            background-position: 249px -448px;
+        }
     }
 }
 </style>

@@ -124,6 +124,7 @@ export default {
                     this.marketInfo = res.data.data;
                 });
         },
+        // 获取买家订单
         getBuyerOrder() {
             axios.get("http://localhost:8081/order/getBuyerOrder", {
                 params: {

@@ -32,7 +32,7 @@
                         cancel-button-type="primary" @confirm="closeDeliverGoods(scope.row)">
                         <span slot="reference" class="closeDeliverGoods">取消发货</span>
                     </el-popconfirm>
-                    <span class="DeliverGoods" @click="handleDeliverGoods(scope.row)">发货</span>
+                    <span class="DeliverGoods" @click.once="handleDeliverGoods(scope.row)">发货</span>
                 </template>
             </el-table-column>
             <el-table-column width="30"></el-table-column>
@@ -51,11 +51,42 @@ export default {
         return {};
     },
     methods: {
+        // 取消发货
         closeDeliverGoods(row) {
-            this.$bus.$emit('closeDeliverGoods', row)
+            axios.get("http://localhost:8081/order/updateOrderStatue", {
+                params: {
+                    statue: 3,
+                    oID: row.oid,
+                }
+            }).then(res => {
+                axios.put("http://localhost:8081/user/addPrice", {
+                    uID: row.buyerID,
+                    paymentMethod: row.paymentMethod,
+                    price: "price",
+                    sID: row.sid,
+                }).then(res => {
+                    // 当成功添加价格后，重新获取等待发货的数据
+                    this.$bus.$emit("getWaitSellData")
+                })
+            })
+            this.$message({
+                message: "取消成功！",
+                type: "success",
+            });
         },
+        // 发货
         handleDeliverGoods(row) {
-            this.$bus.$emit('deliverGoods', row)
+            console.log('row:', row)
+            axios.post("http://localhost:8081/tool/deliverGoods", {
+                goods: row
+            }).then(res => {
+                this.$bus.$emit("getWaitSellData")
+                this.$store.commit("updataUserPrice", { payment: row.paymentMethod, price: this.$store.state.userInfo[row.paymentMethod] + parseFloat(row.actualPrice) })
+                this.$message({
+                    message: "发货成功",
+                    type: "success"
+                })
+            })
         },
     },
 };
