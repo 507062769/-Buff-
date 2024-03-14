@@ -11,13 +11,29 @@
           </td>
           <td></td>
         </tr>
-        <tr>
+        <tr v-show="isShowName">
           <td>昵称</td>
-          <td>热心小刘</td>
           <td>
-            <div class="btn">
-              修改昵称
-            </div>
+            {{ userInfo.nickName }}
+          </td>
+          <td>
+            <div class="btn" @click="isShowName = !isShowName">修改昵称</div>
+          </td>
+        </tr>
+        <tr v-show="!isShowName" class="updateName">
+          <td>昵称</td>
+          <td>
+            <el-input v-model="userInfo.nickName"></el-input>
+            <span>
+              昵称必须为包含数字、英文、中文在内的4-14个字符，三个月内只能修改一次。
+            </span>
+            <b>
+              (请勿带有辱骂、广告、诱导等其他违反法规的词汇，违者帐号将作封禁处理)
+            </b>
+          </td>
+          <td>
+            <div class="btn" @click="updateName">确定</div>
+            <div class="btn close" @click="isShowName = !isShowName">取消</div>
           </td>
         </tr>
       </table>
@@ -30,12 +46,10 @@
           <td>手机账号</td>
           <td>
             <span>已绑定</span>
-            绑定手机号17671214206
+            绑定手机号{{ userInfo.account }}
           </td>
           <td>
-            <div class="btn">
-              更换号码
-            </div>
+            <div class="btn">更换号码</div>
           </td>
         </tr>
         <tr>
@@ -49,9 +63,7 @@
           <td>密码设置</td>
           <td></td>
           <td>
-            <div class="btn">
-              修改密码
-            </div>
+            <div class="btn">修改密码</div>
           </td>
         </tr>
       </table>
@@ -60,15 +72,39 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: "profile",
   components: {},
   data() {
     return {
-    }
+      userInfo: {},
+      isShowName: true,
+    };
   },
-  methods: {},
-}
+  methods: {
+    init() {
+      this.userInfo = this.$store.state.userInfo;
+    },
+    updateName() {
+      axios.get("http://localhost:8081/user/updateName", {
+        params: {
+          uID: this.userInfo.uid,
+          name: this.userInfo.nickName
+        }
+      }).then(res => {
+        this.init()
+        this.$message({
+          type: "success",
+          message: "修改成功！"
+        })
+      })
+    },
+  },
+  mounted() {
+    this.init();
+  },
+};
 </script>
 
 <style scoped lang="less">
@@ -77,7 +113,6 @@ export default {
   width: 100%;
   height: 670px;
   padding: 40px 54px;
-
 
   table {
     height: 100%;
@@ -118,5 +153,27 @@ export default {
   .securitySet {
     margin-top: 20px;
   }
+
+  .updateName {
+    height: 100px;
+
+    /deep/.el-input {
+      width: 200px;
+    }
+
+    span,
+    b {
+      display: block;
+      font-size: 12px;
+      color: #959595
+    }
+
+    .close {
+      background: #45536c;
+      margin: 0 10px;
+    }
+
+  }
+
 }
 </style>

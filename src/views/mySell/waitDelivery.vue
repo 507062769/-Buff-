@@ -53,12 +53,14 @@ export default {
     methods: {
         // 取消发货
         closeDeliverGoods(row) {
+            // 修改订单状态为取消发货
             axios.get("http://localhost:8081/order/updateOrderStatue", {
                 params: {
                     statue: 3,
                     oID: row.oid,
                 }
             }).then(res => {
+                // 给买家退款
                 axios.put("http://localhost:8081/user/addPrice", {
                     uID: row.buyerID,
                     paymentMethod: row.paymentMethod,
@@ -67,8 +69,20 @@ export default {
                 }).then(res => {
                     // 当成功添加价格后，重新获取等待发货的数据
                     this.$bus.$emit("getWaitSellData")
+
+                    // 创建资金流水,给买家退款
+                    axios.get("http://localhost:8081/fund/addFlow", {
+                        params: {
+                            uID: row.buyerID,
+                            type: 3,
+                            amount: row.price,
+                            source: row.paymentMethod,
+                        }
+                    })
+
                 })
             })
+
             this.$message({
                 message: "取消成功！",
                 type: "success",
@@ -76,12 +90,21 @@ export default {
         },
         // 发货
         handleDeliverGoods(row) {
-            console.log('row:', row)
             axios.post("http://localhost:8081/tool/deliverGoods", {
                 goods: row
             }).then(res => {
                 this.$bus.$emit("getWaitSellData")
                 this.$store.commit("updataUserPrice", { payment: row.paymentMethod, price: this.$store.state.userInfo[row.paymentMethod] + parseFloat(row.actualPrice) })
+
+                // 创建资金流水,给卖家添加流水订单
+                axios.get("http://localhost:8081/fund/addFlow", {
+                    params: {
+                        uID: row.sellerID,
+                        type: 2,
+                        amount: row.actualPrice,
+                        source: row.paymentMethod,
+                    }
+                })
                 this.$message({
                     message: "发货成功",
                     type: "success"

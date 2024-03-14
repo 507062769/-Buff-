@@ -13,7 +13,7 @@
             </div>
           </div>
         </h4>
-        <p>￥18881.00</p>
+        <p>￥ {{ amount_zfb }}</p>
       </span>
       <p class="divisionLine"></p>
       <span>
@@ -27,7 +27,7 @@
             </div>
           </div>
         </h4>
-        <p>￥18881.00</p>
+        <p>￥ {{ amount_yhk }}</p>
 
       </span>
     </div>
@@ -43,6 +43,15 @@
           <li :tabindex="3" :class="tabIndex == 3 ? 'on' : ''">
             <span>资金流水</span>
           </li>
+
+          <div class="paymentTab">
+            <h3>{{ paymentMethod.name }}</h3>
+            <ul @click="togglePayment">
+              <li payment="amount_zfb">BUFF余额-支付宝</li>
+              <li payment="amount_yhk">BUFF余额-银行卡</li>
+            </ul>
+          </div>
+
         </ul>
       </div>
       <router-view></router-view>
@@ -58,6 +67,7 @@ export default {
   data() {
     return {
       tabIndex: 1,
+      paymentMethod: { id: "amount_zfb", name: "BUFF余额-支付宝" }
     }
   },
   methods: {
@@ -85,9 +95,20 @@ export default {
           })
           break;
       }
+    },
+    togglePayment({ target }) {
+      console.log('target:', target.payment)
     }
 
   },
+  computed: {
+    amount_zfb() {
+      return this.$store.state.userInfo.amount_zfb;
+    },
+    amount_yhk() {
+      return this.$store.state.userInfo.amount_yhk;
+    },
+  }
 }
 </script>
 
@@ -178,7 +199,6 @@ export default {
     .main-head {
       height: 50px;
       width: 100%;
-
       background-color: #1c202b;
 
       ul {
@@ -202,12 +222,17 @@ export default {
 
         }
 
+
         .on {
           color: #fff;
           background-image: url("../../../public/img/icon.png");
           background-position: -308px -78px;
           pointer-events: none;
         }
+      }
+
+      .paymentTab {
+        color: red
       }
     }
   }

@@ -3,7 +3,7 @@
   <div id="userNav">
     <div class="my-thum">
       <el-avatar icon="el-icon-user-solid" :size="70" class="tx"></el-avatar>
-      <p>热心小刘</p>
+      <p>{{ $store.state.userInfo.nickName }}</p>
     </div>
     <div class="my-menu">
       <ul @click="toggleTab">

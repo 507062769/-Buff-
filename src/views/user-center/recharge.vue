@@ -9,12 +9,12 @@
           </td>
           <td class="content">
             <div class="amount" @click="toggleTab" :tr="rechargeMethod[0]">
-              <p class="input-span" :class="tabIndex == 1 ? 'on' : ''" :tabIndex="1">
+              <p class="input-span" :class="tabIndex == 1 ? 'on' : ''" tabIndex="1">
                 <input type="text" placeholder="请输入金额" v-model.number="amount">
               </p>
-              <span :class="tabIndex == 2 ? 'on' : ''" :tabIndex="2">￥100</span>
-              <span :class="tabIndex == 3 ? 'on' : ''" :tabIndex="3">￥200</span>
-              <span :class="tabIndex == 4 ? 'on' : ''" :tabIndex="4">￥500</span>
+              <span :class="tabIndex == 2 ? 'on' : ''" tabIndex="2">￥100</span>
+              <span :class="tabIndex == 3 ? 'on' : ''" tabIndex="3">￥200</span>
+              <span :class="tabIndex == 4 ? 'on' : ''" tabIndex="4">￥500</span>
 
             </div>
           </td>
@@ -25,16 +25,15 @@
           </td>
           <td class="content">
             <div class="amount" @click="toggleTab" :tr="rechargeMethod[1]">
-              <span :class="meTabIndex == 1 ? 'on' : ''" :tabIndex="1">支付宝</span>
-              <span :class="meTabIndex == 2 ? 'on' : ''" :tabIndex="2">信用卡花呗</span>
+              <span :class="meTabIndex == 1 ? 'on' : ''" tabIndex="1">支付宝</span>
+              <span :class="meTabIndex == 2 ? 'on' : ''" tabIndex="2">银行卡</span>
             </div>
-
           </td>
         </tr>
         <tr>
           <td class="title"></td>
           <td class="content">
-            <div class="submit">
+            <div class="submit" @click="openRecharge">
               确认充值
             </div>
           </td>
@@ -56,6 +55,12 @@
       <div class="line"> </div>
 
     </div>
+    <div class="container" v-show="isShowRecharge">
+      <h3>请扫描二维码完成付款</h3>
+      <div class="container_img"></div>
+      <div></div>
+    </div>
+    <div class="mask" v-show="isShowRecharge" @click="isShowRecharge = false"></div>
   </div>
 </template>
 
@@ -69,6 +74,7 @@ export default {
       meTabIndex: 1,
       rechargeMethod: ['amount', 'method'],
       amount: "",
+      isShowRecharge: false,
 
     }
   },
@@ -94,6 +100,9 @@ export default {
 
       }
     },
+    openRecharge() {
+      this.isShowRecharge = true;
+    }
   },
 }
 </script>
@@ -226,6 +235,27 @@ export default {
       overflow: hidden;
       background-image: linear-gradient(-90deg, rgba(250, 250, 250, 0) 0, #eea20e 49%, rgba(250, 250, 250, 0) 100%);
     }
+  }
+
+  .container {
+    height: 400px;
+    width: 400px;
+    background-color: red;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+  }
+
+  .mask {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background: rgba(0, 0, 0, 0.6);
   }
 
 }

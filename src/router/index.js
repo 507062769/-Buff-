@@ -54,6 +54,11 @@ const routes = [
             path: "asset",
             component: () => import("../views/user-center/asset.vue"),
           },
+          {
+            name: "ewm",
+            path: "ewm",
+            component: () => import("../views/user-center/ewm.vue"),
+          },
         ],
       },
       {

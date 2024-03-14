@@ -111,6 +111,7 @@ export default {
         },
         //确认付款   
         buy() {
+            // 修改用户余额
             axios.put("http://localhost:8081/user/subPrice", {
                 uID: this.userInfo.uid,
                 payment: this.selectedPayment,
@@ -123,8 +124,24 @@ export default {
                     type: "success",
                 })
                 this.hidden(this.selectData.sid, this.selectData.uid)
+
+                // 创建资金流水
+                axios.get("http://localhost:8081/fund/addFlow", {
+                    params: {
+                        uID: this.userInfo.uid,
+                        type: 1,
+                        amount: this.selectData.price,
+                        // balance: this.userInfo[this.selectedPayment] - parseFloat(this.selectData.price),
+                        source: this.selectedPayment,
+                    }
+                })
+
             })
 
+
+
+
+            // 提交购买订单
             axios.post("http://localhost:8081/order/addBuyOrder", {
                 gID: this.selectData.gid,
                 sID: this.selectData.sid,
