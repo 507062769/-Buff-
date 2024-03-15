@@ -11,19 +11,19 @@
           </td>
           <td></td>
         </tr>
-        <tr v-show="isShowName">
+        <tr v-if="isShowName">
           <td>昵称</td>
           <td>
-            {{ userInfo.nickName }}
+            {{ nickName }}
           </td>
           <td>
             <div class="btn" @click="isShowName = !isShowName">修改昵称</div>
           </td>
         </tr>
-        <tr v-show="!isShowName" class="updateName">
+        <tr v-else class="update">
           <td>昵称</td>
           <td>
-            <el-input v-model="userInfo.nickName"></el-input>
+            <el-input v-model="nickName"></el-input>
             <span>
               昵称必须为包含数字、英文、中文在内的4-14个字符，三个月内只能修改一次。
             </span>
@@ -33,7 +33,7 @@
           </td>
           <td>
             <div class="btn" @click="updateName">确定</div>
-            <div class="btn close" @click="isShowName = !isShowName">取消</div>
+            <div class="btn close" @click="closeUpdateName">取消</div>
           </td>
         </tr>
       </table>
@@ -42,14 +42,26 @@
     <div class="securitySet">
       <h3>安全设置</h3>
       <table>
-        <tr>
+        <tr v-if="isShowAccount">
           <td>手机账号</td>
           <td>
-            <span>已绑定</span>
-            绑定手机号{{ userInfo.account }}
+            <span>已绑定 </span>
+            绑定手机号{{ account }}
           </td>
           <td>
-            <div class="btn">更换号码</div>
+            <div class="btn" @click="isShowAccount = !isShowAccount">
+              更换号码
+            </div>
+          </td>
+        </tr>
+        <tr v-else class="update" style="height: 60px">
+          <td>手机账号</td>
+          <td>
+            <el-input v-model="account"></el-input>
+          </td>
+          <td>
+            <div class="btn" @click="updateACcount">确定</div>
+            <div class="btn close" @click="closeUpdateAccount">取消</div>
           </td>
         </tr>
         <tr>
@@ -59,7 +71,14 @@
           </td>
           <td></td>
         </tr>
-        <tr>
+        <tr v-if="isShowPwd">
+          <td>密码设置</td>
+          <td></td>
+          <td>
+            <div class="btn">修改密码</div>
+          </td>
+        </tr>
+        <tr v-else>
           <td>密码设置</td>
           <td></td>
           <td>
@@ -72,33 +91,83 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "axios";
 export default {
   name: "profile",
   components: {},
   data() {
     return {
       userInfo: {},
+
       isShowName: true,
+      isShowAccount: true,
+      isShowPwd: true,
+      nickName: "",
+      account: "",
     };
   },
   methods: {
+    // 初始化用户名、手机号、密码等信息
     init() {
-      this.userInfo = this.$store.state.userInfo;
+      this.nickName = this.$store.state.userInfo.nickName;
+      this.account = this.$store.state.userInfo.account;
     },
+    // 取消修改用户名
+    closeUpdateName() {
+      this.isShowName = !this.isShowName;
+      this.nickName = this.$store.state.userInfo.nickName;
+    },
+    // 取消修改手机号
+    closeUpdateAccount() {
+      this.isShowAccount = !this.isShowAccount;
+      this.account = this.$store.state.userInfo.account;
+    },
+
+    // 修改用户名
     updateName() {
-      axios.get("http://localhost:8081/user/updateName", {
-        params: {
-          uID: this.userInfo.uid,
-          name: this.userInfo.nickName
-        }
-      }).then(res => {
-        this.init()
-        this.$message({
-          type: "success",
-          message: "修改成功！"
+      axios
+        .get("http://localhost:8081/user/updateName", {
+          params: {
+            uID: this.$store.state.userInfo.uid,
+            nickName: this.nickName,
+          },
         })
-      })
+        .then((res) => {
+          this.$store.commit("updateUserNickName", this.nickName);
+          this.$message({
+            type: "success",
+            message: "修改成功！",
+          });
+          this.isShowName = !this.isShowName;
+        });
+    },
+    // 修改手机号
+    updateACcount() {
+      axios
+        .get("http://localhost:8081/user/isExistTel", {
+          params: {
+            uID: this.$store.state.userInfo.uid,
+            account: this.account,
+          },
+        })
+        .then((res) => {
+          switch (res.data.status) {
+            case "200":
+              this.$message({
+                type: "success",
+                message: "注册成功！",
+              });
+              this.$store.commit("updateUserAccount", this.account);
+              this.isShowAccount = !this.isShowAccount;
+              break;
+            case "201":
+              this.$message({
+                type: "error",
+                message: "手机号已被注册，请重新输入手机号！",
+              });
+              break;
+          }
+        });
     },
   },
   mounted() {
@@ -154,7 +223,7 @@ export default {
     margin-top: 20px;
   }
 
-  .updateName {
+  .update {
     height: 100px;
 
     /deep/.el-input {
@@ -165,15 +234,13 @@ export default {
     b {
       display: block;
       font-size: 12px;
-      color: #959595
+      color: #959595;
     }
 
     .close {
       background: #45536c;
       margin: 0 10px;
     }
-
   }
-
 }
 </style>

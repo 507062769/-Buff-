@@ -33,7 +33,7 @@
     </div>
     <div class="purse-main">
       <div class="main-head">
-        <ul @click="toggleTab">
+        <ul @click="toggleTab" class="toggleTab">
           <li :tabindex="1" :class="tabIndex == 1 ? 'on' : ''">
             <span>充值</span>
           </li>
@@ -43,34 +43,50 @@
           <li :tabindex="3" :class="tabIndex == 3 ? 'on' : ''">
             <span>资金流水</span>
           </li>
-
-          <div class="paymentTab">
-            <h3>{{ paymentMethod.name }}</h3>
-            <ul @click="togglePayment">
-              <li payment="amount_zfb">BUFF余额-支付宝</li>
-              <li payment="amount_yhk">BUFF余额-银行卡</li>
-            </ul>
-          </div>
-
         </ul>
+        <div class="paymentTab" v-show="tabIndex == 3">
+          <h3 @click="isClickName = !isClickName" :class="{ active: isClickNameActive }"
+            @mousedown="isClickNameActive = true" @mouseup="isClickNameActive = false">{{ paymentMethod.name }}</h3>
+          <ul @click="togglePayment" :class="isClickName ? 'onPayment' : ''">
+            <li data-payment="amount_zfb">BUFF余额-支付宝</li>
+            <li data-payment="amount_yhk">BUFF余额-银行卡</li>
+          </ul>
+        </div>
       </div>
-      <router-view></router-view>
+      <router-view :flowFundData="flowFundData"></router-view>
       <div></div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: "myPurse",
   components: {},
   data() {
     return {
       tabIndex: 1,
-      paymentMethod: { id: "amount_zfb", name: "BUFF余额-支付宝" }
+      isClickName: false,
+      isClickNameActive: false,
+      paymentMethod: { id: "amount_zfb", name: "BUFF余额-支付宝" },
+      flowFundData: [],
     }
   },
   methods: {
+    // 初始化资金流水
+    init() {
+      axios.get("http://localhost:8081/fund/getFlowFund", {
+        params: {
+          uID: this.$store.state.userInfo.uid,
+          payment: this.paymentMethod.id,
+        }
+      }).then(res => {
+        this.flowFundData = res.data.data
+      })
+    },
+    // 切换充值、提现tab
     toggleTab({ target }) {
       console.log('tar:', target)
       if (target.tagName === "LI") {
@@ -96,8 +112,12 @@ export default {
           break;
       }
     },
+    // 切换查询余额的支付方式
     togglePayment({ target }) {
-      console.log('target:', target.payment)
+      this.paymentMethod.id = target.dataset.payment
+      this.paymentMethod.name = target.innerText
+      this.init()
+      this.isClickName = false
     }
 
   },
@@ -108,6 +128,9 @@ export default {
     amount_yhk() {
       return this.$store.state.userInfo.amount_yhk;
     },
+  },
+  mounted() {
+    this.init()
   }
 }
 </script>
@@ -115,7 +138,7 @@ export default {
 <style scoped lang="less">
 #myPurse {
   height: fit-content;
-  width: 100%;
+  width: 955px;
 
   .purse-head {
     height: 80px;
@@ -200,8 +223,10 @@ export default {
       height: 50px;
       width: 100%;
       background-color: #1c202b;
+      padding-right: 20px;
+      display: flex;
 
-      ul {
+      .toggleTab {
         display: flex;
 
         li {
@@ -232,8 +257,64 @@ export default {
       }
 
       .paymentTab {
-        color: red
+        margin-left: auto;
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        h3 {
+          color: #fff;
+          background-color: #4773c8;
+          display: inline-block;
+          height: 32px;
+          width: 120px;
+          line-height: 32px;
+          font-size: 12px;
+          font-weight: 400;
+          padding-left: 5px;
+          cursor: pointer;
+          border-radius: 5px;
+
+        }
+
+        ul {
+          position: absolute;
+          background-color: #fff;
+          color: #000;
+          border: 1px solid rgb(217, 217, 217);
+          top: 43px;
+          border-radius: 5px;
+          display: none;
+          z-index: 10;
+
+          li {
+            width: 120px;
+            height: 32px;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 32px;
+            border-bottom: 1px solid #e3e3e3;
+            padding-left: 5px;
+            cursor: pointer;
+          }
+        }
+
+        .onPayment {
+          display: inline-block;
+        }
+
+        .active {
+          background-color: #3c61a8 !important;
+        }
       }
+
+      .paymentTab:hover {
+        h3 {
+          background-color: #567fcd;
+        }
+      }
+
+
     }
   }
 }

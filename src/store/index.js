@@ -80,16 +80,24 @@ const mutations = {
   },
   // 修改用户余额
   updataUserPrice(state, val) {
-    state.userInfo[val.payment]=val.price
-  }
+    state.userInfo[val.payment] = val.price;
+  },
+  // 修改用户名
+  updateUserNickName(state, val) {
+    state.userInfo.nickName = val;
+  },
+  // 修改手机号
+  updateUserAccount(state, val) {
+    state.userInfo.account = val;
+  },
 };
 
 // 用于存放数据
 const state = {
   checkedSellItem: [],
   inventorySortord: "gainTime desc",
-  sellSortord:"sellingTime",
-  group:"sell",
+  sellSortord: "sellingTime",
+  group: "sell",
   userInfo: {},
 };
 
