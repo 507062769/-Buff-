@@ -71,21 +71,31 @@
           </td>
           <td></td>
         </tr>
-        <tr v-if="isShowPwd">
+        <tr>
           <td>密码设置</td>
           <td></td>
           <td>
-            <div class="btn">修改密码</div>
-          </td>
-        </tr>
-        <tr v-else>
-          <td>密码设置</td>
-          <td></td>
-          <td>
-            <div class="btn">修改密码</div>
+            <div class="btn" @click="isShowPwd = !isShowPwd">修改密码</div>
           </td>
         </tr>
       </table>
+      <el-dialog title="修改密码" :visible.sync="isShowPwd">
+        <el-form :model="pwdForm" ref="ruleForm" label-position="right" label-width="130px" :rules="rules">
+          <el-form-item label="原密码" prop="oldPwd">
+            <el-input v-model="pwdForm.oldPwd" show-password autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="请输入新密码" prop="pass">
+            <el-input v-model="pwdForm.pass" show-password autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="请再次输入新密码" prop="checkPass">
+            <el-input v-model="pwdForm.checkPass" show-password autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click=" isShowPwd = false">取 消</el-button>
+          <el-button type="primary" @click="updatePwd('ruleForm')">确 定</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -96,14 +106,65 @@ export default {
   name: "profile",
   components: {},
   data() {
-    return {
-      userInfo: {},
+    let validateOldPwd = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'));
+      } else {
+        if (this.pwdForm.oldPwd !== '') {
+          axios.get("http://localhost:8081/user/checkPwd", {
+            params: {
+              account: this.$store.state.userInfo.account,
+              pwd: this.pwdForm.oldPwd
+            }
+          }).then(res => {
+            if (res.data.status == '200') callback();
+            else callback(new Error('密码不正确'));
+          })
+        }
 
+      }
+    };
+    let validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'));
+      } else {
+        if (value === this.pwdForm.oldPwd) {
+          callback(new Error('新密码不能与老密码一致'));
+        }
+        callback()
+      }
+    };
+    let validateCheckPass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'));
+      } else if (value !== this.pwdForm.pass) {
+        callback(new Error('两次输入密码不一致!'));
+      } else {
+        callback();
+      }
+    };
+    return {
       isShowName: true,
       isShowAccount: true,
-      isShowPwd: true,
+      isShowPwd: false,
       nickName: "",
       account: "",
+      pwdForm: {
+        oldPwd: '',
+        pass: '',
+        checkPass: '',
+      },
+      rules: {
+        oldPwd: [
+          { validator: validateOldPwd, trigger: 'blur' }
+        ],
+        pass: [
+          { validator: validatePass, trigger: 'blur' }
+        ],
+        checkPass: [
+          { validator: validateCheckPass, trigger: 'blur' }
+        ],
+      }
     };
   },
   methods: {
@@ -122,7 +183,6 @@ export default {
       this.isShowAccount = !this.isShowAccount;
       this.account = this.$store.state.userInfo.account;
     },
-
     // 修改用户名
     updateName() {
       axios
@@ -169,6 +229,27 @@ export default {
           }
         });
     },
+    // 修改密码
+    updatePwd(ruleForm) {
+      this.$refs[ruleForm].validate((valid) => {
+        if (valid) {
+          axios.put("http://localhost:8081/user/updatePwd", {
+            uID: this.$store.state.userInfo.uid,
+            pwd: this.pwdForm.pass,
+          }).then(res => {
+            this.$message({
+              type: "success",
+              message: "修改成功！"
+            })
+            this.isShowPwd = false;
+          })
+        } else {
+          return false
+        }
+      })
+
+    },
+
   },
   mounted() {
     this.init();

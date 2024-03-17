@@ -131,14 +131,18 @@ export default {
                         uID: this.userInfo.uid,
                         type: 1,
                         amount: this.selectData.price,
-                        // balance: this.userInfo[this.selectedPayment] - parseFloat(this.selectData.price),
                         source: this.selectedPayment,
                     }
                 })
 
+                // 创建通知消息
+                axios.get("http://localhost:8081/tool/addMessage", {
+                    params: {
+                        type: 1,
+                        context: this.selectData.name,
+                    }
+                })
             })
-
-
 
 
             // 提交购买订单
@@ -150,8 +154,6 @@ export default {
                 sellerID: this.selectData.uid,
                 paymentMethod: this.selectedPayment,
                 statue: 1,
-            }).then(res => {
-
             })
         },
 

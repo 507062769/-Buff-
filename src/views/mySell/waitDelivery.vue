@@ -69,7 +69,6 @@ export default {
                 }).then(res => {
                     // 当成功添加价格后，重新获取等待发货的数据
                     this.$bus.$emit("getWaitSellData")
-
                     // 创建资金流水,给买家退款
                     axios.get("http://localhost:8081/fund/addFlow", {
                         params: {
@@ -79,8 +78,16 @@ export default {
                             source: row.paymentMethod,
                         }
                     })
-
                 })
+                // 创建通知消息
+                axios.get("http://localhost:8081/tool/addMessage", {
+                    params: {
+                        type: 3,
+                        context: row.name,
+                        price: row.price,
+                    }
+                })
+
             })
 
             this.$message({
@@ -105,6 +112,25 @@ export default {
                         source: row.paymentMethod,
                     }
                 })
+
+                // 创建通知消息
+                axios.get("http://localhost:8081/tool/addMessage", {
+                    params: {
+                        type: 4,
+                        context: row.name,
+                    }
+                })
+
+                console.log('看看真实价格', row.actualPrice)
+                // 创建通知消息
+                axios.get("http://localhost:8081/tool/addMessage", {
+                    params: {
+                        type: 2,
+                        context: row.name,
+                        price: row.actualPrice,
+                    }
+                })
+
                 this.$message({
                     message: "发货成功",
                     type: "success"
