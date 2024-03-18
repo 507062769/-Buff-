@@ -119,17 +119,18 @@ export default {
                         type: 4,
                         context: row.name,
                     }
+                }).then(res => {
+                    // 创建通知消息
+                    axios.get("http://localhost:8081/tool/addMessage", {
+                        params: {
+                            type: 2,
+                            context: row.name,
+                            price: row.actualPrice,
+                        }
+                    })
                 })
 
-                console.log('看看真实价格', row.actualPrice)
-                // 创建通知消息
-                axios.get("http://localhost:8081/tool/addMessage", {
-                    params: {
-                        type: 2,
-                        context: row.name,
-                        price: row.actualPrice,
-                    }
-                })
+
 
                 this.$message({
                     message: "发货成功",
