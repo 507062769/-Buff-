@@ -19,7 +19,7 @@
             </el-form-item>
             <el-form-item label="封面上传">
                 <el-upload ref="upload" :action="uploadUrl" list-type="picture-card" :on-success="handleSuccess"
-                    :on-change="hangleChange" :limit="1" :class="{ hide: hideUpload }">
+                    :on-change="hangleChange" :before-upload="beforeUpload" :limit="1" :class="{ hide: hideUpload }">
                     <i slot="default" class="el-icon-plus"></i>
                     <div slot="file" slot-scope="{file}">
                         <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
@@ -58,7 +58,7 @@ export default {
             editor: null,
             toolbarConfig: {
                 insertKeys: { index: 1, keys: ["fontSize", "fontFamily"] },
-                excludeKeys: ["insertImage", "insertVideo", "insertTable", "through", "todo", "codeBlock", 'insertLink', 'header1', 'header2', 'header3', 'bulletedList', 'numberedList', "blockquote"],//需要屏蔽的菜单
+                excludeKeys: ["insertVideo", "insertTable", "through", "todo", "codeBlock", 'insertLink', 'header1', 'header2', 'header3', 'bulletedList', 'numberedList', "blockquote"],//需要屏蔽的菜单
             },
             editorConfig: {
                 MENU_CONF: {
@@ -101,7 +101,15 @@ export default {
             // 上传成功后的逻辑
             // console.log('File uploaded successfully:', response);
             this.form.coverURL = response.data
-
+        },
+        beforeUpload(file) {
+            console.log('file.size ', file.size)
+            const isLt500K = file.size / 1024 / 1024 < 10;
+            console.log('isLt500K', isLt500K)
+            if (!isLt500K) {
+                this.$message.error('上传的文件大小不能超过 10KB!');
+            }
+            return isLt500K;
         },
         hangleChange() {
             this.hideUpload = true;

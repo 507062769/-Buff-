@@ -35,6 +35,11 @@ const routes = [
     component: () => import("../views/gameInfo/contribute.vue"),
   },
   {
+    name: "GameInfoDetails",
+    path: "/gameInfo/:gID",
+    component: () => import("../views/gameInfo/GameInfoDetails.vue"),
+  },
+  {
     name: "UserCenter",
     path: "/user-center",
     component: () => import("../views/user-center/user-center.vue"),

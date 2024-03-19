@@ -6,10 +6,10 @@
     <div class="list">
       <div class="item" v-for="g in gameInfoList" :key="g.id">
         <div class="left">
-          <img :src="g.coverURL" alt="">
+          <img :src="g.coverURL" alt="" @click="goDetails(g.id)">
         </div>
         <div class="right">
-          <p class="title">{{ g.title }}</p>
+          <p class="title" @click="goDetails(g.id)">{{ g.title }}</p>
           <p class="source">{{ g.source }}</p>
           <p class="info">
             <span>作者：{{ g.author }}</span>
@@ -45,7 +45,15 @@ export default {
       this.$router.push({
         name: "Contribute",
       });
-    }
+    },
+    goDetails(id) {
+      this.$router.push({
+        name: "GameInfoDetails",
+        params: {
+          gID: id
+        }
+      });
+    },
   },
 };
 </script>
@@ -81,7 +89,7 @@ export default {
 
   .list {
     width: 100%;
-    height: 500px;
+    height: fit-content;
     background-color: #fff;
     padding: 20px;
 
@@ -90,6 +98,7 @@ export default {
       width: 100%;
       background-color: #f0f0f0;
       display: flex;
+      margin-bottom: 20px;
 
       .left {
         width: 20%;
