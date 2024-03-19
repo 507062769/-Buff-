@@ -156,6 +156,11 @@ const routes = [
       },
     ],
   },
+  {
+    name: "Amusement",
+    path: "/amusement",
+    component: () => import("../views/amusement/amusement.vue"),
+  },
 
   {
     name: "Defualt",

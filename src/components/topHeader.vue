@@ -11,6 +11,7 @@
             <el-menu-item index="/home">首页</el-menu-item>
             <el-menu-item index="/marketplace">饰品市场</el-menu-item>
             <el-menu-item index="/gameInfo">游戏资讯</el-menu-item>
+            <el-menu-item index="/amusement">游乐园</el-menu-item>
             <div class="right-menu-items">
               <el-menu-item index="/myBackpack/inventory" v-show="isExistUser">我的库存</el-menu-item>
               <el-menu-item index="/mySell/sellManage/onSell" v-show="isExistUser">我的出售</el-menu-item>
