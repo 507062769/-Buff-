@@ -32,9 +32,11 @@ export default {
 }
 
 .allBg {
-  background-image: url("../public/img/bg/header-bg_csgo.jpg");
   height: fit-content;
+  background-image: url("../public/img/bg/header-bg_csgo.jpg");
   background-position: -204px -70px;
+  background-repeat: no-repeat;
+  background-color: #182033;
 }
 
 .padding20 {

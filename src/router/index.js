@@ -161,6 +161,11 @@ const routes = [
     path: "/amusement",
     component: () => import("../views/amusement/amusement.vue"),
   },
+  {
+    name: "BoxDetatil",
+    path: "/amusement/:bID",
+    component: () => import("../views/amusement/detail.vue"),
+  },
 
   {
     name: "Defualt",

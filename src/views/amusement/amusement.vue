@@ -4,60 +4,15 @@
             <div class="pc-home-list">
                 <div class="title">新手乐园</div>
                 <div class="pc-tab-list">
-                    <div class="pc-tab-item">
+                    <div class="pc-tab-item" v-for="box in boxKind" :key="box.bid" @click="goBoxDetail(box.bid)">
                         <div class="pc-hot">
                             <img src="~@img/bg/hot.png" alt="">
                         </div>
-                        <div class="pc-item-pic"
-                            style="background: url('/img/box/bgURL.png') center/contain no-repeat;">
+                        <div class="pc-item-pic">
                             <img src="/img/box/showURL.png" alt="">
                         </div>
-                        <div class="pc-item-price">{{ boxKind.price }}</div>
-                        <div class="pc-item-name">{{ boxKind.name }}</div>
-                    </div>
-                    <div class="pc-tab-item">
-                        <div class="pc-hot">
-                            <img src="~@img/bg/hot.png" alt="">
-                        </div>
-                        <div class="pc-item-pic"
-                            style="background: url('/img/box/bgURL.png') center/contain no-repeat;">
-                            <img src="/img/box/showURL.png" alt="">
-                        </div>
-                        <div class="pc-item-price">{{ boxKind.price }}</div>
-                        <div class="pc-item-name">{{ boxKind.name }}</div>
-                    </div>
-                    <div class="pc-tab-item">
-                        <div class="pc-hot">
-                            <img src="~@img/bg/hot.png" alt="">
-                        </div>
-                        <div class="pc-item-pic"
-                            style="background: url('/img/box/bgURL.png') center/contain no-repeat;">
-                            <img src="/img/box/showURL.png" alt="">
-                        </div>
-                        <div class="pc-item-price">{{ boxKind.price }}</div>
-                        <div class="pc-item-name">{{ boxKind.name }}</div>
-                    </div>
-                    <div class="pc-tab-item">
-                        <div class="pc-hot">
-                            <img src="~@img/bg/hot.png" alt="">
-                        </div>
-                        <div class="pc-item-pic"
-                            style="background: url('/img/box/bgURL.png') center/contain no-repeat;">
-                            <img src="/img/box/showURL.png" alt="">
-                        </div>
-                        <div class="pc-item-price">{{ boxKind.price }}</div>
-                        <div class="pc-item-name">{{ boxKind.name }}</div>
-                    </div>
-                    <div class="pc-tab-item">
-                        <div class="pc-hot">
-                            <img src="~@img/bg/hot.png" alt="">
-                        </div>
-                        <div class="pc-item-pic"
-                            style="background: url('/img/box/bgURL.png') center/contain no-repeat;">
-                            <img src="/img/box/showURL.png" alt="">
-                        </div>
-                        <div class="pc-item-price">{{ boxKind.price }}</div>
-                        <div class="pc-item-name">{{ boxKind.name }}</div>
+                        <div class="pc-item-price">￥{{ box.price }}</div>
+                        <div class="pc-item-name">{{ box.name }}</div>
                     </div>
                 </div>
             </div>
@@ -76,11 +31,23 @@ export default {
         }
     },
     methods: {
+        // 初始化
         init() {
+            // 获取盲盒种类
             axios.get("http://localhost:8081/box/getBoxKind").then(res => {
                 this.boxKind = res.data.data
             })
-        }
+        },
+        // 跳转购买页面
+        goBoxDetail(id) {
+            console.log('当前想要的是：', id)
+            this.$router.push({
+                name: "BoxDetatil",
+                params: {
+                    bID: id
+                }
+            });
+        },
     },
     mounted() {
         this.init()
@@ -91,8 +58,7 @@ export default {
 <style scoped lang="less">
 #amusement {
     width: 80%;
-    height: 500px;
-    background-color: #fff;
+    height: fit-content;
     margin: 0 auto;
 
     .pc-home-wrap {
@@ -101,8 +67,8 @@ export default {
 
         .pc-home-list {
             width: 100%;
-            height: 300px;
-            background-color: red;
+            height: fit-content;
+            margin: 20px 0;
 
             .title {
                 width: 240px;
@@ -118,23 +84,34 @@ export default {
 
             .pc-tab-list {
                 width: 100%;
-                height: 265px;
+                height: fit-content;
                 display: flex;
                 justify-content: space-between;
-                background-color: aqua;
+                margin-top: 40px;
+                cursor: pointer;
 
                 .pc-tab-item {
                     flex: 1;
+                    position: relative;
 
                     .pc-hot {
                         height: 40px;
                         width: 40px;
+                        position: absolute;
+                        top: -20px;
+                        left: 160px;
+
+                        img {
+                            max-height: 40px;
+                            max-width: 40px;
+                        }
                     }
 
                     .pc-item-pic {
-                        width: 170px;
-                        height: 190px;
+                        width: 190px;
+                        height: 170px;
                         margin: 0 auto;
+                        background: url('~@img/box/bgURL.png') center/contain no-repeat !important;
 
                         img {
                             max-width: 100%;
@@ -142,8 +119,23 @@ export default {
                             background-position: center;
                             background-size: contain;
                             background-repeat: no-repeat;
-                            margin-top: 20px;
+                            margin-top: 10px;
                         }
+                    }
+
+                    .pc-item-price {
+                        text-align: center;
+                        font-size: 1.5rem;
+                        font-weight: 700;
+                        color: #eea20e;
+                    }
+
+                    .pc-item-name {
+                        text-align: center;
+                        font-size: 1rem;
+                        font-weight: 700;
+                        color: #fff;
+                        margin: 10px 0;
                     }
                 }
             }
