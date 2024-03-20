@@ -108,7 +108,12 @@ export default {
                     ID: this.$route.params.bID
                 }
             }).then(res => {
-                this.boxKindList = res.data.data
+                this.boxKindList = res.data.data.map(e => {
+                    return {
+                        ...e,
+                        price: e.price === 0 ? '暂无定价' : e.price
+                    };
+                });
             })
         },
         // 是否展示全名
