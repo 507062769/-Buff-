@@ -124,7 +124,6 @@ export default {
                     type: "success",
                 })
                 this.hidden(this.selectData.sid, this.selectData.uid)
-
                 // 创建资金流水
                 axios.get("http://localhost:8081/fund/addFlow", {
                     params: {
@@ -134,7 +133,6 @@ export default {
                         source: this.selectedPayment,
                     }
                 })
-
                 // 创建通知消息
                 axios.get("http://localhost:8081/tool/addMessage", {
                     params: {
@@ -143,8 +141,6 @@ export default {
                     }
                 })
             })
-
-
             // 提交购买订单
             axios.post("http://localhost:8081/order/addBuyOrder", {
                 gID: this.selectData.gid,

@@ -9,23 +9,70 @@
                     </div>
                 </div>
                 <div class="openbox-buyCount">
-                    <ul>
-                        <li>1</li>
-                        <li>2</li>
-                        <li>3</li>
-                        <li>4</li>
-                        <li>5</li>
+                    <ul @click="toggleBuyCount">
+                        <li v-for="buyCount in [1, 2, 3, 4, 5]" :key="buyCount" :data-count="buyCount"
+                            :class="{ onCount: isActive(buyCount) }">{{ buyCount }}</li>
                     </ul>
                 </div>
-                <div class="openbox-price">￥ {{ boxInfo.price }}</div>
-                <div class="openbox-btn-box">开启</div>
+                <div class="openbox-price">￥ {{ price }}</div>
+                <p class="openbox-havaCount">
+                    可开启:<b> {{ count }}</b> 个，
+                    <span v-if="count != 0">快去开启吧！</span>
+                    <span v-else>快去购买吧！</span>
+                </p>
+                <div class="openbox-box">
+                    <div class="openbox-btn-box" @click="isBuy = true">购买</div>
+                    <div class="openbox-btn-box" @click="startCj">开启</div>
+                </div>
+
+                <div class="popup" v-show="isBuy">
+                    <div class="pupop_header">
+                        <h3>
+                            确认支付
+                        </h3>
+                        <span class="popup-close" @click="isBuy = false; isShowBody = false">x</span>
+                    </div>
+                    <div class="pupop_cont">
+                        <h3>应付 <span>￥{{ price }}</span></h3>
+                        <p class="cont-tip">选择支付方式</p>
+                        <ul>
+                            <li v-for="item in paymentMethod" :key="item.id">
+                                <div class="pay_mode">
+                                    <img :src="item.img">
+                                    <div class="pay_mode_text">
+                                        <h5> {{ item.name }} <span style="color:#4d80e1">￥{{ getItemAmount(item.id) }}
+                                            </span>
+                                        </h5>
+                                        <p style="color:#EEA20E" v-if="getItemAmount(item.id) < price">
+                                            余额不足，请充值
+                                        </p>
+                                    </div>
+                                    <el-radio v-model="selectedPayment" :label="item.id">&nbsp;</el-radio>
+                                </div>
+                            </li>
+                        </ul>
+                        <el-button type="primary" @click="buy">确认付款</el-button>
+                        <!-- <el-button type="primary">前往充值</el-button> -->
+                    </div>
+                </div>
+                <div class="mask" v-show="isBuy" @click="isBuy = false"></div>
             </div>
+
+            <div class="openBox-cj">
+                <div class="openBox-main">
+                    <div class="main-item" v-for="i in 21" :key="i">
+                        {{ i }}
+                    </div>
+                </div>
+            </div>
+
+
             <!-- 展示该盲盒中的所有物品 -->
             <div class="openbox-desc">
                 <div class="column">
                     <div class="include">盒子包含</div>
-                    <div class="tip">
-                        温馨提示:饰品发货时出现任何问题,一定联系客服解决,切勿上头!
+                    <div class="tip" ref="tip">
+                        <span :style="{ transform: `translateX(${scrollPosition}px)` }">{{ text }}</span>
                     </div>
                 </div>
                 <div class="chance">
@@ -64,7 +111,6 @@
                     <div class="weapon-item" v-for="b in boxKindList" :key="b.bkID">
                         <div class="weapon-item-price">￥{{ b.price }}</div>
                         <div class="weapon-item-pic">
-                            <!-- <img src="~@img/pf/akblkzz.png" alt=""> -->
                             <img :src="b.img" alt="">
                         </div>
                         <div class="weapon-item-name" @click="toggleIsNameActive">
@@ -85,11 +131,29 @@ export default {
     components: {},
     data() {
         return {
-            isNameActive: false,
+            isNameActive: false,  //是否展示全名
             boxInfo: {
                 bgURL: ""
-            },
-            boxKindList: [],
+            },   //盲盒信息
+            boxKindList: [],   //盲盒所含道具
+            buyCount: 1,   //默认盲盒购买个数
+            count: 0,   //可开启的盲盒个数
+            isBuy: false,  //是否展示购买页面
+            paymentMethod: [
+                { id: 'amount_zfb', name: 'BUFF余额-支付宝', img: "/img/zfb.png" },
+                { id: 'amount_yhk', name: 'BUFF余额-银行卡', img: "/img/yhk.png" }
+            ],   //可选的支付方式
+            selectedPayment: null,  //我的支付方式
+
+            // 温馨提示所需属性
+            text: '温馨提示:饰品发货时出现任何问题,一定联系客服解决,切勿上头!',
+            scrollPosition: 1016, // 初始位置设置在容器右侧外  
+            containerWidth: 0,  //容器宽度
+            textWidth: 0,  //文本宽度
+            intervalId: null,  //定时器ID
+
+            cjIntervalID: null,
+            cjScrollPosition: 0,
         };
     },
     methods: {
@@ -115,15 +179,134 @@ export default {
                     };
                 });
             })
+            // 获取用户所拥有的盲盒个数
+            axios.get("http://localhost:8081/box/getBoxCount", {
+                params: {
+                    uID: this.$store.state.userInfo.uid,
+                    bID: this.$route.params.bID,
+                }
+            }).then(res => {
+                this.count = res.data.data
+            })
+
+            // 设置温馨提示滚动开始的地方与开始滚动
+            this.containerWidth = this.$refs.tip.offsetWidth;
+            this.textWidth = this.$refs.tip.querySelector('span').scrollWidth;
+            this.startScrolling();
+
         },
         // 是否展示全名
         toggleIsNameActive() {
             this.isNameActive = !this.isNameActive
+        },
+        // 切换购买个数
+        toggleBuyCount({ target }) {
+            if (target.tagName === "LI") {
+                this.buyCount = parseInt(target.dataset.count)
+            }
+        },
+        // 为购买个数添加class
+        isActive(count) {
+            return count <= this.buyCount
+        },
+        //  获取账户支付宝、银行卡金额
+        getItemAmount(id) {
+            switch (id) {
+                case 'amount_zfb':
+                    return this.$store.state.userInfo.amount_zfb || 0;
+                case 'amount_yhk':
+                    return this.$store.state.userInfo.amount_yhk || 0;
+                default:
+                    return 0
+            }
+        },
+        // 点击付款的逻辑
+        buy() {
+            // 修改用户余额
+            axios.put("http://localhost:8081/user/subPrice", {
+                uID: this.$store.state.userInfo.uid,
+                payment: this.selectedPayment,
+                price: this.$store.state.userInfo[this.selectedPayment] - parseFloat(this.price),
+            }).then(res => {
+                this.isBuy = false;
+                this.$store.commit("updataUserPrice", { payment: this.selectedPayment, price: this.$store.state.userInfo[this.selectedPayment] - parseFloat(this.price) })
+                this.$message({
+                    message: "购买成功！",
+                    type: "success",
+                })
+
+                // 创建资金流水
+                axios.get("http://localhost:8081/fund/addFlow", {
+                    params: {
+                        uID: this.$store.state.userInfo.uid,
+                        type: 1,
+                        amount: this.price,
+                        source: this.selectedPayment,
+                    }
+                })
+
+                // 创建通知消息
+                axios.get("http://localhost:8081/tool/addMessage", {
+                    params: {
+                        type: 5,
+                        context: this.boxInfo.name,
+                    }
+                })
+
+                axios.get("http://localhost:8081/box/updateBoxCount", {
+                    params: {
+                        uID: this.$store.state.userInfo.uid,
+                        bID: this.boxInfo.bid,
+                        count: this.count + this.buyCount
+                    }
+                }).then(res => {
+                    this.count = this.count + this.buyCount
+                })
+
+
+            })
+        },
+
+        // 开始滚动温馨提示
+        startScrolling() {
+            this.intervalId = setInterval(() => {
+                this.scrollPosition -= 2; // 控制滚动速度
+                // 当前滚动位置小于文本位置时，重置滚动
+                if (this.scrollPosition < -this.textWidth) {
+                    this.resetScrolling();
+                }
+            }, 20); // 控制滚动频率
+        },
+        // 重置滚动
+        resetScrolling() {
+            // 重置滚动位置  
+            this.scrollPosition = this.containerWidth;
+        },
+        // 停止滚动
+        stopScrolling() {
+            clearInterval(this.intervalId);
+        },
+
+        startCj() {
+            this.cjIntervalID = setInterval(() => {
+                this.cjScrollPosition -= 10;
+            })
         }
+
+
+    },
+    computed: {
+        price() {
+            return this.buyCount * this.boxInfo.price
+        },
+
     },
     mounted() {
-        this.init()
-    }
+        this.init();
+    },
+    beforeDestroy() {
+        this.stopScrolling();
+    },
 };
 </script>
 
@@ -199,6 +382,7 @@ export default {
                         font-weight: 700;
                         line-height: 50px;
                         margin: 0 10px;
+                        cursor: pointer;
                     }
 
                     .onCount {
@@ -206,6 +390,23 @@ export default {
                         color: #37363b;
                     }
                 }
+            }
+
+            .openbox-havaCount {
+                font-size: 14px;
+                text-align: center;
+                color: #fff;
+                margin: 10px 0 5px;
+                letter-spacing: 4px;
+
+                b {
+                    color: #fbfa02;
+                    font-weight: 700;
+                    font-size: 16px;
+                    letter-spacing: 0;
+                }
+
+
             }
 
             .openbox-price {
@@ -217,15 +418,186 @@ export default {
                 margin: 20px 0;
             }
 
-            .openbox-btn-box {
-                height: 60px;
-                width: 250px;
-                background-color: #fbfa02;
-                font-size: 24px;
-                font-weight: 700;
-                line-height: 60px;
-                text-align: center;
+            .openbox-box {
+                box-sizing: border-box;
+                width: fit-content;
                 margin: 0 auto;
+
+
+                .openbox-btn-box {
+                    display: inline-block;
+                    height: 60px;
+                    width: 250px;
+                    background-color: #fbfa02;
+                    font-size: 24px;
+                    font-weight: 700;
+                    line-height: 60px;
+                    text-align: center;
+                    margin: 0 20px;
+                    cursor: pointer;
+                }
+            }
+
+
+
+            .popup {
+                width: 540px;
+                height: fit-content;
+                position: fixed;
+                z-index: 15;
+                left: 50%;
+                top: 50%;
+                box-sizing: border-box;
+                transform: translate(-50%, -50%);
+                background-color: #fff;
+
+                .pupop_header {
+                    height: 50px;
+                    width: 100%;
+                    background-color: white;
+                    position: relative;
+
+                    h3 {
+                        height: 50px;
+                        text-align: center;
+                        font-size: 18px;
+                        color: #515151;
+                        line-height: 50px;
+
+                        span {
+                            font-size: 12px;
+                            letter-spacing: 2px;
+                            color: #959595;
+                        }
+                    }
+
+                    .popup-close {
+                        display: inline-block;
+                        height: 20px;
+                        width: 20px;
+                        text-align: center;
+                        line-height: 15px;
+                        font-size: 18px;
+                        position: absolute;
+                        top: 50%;
+                        right: 10px;
+                        transform: translate(0, -50%);
+                        cursor: pointer;
+                    }
+                }
+
+
+                .pupop_cont {
+                    height: 290px;
+                    padding: 0 40px;
+
+                    h3 {
+                        height: 50px;
+                        text-align: center;
+                        line-height: 50px;
+                        font-size: 16px;
+                        color: #959595;
+
+                        span {
+                            font-size: 24px;
+                            color: #eea20e;
+                        }
+                    }
+
+                    .cont-tip {
+                        font-size: 14px;
+                        color: #959595
+                    }
+
+                    .pay_mode {
+                        height: 70px;
+                        display: flex;
+                        border-bottom: 1px solid #e5e5e5;
+
+                        img {
+                            height: 40px;
+                            width: 40px;
+                            background-repeat: no-repeat;
+                            background-size: 100% 100%;
+                            transform: translate(0, 15px);
+                        }
+
+                        .pay_mode_text {
+                            width: 100%;
+                            padding-left: 20px;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+
+                            h5 {
+                                font-weight: 500;
+                                font-size: 16px;
+                            }
+
+                            p {
+                                font-size: 12px;
+                            }
+                        }
+
+                        /deep/ .el-radio {
+                            transform: translate(0, 27px);
+                        }
+
+                    }
+
+                    .pay_mode:hover {
+                        background-color: #f5f5f5;
+                    }
+
+                    /deep/.el-button {
+                        height: 40px;
+                        width: 100px;
+                        font-size: 16px;
+                        position: fixed;
+                        left: 50%;
+                        top: 50%;
+                        transform: translate(-50%, 110px);
+                    }
+
+                }
+            }
+
+            .mask {
+                position: fixed;
+                z-index: 10;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                top: 0;
+                background: rgba(0, 0, 0, 0.6);
+            }
+        }
+
+        .openBox-cj {
+            width: 100%;
+            height: 200px;
+            margin-top: 40px;
+
+            .openBox-main {
+                height: 100%;
+                width: 100%;
+                overflow: hidden;
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+
+
+
+                .main-item {
+                    width: 210px;
+                    height: 100px;
+                    flex-shrink: 0;
+                    flex-basis: 210px;
+                    background: url("~@img/bg/boxCj1.png") center / contain no-repeat;
+                    text-align: center;
+                    color: #fff;
+                    line-height: 100px;
+                }
             }
         }
 
@@ -237,7 +609,8 @@ export default {
                 height: 50px;
                 width: 100%;
                 display: flex;
-                margin-top: 50px;
+                margin-top: 30px;
+                border-bottom: 2px solid #fbfa02;
 
                 .include {
                     background-color: #fbfa02;
@@ -250,13 +623,21 @@ export default {
                 }
 
                 .tip {
-                    width: 85%;
+                    box-sizing: border-box;
+                    width: 1030px;
                     height: 50px;
-                    border-bottom: 2px solid #fbfa02;
+
                     color: #fff;
                     font-size: 20px;
                     line-height: 50px;
-                    padding: 0 10px;
+                    margin: 0 10px;
+                    overflow: hidden;
+
+                    span {
+                        display: inline-block;
+                        white-space: nowrap;
+                        transition: transform linear;
+                    }
                 }
             }
 
