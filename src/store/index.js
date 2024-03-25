@@ -18,24 +18,19 @@ const actions = {
   // 点击单个item
   toggleSellCheckedItem(cont, id) {
     // 获取正在出售中的商品
-    // axios
-    //   .get("http://localhost:8081/sell/getSell", {
-    //     params: {
-    //       uID: cont.state.userInfo.uid,
-    //     },
-    //   })
-    //   .then((res) => {
-    //     let IDList = res.data.data;
-    //     let sellIDList = [];
-    //     IDList.forEach((ele) => {
-    //       sellIDList.push(ele.gid);
-    //     });
-    //     // 当点击的id未被出售时，才能触发点击
-    //     if (!sellIDList.includes(id)) {
-    //       cont.commit("toggleSellCheckedItem", id);
-    //     }
-    //   });
-    cont.commit("toggleSellCheckedItem", id);
+    axios
+      .get("http://localhost:8081/sell/getSellID", {
+        params: {
+          uID: cont.state.userInfo.uid,
+        },
+      })
+      .then((res) => {
+        let IDList = res.data.data;
+        // 当点击的id未被出售时，才能触发点击
+        if (!IDList.includes(id)) {
+          cont.commit("toggleSellCheckedItem", id);
+        }
+      });
   },
 };
 
@@ -43,11 +38,24 @@ const actions = {
 const mutations = {
   // 全选
   addAllSellToCheckedItem(state, items) {
-    items.forEach((item) => {
-      if (!state.checkedSellItem.includes(item.iid)) {
-        state.checkedSellItem.push(item.iid);
-      }
-    });
+    axios
+      .get("http://localhost:8081/sell/getSellID", {
+        params: {
+          uID: state.userInfo.uid,
+        },
+      })
+      .then((res) => {
+        let IDList = res.data.data;
+
+        items.forEach((item) => {
+          if (
+            !state.checkedSellItem.includes(item.iid) &&
+            !IDList.includes(item.iid)
+          ) {
+            state.checkedSellItem.push(item.iid);
+          }
+        });
+      });
   },
   // 全不选
   resetSellCheckedItem(state) {

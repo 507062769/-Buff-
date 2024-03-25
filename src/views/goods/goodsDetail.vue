@@ -254,14 +254,6 @@ export default {
                     return item.price < this.maxPrice && item.price > this.minPrice
                 })
             } else {
-                // axios.get("http://localhost:8081/sell/toggleGoodsWear", {
-                //     params: {
-                //         goodsName: this.$route.params.item.name.replace(/\(.*?\)/, ''),
-                //         wearIndex: this.wearIndex
-                //     }
-                // }).then(res => {
-                //     this.goodsInfo = res.data.data;
-                // })
                 this.filterData = this.goodsInfo
             }
 

@@ -139,6 +139,8 @@ export default {
                 price: "desc", // 初始设置为降序
                 wear: "desc", // 初始设置为降序
             },
+            // 将上架的商品标记
+            isSell: [],
         };
     },
     methods: {
@@ -163,6 +165,7 @@ export default {
             }
             this.getInventory();
         },
+        // 判断排序方式。若存在就升降序
         startsWith(str, prefix) {
             return str.startsWith(prefix);
         },
@@ -185,15 +188,16 @@ export default {
             this.isGoSell = true;
             this.isShowBody = !this.isShowBody;
             this.showBody();
-            console.log('uid,itemIdLi::', this.$store.state.userInfo.uid, this.$store.state.checkedSellItem)
             axios
                 .post("http://localhost:8081/inventory/getInventoryByItemList", {
                     uID: this.$store.state.userInfo.uid,
                     itemIDList: this.$store.state.checkedSellItem,
                 })
                 .then((res) => {
+                    this.isSell = []
                     res.data.data.forEach((e) => {
                         (e.sellPrice = null), (e.actualPrice = null);
+                        this.isSell.push(e.iid)
                     });
                     this.sellData = res.data.data;
                 });
@@ -214,6 +218,11 @@ export default {
                         });
                         this.isGoSell = false;
                         this.$store.commit("resetSellCheckedItem");
+                        console.log('isSell', this.isSell)
+                        axios.post("http://localhost:8081/inventory/updateIsSell", {
+                            IIDList: this.isSell,
+                            value: 1,
+                        })
                     }
                 });
         },
