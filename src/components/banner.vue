@@ -13,12 +13,8 @@
         </li>
       </ul>
       <div class="slider-nav">
-        <span
-          v-for="(item, index) in bannerInfo"
-          :key="index"
-          @click="clickNav(index)"
-          :class="{ bnActive: pageIndex == index }"
-        ></span>
+        <span v-for="(item, index) in bannerInfo" :key="index" @click="clickNav(index)"
+          :class="{ bnActive: pageIndex == index }"></span>
       </div>
     </div>
   </div>
@@ -72,12 +68,9 @@ export default {
       bnTimer: null,
     };
   },
-  create() {},
   mounted() {
     this.runInv();
   },
-  watch: {},
-  computed: {},
   methods: {
     clickNav(index) {
       this.pageIndex = index;
@@ -98,6 +91,7 @@ export default {
   background-image: url("../../public/img/bg/bj.jpg");
   background-position: 0 -70px;
 }
+
 #banner {
   height: 440px;
   width: 100%;

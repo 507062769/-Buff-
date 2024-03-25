@@ -11,7 +11,9 @@
                 <div class="openbox-buyCount">
                     <ul @click="toggleBuyCount">
                         <li v-for="buyCount in [1, 2, 3, 4, 5]" :key="buyCount" :data-count="buyCount"
-                            :class="{ onCount: isActive(buyCount) }">{{ buyCount }}</li>
+                            :class="{ onCount: isActive(buyCount) }">
+                            {{ buyCount }}
+                        </li>
                     </ul>
                 </div>
                 <div class="openbox-price">￥ {{ price }}</div>
@@ -22,28 +24,33 @@
                 </p>
                 <div class="openbox-box">
                     <div class="openbox-btn-box" @click="isBuy = true">购买</div>
-                    <div class="openbox-btn-box" @click="startCj">开启</div>
+                    <div class="openbox-btn-box" @click="startCj" :class="{ isOpen: isOpen }">开启</div>
                 </div>
 
                 <div class="popup" v-show="isBuy">
                     <div class="pupop_header">
-                        <h3>
-                            确认支付
-                        </h3>
-                        <span class="popup-close" @click="isBuy = false; isShowBody = false">x</span>
+                        <h3>确认支付</h3>
+                        <span class="popup-close" @click="
+                    isBuy = false;
+                isShowBody = false;
+                ">x</span>
                     </div>
                     <div class="pupop_cont">
-                        <h3>应付 <span>￥{{ price }}</span></h3>
+                        <h3>
+                            应付 <span>￥{{ price }}</span>
+                        </h3>
                         <p class="cont-tip">选择支付方式</p>
                         <ul>
                             <li v-for="item in paymentMethod" :key="item.id">
                                 <div class="pay_mode">
-                                    <img :src="item.img">
+                                    <img :src="item.img" />
                                     <div class="pay_mode_text">
-                                        <h5> {{ item.name }} <span style="color:#4d80e1">￥{{ getItemAmount(item.id) }}
+                                        <h5>
+                                            {{ item.name }}
+                                            <span style="color: #4d80e1">￥{{ getItemAmount(item.id) }}
                                             </span>
                                         </h5>
-                                        <p style="color:#EEA20E" v-if="getItemAmount(item.id) < price">
+                                        <p style="color: #eea20e" v-if="getItemAmount(item.id) < price">
                                             余额不足，请充值
                                         </p>
                                     </div>
@@ -52,70 +59,62 @@
                             </li>
                         </ul>
                         <el-button type="primary" @click="buy">确认付款</el-button>
-                        <!-- <el-button type="primary">前往充值</el-button> -->
+                        <el-button type="primary">前往充值</el-button>
                     </div>
                 </div>
                 <div class="mask" v-show="isBuy" @click="isBuy = false"></div>
             </div>
-
-            <div class="openBox-cj">
-                <div class="openBox-main">
-                    <div class="main-item" v-for="i in 21" :key="i">
-                        {{ i }}
-                    </div>
-                </div>
-            </div>
-
 
             <!-- 展示该盲盒中的所有物品 -->
             <div class="openbox-desc">
                 <div class="column">
                     <div class="include">盒子包含</div>
                     <div class="tip" ref="tip">
-                        <span :style="{ transform: `translateX(${scrollPosition}px)` }">{{ text }}</span>
+                        <span :style="{ transform: `translateX(${scrollPosition}px)` }">
+                            {{ text }}
+                        </span>
                     </div>
                 </div>
                 <div class="chance">
                     <div class="chance_main">
                         <div class="chance_item">
-                            <img src="~@img/bg/chance1.png" alt="" />
-                            <p>0%</p>
-                        </div>
-                        <div class="chance_item">
                             <img src="~@img/bg/chance2.png" alt="" />
-                            <p>0%</p>
+                            <p>{{ boxInfo.q1 }} %</p>
                         </div>
                         <div class="chance_item">
                             <img src="~@img/bg/chance3.png" alt="" />
-                            <p>0%</p>
+                            <p>{{ boxInfo.q2 }} %</p>
                         </div>
                         <div class="chance_item">
                             <img src="~@img/bg/chance4.png" alt="" />
-                            <p>0%</p>
+                            <p>{{ boxInfo.q3 }} %</p>
                         </div>
                         <div class="chance_item">
                             <img src="~@img/bg/chance5.png" alt="" />
-                            <p>0%</p>
+                            <p>{{ boxInfo.q4 }} %</p>
                         </div>
                         <div class="chance_item">
                             <img src="~@img/bg/chance6.png" alt="" />
-                            <p>0%</p>
+                            <p>{{ boxInfo.q5 }} %</p>
                         </div>
                         <div class="chance_item">
                             <img src="~@img/bg/chance7.png" alt="" />
-                            <p>0%</p>
+                            <p>{{ boxInfo.q6 }} %</p>
                         </div>
                     </div>
                 </div>
                 <div class="weaponListCpt">
-                    <div class="weapon-item" v-for="b in boxKindList" :key="b.bkID">
+                    <div class="weapon-item" v-for="(b, index) in boxKindList" :key="index">
                         <div class="weapon-item-price">￥{{ b.price }}</div>
                         <div class="weapon-item-pic">
-                            <img :src="b.img" alt="">
+                            <img :src="b.img" alt="" />
                         </div>
-                        <div class="weapon-item-name" @click="toggleIsNameActive">
-                            {{ b.name }}</div>
-                        <div class="weapon-all-name" :class="{ 'nameActive': isNameActive }">{{ b.name }}</div>
+                        <div class="weapon-item-name" @click="toggleIsNameActive(index)">
+                            {{ shortenedName(b.name) }}
+                        </div>
+                        <div class="weapon-all-name" :class="{ nameActive: isNameActive[index] }">
+                            {{ b.name }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -131,29 +130,31 @@ export default {
     components: {},
     data() {
         return {
-            isNameActive: false,  //是否展示全名
+            isNameActive: {}, //是否展示全名
             boxInfo: {
-                bgURL: ""
-            },   //盲盒信息
-            boxKindList: [],   //盲盒所含道具
-            buyCount: 1,   //默认盲盒购买个数
-            count: 0,   //可开启的盲盒个数
-            isBuy: false,  //是否展示购买页面
+                bgURL: "",
+            }, //盲盒信息
+            boxKindList: [
+                {
+                    img: "",
+                },
+            ], //盲盒所含道具
+            buyCount: 1, //默认盲盒购买个数
+            count: 0, //可开启的盲盒个数
+            isBuy: false, //是否展示购买页面
             paymentMethod: [
-                { id: 'amount_zfb', name: 'BUFF余额-支付宝', img: "/img/zfb.png" },
-                { id: 'amount_yhk', name: 'BUFF余额-银行卡', img: "/img/yhk.png" }
-            ],   //可选的支付方式
-            selectedPayment: null,  //我的支付方式
+                { id: "amount_zfb", name: "BUFF余额-支付宝", img: "/img/zfb.png" },
+                { id: "amount_yhk", name: "BUFF余额-银行卡", img: "/img/yhk.png" },
+            ], //可选的支付方式
+            selectedPayment: null, //我的支付方式
 
             // 温馨提示所需属性
-            text: '温馨提示:饰品发货时出现任何问题,一定联系客服解决,切勿上头!',
-            scrollPosition: 1016, // 初始位置设置在容器右侧外  
-            containerWidth: 0,  //容器宽度
-            textWidth: 0,  //文本宽度
-            intervalId: null,  //定时器ID
+            text: "温馨提示:饰品发货时出现任何问题,一定联系客服解决,切勿上头!",
+            scrollPosition: 1016, // 初始位置设置在容器右侧外
+            containerWidth: 0, //容器宽度
+            textWidth: 0, //文本宽度
+            intervalId: null, //定时器ID
 
-            cjIntervalID: null,
-            cjScrollPosition: 0,
         };
     },
     methods: {
@@ -161,143 +162,201 @@ export default {
             // 获取是哪种盲盒
             axios.get("http://localhost:8081/box/getBoxByID", {
                 params: {
-                    ID: this.$route.params.bID
-                }
-            }).then(res => {
-                this.boxInfo = res.data.data;
+                    ID: this.$route.params.bID,
+                },
             })
-            // 获取盲盒内的饰品
-            axios.get("http://localhost:8081/box/getBoxItem", {
-                params: {
-                    ID: this.$route.params.bID
-                }
-            }).then(res => {
-                this.boxKindList = res.data.data.map(e => {
-                    return {
-                        ...e,
-                        price: e.price === 0 ? '暂无定价' : e.price
-                    };
+                .then((res) => {
+                    this.boxInfo = res.data.data;
                 });
-            })
+            // 获取盲盒内的饰品
+            axios
+                .get("http://localhost:8081/box/getBoxItem", {
+                    params: {
+                        ID: this.$route.params.bID,
+                    },
+                })
+                .then((res) => {
+                    this.boxKindList = res.data.data.map((e) => {
+                        return {
+                            ...e,
+                            price: e.price === 0 ? "暂无定价" : e.price,
+                        };
+                    });
+                    this.prizeList = this.boxKindList;
+                });
             // 获取用户所拥有的盲盒个数
-            axios.get("http://localhost:8081/box/getBoxCount", {
-                params: {
-                    uID: this.$store.state.userInfo.uid,
-                    bID: this.$route.params.bID,
-                }
-            }).then(res => {
-                this.count = res.data.data
-            })
+            axios
+                .get("http://localhost:8081/box/getBoxCount", {
+                    params: {
+                        uID: this.$store.state.userInfo.uid,
+                        bID: this.$route.params.bID,
+                    },
+                })
+                .then((res) => {
+                    this.count = res.data.data;
+                });
 
             // 设置温馨提示滚动开始的地方与开始滚动
             this.containerWidth = this.$refs.tip.offsetWidth;
             this.textWidth = this.$refs.tip.querySelector('span').scrollWidth;
             this.startScrolling();
-
         },
         // 是否展示全名
-        toggleIsNameActive() {
-            this.isNameActive = !this.isNameActive
+        toggleIsNameActive(index) {
+            // 若当前名称已点击
+            if (this.isNameActive[index]) {
+                // 将他隐藏
+                this.$set(this.isNameActive, index, false);
+            } else {
+                // 否则，关闭所有其他条目的详细信息并展开当前条目  
+                Object.keys(this.isNameActive).forEach(key => {
+                    this.$set(this.isNameActive, key, false);
+                });
+                this.$set(this.isNameActive, index, true);
+            }
         },
         // 切换购买个数
         toggleBuyCount({ target }) {
             if (target.tagName === "LI") {
-                this.buyCount = parseInt(target.dataset.count)
+                this.buyCount = parseInt(target.dataset.count, 10);
             }
         },
         // 为购买个数添加class
         isActive(count) {
-            return count <= this.buyCount
+            return count <= this.buyCount;
         },
         //  获取账户支付宝、银行卡金额
         getItemAmount(id) {
             switch (id) {
-                case 'amount_zfb':
+                case "amount_zfb":
                     return this.$store.state.userInfo.amount_zfb || 0;
-                case 'amount_yhk':
+                case "amount_yhk":
                     return this.$store.state.userInfo.amount_yhk || 0;
                 default:
-                    return 0
+                    return 0;
             }
         },
         // 点击付款的逻辑
         buy() {
             // 修改用户余额
-            axios.put("http://localhost:8081/user/subPrice", {
-                uID: this.$store.state.userInfo.uid,
-                payment: this.selectedPayment,
-                price: this.$store.state.userInfo[this.selectedPayment] - parseFloat(this.price),
-            }).then(res => {
-                this.isBuy = false;
-                this.$store.commit("updataUserPrice", { payment: this.selectedPayment, price: this.$store.state.userInfo[this.selectedPayment] - parseFloat(this.price) })
-                this.$message({
-                    message: "购买成功！",
-                    type: "success",
+            axios
+                .put("http://localhost:8081/user/subPrice", {
+                    uID: this.$store.state.userInfo.uid,
+                    payment: this.selectedPayment,
+                    price:
+                        this.$store.state.userInfo[this.selectedPayment] -
+                        parseFloat(this.price),
                 })
+                .then(() => {
+                    this.isBuy = false;
+                    this.$store.commit("updataUserPrice", {
+                        payment: this.selectedPayment,
+                        price:
+                            this.$store.state.userInfo[this.selectedPayment] -
+                            parseFloat(this.price),
+                    });
+                    this.$message({
+                        message: "购买成功！",
+                        type: "success",
+                    });
 
-                // 创建资金流水
-                axios.get("http://localhost:8081/fund/addFlow", {
-                    params: {
-                        uID: this.$store.state.userInfo.uid,
-                        type: 1,
-                        amount: this.price,
-                        source: this.selectedPayment,
-                    }
-                })
+                    // 创建资金流水
+                    axios.get("http://localhost:8081/fund/addFlow", {
+                        params: {
+                            uID: this.$store.state.userInfo.uid,
+                            type: 1,
+                            amount: this.price,
+                            source: this.selectedPayment,
+                        },
+                    });
 
-                // 创建通知消息
-                axios.get("http://localhost:8081/tool/addMessage", {
-                    params: {
-                        type: 5,
-                        context: this.boxInfo.name,
-                    }
-                })
+                    // 创建通知消息
+                    axios.get("http://localhost:8081/tool/addMessage", {
+                        params: {
+                            type: 5,
+                            context: this.boxInfo.name,
+                        },
+                    });
 
-                axios.get("http://localhost:8081/box/updateBoxCount", {
-                    params: {
-                        uID: this.$store.state.userInfo.uid,
-                        bID: this.boxInfo.bid,
-                        count: this.count + this.buyCount
-                    }
-                }).then(res => {
-                    this.count = this.count + this.buyCount
-                })
-
-
-            })
+                    axios
+                        .get("http://localhost:8081/box/updateBoxCount", {
+                            params: {
+                                uID: this.$store.state.userInfo.uid,
+                                bID: this.boxInfo.bid,
+                                count: this.count + this.buyCount,
+                            },
+                        })
+                        .then(() => {
+                            this.count = this.count + this.buyCount;
+                        });
+                });
         },
-
         // 开始滚动温馨提示
         startScrolling() {
             this.intervalId = setInterval(() => {
                 this.scrollPosition -= 2; // 控制滚动速度
                 // 当前滚动位置小于文本位置时，重置滚动
                 if (this.scrollPosition < -this.textWidth) {
-                    this.resetScrolling();
+                    this.scrollPosition = this.containerWidth;
                 }
             }, 20); // 控制滚动频率
-        },
-        // 重置滚动
-        resetScrolling() {
-            // 重置滚动位置  
-            this.scrollPosition = this.containerWidth;
         },
         // 停止滚动
         stopScrolling() {
             clearInterval(this.intervalId);
         },
-
+        // 开启抽奖
         startCj() {
-            this.cjIntervalID = setInterval(() => {
-                this.cjScrollPosition -= 10;
-            })
-        }
+            if (this.count > 0) {
+                // 修改已拥有盲盒个数
+                axios.get("http://localhost:8081/box/updateBoxCount", {
+                    params: {
+                        uID: this.$store.state.userInfo.uid,
+                        bID: this.boxInfo.bid,
+                        count: this.count--,
+                    },
+                })
+                    .then(() => {
+                        this.count = this.count--;
 
+                        // 抽奖逻辑
+                        axios.get("http://localhost:8081/box/lottery", {
+                            params: {
+                                bID: this.boxInfo.bid
+                            }
+                        }).then(res => {
+                            this.$alert(`奖品为：${res.data.data.name}，已为您发入库存中`, '恭喜您中奖啦！', {
+                                confirmButtonText: '确定',
+                            });
+
+                            axios.get("http://localhost:8081/inventory/addInventory", {
+                                params: {
+                                    uID: this.$store.state.userInfo.uid,
+                                    gID: res.data.data.gid,
+                                    name: res.data.data.name,
+                                    wID: res.data.data.wid,
+                                }
+                            })
+                        })
+                    });
+            }
+        },
 
     },
     computed: {
         price() {
-            return this.buyCount * this.boxInfo.price
+            return this.buyCount * this.boxInfo.price;
+        },
+        shortenedName() {
+            return function (name) {
+                if (name && name.length > 13) {
+                    return name.substring(0, 13) + '...'; // 截取并添加省略号  
+                }
+                return name;
+            };
+        },
+        isOpen() {
+            return this.count <= 0;
         },
 
     },
@@ -405,8 +464,6 @@ export default {
                     font-size: 16px;
                     letter-spacing: 0;
                 }
-
-
             }
 
             .openbox-price {
@@ -423,7 +480,6 @@ export default {
                 width: fit-content;
                 margin: 0 auto;
 
-
                 .openbox-btn-box {
                     display: inline-block;
                     height: 60px;
@@ -436,9 +492,15 @@ export default {
                     margin: 0 20px;
                     cursor: pointer;
                 }
+
+                .isOpen {
+                    /* 禁用状态的样式 */
+                    cursor: not-allowed;
+                    /* 显示禁止的光标 */
+                    opacity: 0.6;
+                    /* 降低透明度 */
+                }
             }
-
-
 
             .popup {
                 width: 540px;
@@ -486,7 +548,6 @@ export default {
                     }
                 }
 
-
                 .pupop_cont {
                     height: 290px;
                     padding: 0 40px;
@@ -506,7 +567,7 @@ export default {
 
                     .cont-tip {
                         font-size: 14px;
-                        color: #959595
+                        color: #959595;
                     }
 
                     .pay_mode {
@@ -542,7 +603,6 @@ export default {
                         /deep/ .el-radio {
                             transform: translate(0, 27px);
                         }
-
                     }
 
                     .pay_mode:hover {
@@ -558,7 +618,6 @@ export default {
                         top: 50%;
                         transform: translate(-50%, 110px);
                     }
-
                 }
             }
 
@@ -577,26 +636,34 @@ export default {
             width: 100%;
             height: 200px;
             margin-top: 40px;
+            overflow: hidden;
 
             .openBox-main {
                 height: 100%;
                 width: 100%;
-                overflow: hidden;
                 display: flex;
                 flex-wrap: nowrap;
                 justify-content: flex-start;
 
-
-
                 .main-item {
-                    width: 210px;
+                    width: 202px;
                     height: 100px;
                     flex-shrink: 0;
-                    flex-basis: 210px;
+                    flex-basis: 202px;
                     background: url("~@img/bg/boxCj1.png") center / contain no-repeat;
                     text-align: center;
                     color: #fff;
                     line-height: 100px;
+
+                    img {
+                        max-width: 100%;
+                        height: 100px;
+                        background: center / contain no-repeat;
+                    }
+                }
+
+                .scroll {
+                    animation: scrollAnimation 10s linear infinite;
                 }
             }
         }
@@ -665,6 +732,11 @@ export default {
                             max-width: 20px;
                             background: center/contain no-repeat;
                         }
+
+                        p {
+                            margin-left: 5px;
+                            font-size: 14px;
+                        }
                     }
                 }
             }
@@ -683,10 +755,9 @@ export default {
                     width: 100%;
                     padding: 10px;
                     background-color: #fff;
-                    background: url(~@img/bg/quality1.png)center/contain no-repeat;
+                    background: url(~@img/bg/quality1.png) center/contain no-repeat;
                     background-size: cover;
                     position: relative;
-
 
                     .weapon-item-price {
                         height: 50px;
@@ -712,6 +783,7 @@ export default {
                         height: 30px;
                         font-size: 16px;
                         color: #fff;
+                        cursor: pointer;
                     }
 
                     .weapon-all-name {
@@ -731,9 +803,6 @@ export default {
                         display: inline-block;
                     }
                 }
-
-
-
             }
         }
     }
