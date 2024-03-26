@@ -7,9 +7,13 @@ Vue.use(Vuex);
 
 // 用于响应组件内的动作
 const actions = {
-  // 全选
-  allSellSelect({ commit }, items) {
-    commit("addAllSellToCheckedItem", items);
+  // 全选库存
+  selectAllByInventory({ commit }, items) {
+    commit("SelectAllByInventory", items);
+  },
+  // 全选我的出售
+  selectAllBySell({ commit }, items) {
+    commit("SelectAllBySell",items);
   },
   // 全不选
   resetSellAll({ commit }) {
@@ -17,27 +21,31 @@ const actions = {
   },
   // 点击单个item
   toggleSellCheckedItem(cont, id) {
-    // 获取正在出售中的商品
-    axios
-      .get("http://localhost:8081/sell/getSellID", {
-        params: {
-          uID: cont.state.userInfo.uid,
-        },
-      })
-      .then((res) => {
-        let IDList = res.data.data;
-        // 当点击的id未被出售时，才能触发点击
-        if (!IDList.includes(id)) {
-          cont.commit("toggleSellCheckedItem", id);
-        }
-      });
+    if (cont.state.isSell) {
+      // 获取正在出售中的商品
+      axios
+        .get("http://localhost:8081/sell/getSellID", {
+          params: {
+            uID: cont.state.userInfo.uid,
+          },
+        })
+        .then((res) => {
+          let IDList = res.data.data;
+          // 当点击的id未被出售时，才能触发点击
+          if (!IDList.includes(id)) {
+            cont.commit("toggleSellCheckedItem", id);
+          }
+        });
+    } else {
+      cont.commit("toggleSellCheckedItem", id);
+    }
   },
 };
 
 // 用于操作数据（state）
 const mutations = {
-  // 全选
-  addAllSellToCheckedItem(state, items) {
+  // 全选库存
+  SelectAllByInventory(state, items) {
     axios
       .get("http://localhost:8081/sell/getSellID", {
         params: {
@@ -46,7 +54,6 @@ const mutations = {
       })
       .then((res) => {
         let IDList = res.data.data;
-
         items.forEach((item) => {
           if (
             !state.checkedSellItem.includes(item.iid) &&
@@ -56,6 +63,14 @@ const mutations = {
           }
         });
       });
+  },
+  // 全选我的出售
+  SelectAllBySell(state, items) { 
+    items.forEach((item) => {
+      if (!state.checkedSellItem.includes(item.iid)) {
+        state.checkedSellItem.push(item.iid);
+      }
+    });
   },
   // 全不选
   resetSellCheckedItem(state) {
@@ -98,10 +113,15 @@ const mutations = {
   updateUserAccount(state, val) {
     state.userInfo.account = val;
   },
+  // 修改当前所在tab
+  updateIsSell(state, val) {
+    state.isSell=val
+  }
 };
 
 // 用于存放数据
 const state = {
+  isSell: false, //是否为我的出售页，否为出售，真为库存
   checkedSellItem: [],
   inventorySortord: "gainTime desc",
   sellSortord: "sellingTime",

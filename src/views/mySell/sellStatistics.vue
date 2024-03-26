@@ -20,9 +20,9 @@
             <div class="count-item">
                 <h5>累计出售统计</h5>
                 <ul>
-                    <li class="money">￥7028.67</li>
+                    <li class="money">￥{{ totalPrice }}</li>
                     <li class="line"></li>
-                    <li class="count">257件</li>
+                    <li class="count">{{ totalCount }} 件</li>
                 </ul>
             </div>
         </div>
@@ -37,6 +37,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 import * as echarts from "echarts/core";
 import { LineChart } from "echarts/charts";
 import {
@@ -65,9 +67,30 @@ export default {
         return {
             lineChart: null,
             datePoints: [],
+            totalPrice: 0,
+            totalCount: 0,
         };
     },
     methods: {
+        init() {
+            axios.get("http://localhost:8081/order/getTotalPrice", {
+                params: {
+                    uID: this.$store.state.userInfo.uid,
+                    statue: 2,
+                }
+            }).then(res => {
+                this.totalPrice = res.data.data
+            })
+
+            axios.get("http://localhost:8081/order/getTotalCount", {
+                params: {
+                    uID: this.$store.state.userInfo.uid,
+                    statue: 2,
+                }
+            }).then(res => {
+                this.totalCount = res.data.data
+            })
+        },
         renderLineChart() {
             const dateList = this.datePoints.map((item) => item.date);
             const valueList = this.datePoints.map((item) => item.amount);
@@ -138,6 +161,7 @@ export default {
         }
     },
     mounted() {
+        this.init()
         this.renderData();
         this.lineChart = echarts.init(this.$refs.lineChart); // 初始化echarts实例
         this.renderLineChart(this.datePoints); // 渲染折线图，并传入日期数组
@@ -174,7 +198,7 @@ export default {
             .money,
             .count {
                 height: 70px;
-                width: 149px;
+                width: 148px;
                 display: inline-block;
                 font-size: 24px;
                 text-align: center;

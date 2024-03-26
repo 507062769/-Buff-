@@ -116,7 +116,7 @@ export default {
         // 全选
         allSelect() {
             if (this.isSelect) {
-                this.$store.dispatch("allSellSelect", this.marketInfo);
+                this.$store.dispatch("selectAllBySell", this.marketInfo);
             } else {
                 this.$store.dispatch("resetSellAll");
             }

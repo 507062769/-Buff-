@@ -21,11 +21,6 @@ export default {
   data() {
     return {};
   },
-  create() { },
-  mounted() { },
-  watch: {},
-  computed: {},
-  methods: {},
 };
 </script>
 

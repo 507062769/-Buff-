@@ -104,7 +104,7 @@ export default {
                 this.wear = res.data.data;
             });
             this.getSellInfo();
-
+            this.$store.commit("updateIsSell", false)
         },
         // 获取筛选后的商品
         getSellInfo() {

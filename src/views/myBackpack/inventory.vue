@@ -172,7 +172,7 @@ export default {
         // 全选
         allSelect() {
             this.isSelect
-                ? this.$store.dispatch("allSellSelect", this.marketInfo)
+                ? this.$store.dispatch("selectAllByInventory", this.marketInfo)
                 : this.$store.commit("resetSellCheckedItem");
         },
         // 刷新
@@ -263,7 +263,9 @@ export default {
             }, 0.0);
         },
     },
-    mounted() { },
+    mounted() {
+        this.$store.commit("updateIsSell", true)
+    },
     watch: {
         isShowBody(newVal, oldVal) {
             this.showBody();
