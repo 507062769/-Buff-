@@ -37,7 +37,7 @@
               </div>
               <div class="store-account">
                 <h3>
-                  余额<b>￥{{ $store.state.userInfo.amount_zfb + $store.state.userInfo.amount_yhk }}</b>
+                  余额<b>￥{{ sum }}</b>
                 </h3>
                 <p>
                   <a class="i_Btn_small">充值</a>
@@ -90,6 +90,7 @@ export default {
           },
         })
         .then((res) => {
+          console.log('res:', res)
           switch (res.data.status) {
             case "200":
               this.dialogForm = false;
@@ -134,6 +135,11 @@ export default {
     //判断用户是否存在
     isExistUser() {
       return Object.keys(this.$store.state.userInfo).length > 0;
+    },
+    sum() {
+      console.log('zfb:', this.$store.state.userInfo.amount_zfb)
+      console.log('yhk:', this.$store.state.userInfo.amount_yhk)
+      return (this.$store.state.userInfo.amount_zfb + this.$store.state.userInfo.amount_yhk).toFixed(2);
     }
 
   },
@@ -347,9 +353,9 @@ export default {
   padding: 25px 35px;
   border: 5px solid rgb(255, 255, 255);
   box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 30px 30px -20px;
-  position: relative;
-  top: 50%;
-  left: 34%;
+  position: fixed;
+  top: 180px;
+  left: 590px;
   z-index: 2;
 
   .heading {

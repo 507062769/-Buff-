@@ -36,7 +36,7 @@ export default {
     methods: {
         // 判断是否选中
         handleChecked(iid) {
-            this.$store.dispatch("toggleSellCheckedItem", iid);
+            console.log('iid', iid)
         },
     },
     computed: {

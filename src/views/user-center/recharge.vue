@@ -25,15 +25,15 @@
           </td>
           <td class="content">
             <div class="amount" @click="toggleTab" :tr="rechargeMethod[1]">
-              <span :class="meTabIndex == 1 ? 'on' : ''" tabIndex="1">支付宝</span>
-              <span :class="meTabIndex == 2 ? 'on' : ''" tabIndex="2">银行卡</span>
+              <span :class="meTabIndex == 1 ? 'on' : ''" data-tabIndex="amount_zfb">支付宝</span>
+              <span :class="meTabIndex == 2 ? 'on' : ''" data-tabIndex="amount_yhk">银行卡</span>
             </div>
           </td>
         </tr>
         <tr>
           <td class="title"></td>
           <td class="content">
-            <div class="submit" @click="openRecharge">
+            <div class="submit" @click="recharge">
               确认充值
             </div>
           </td>
@@ -53,18 +53,18 @@
       <div class="blank10"></div>
       <div class="blank10"></div>
       <div class="line"> </div>
-
     </div>
-    <div class="container" v-show="isShowRecharge">
+    <!-- <div class="container" v-show="isShowRecharge">
       <h3>请扫描二维码完成付款</h3>
       <div class="container_img"></div>
       <div></div>
     </div>
-    <div class="mask" v-show="isShowRecharge" @click="isShowRecharge = false"></div>
+    <div class="mask" v-show="isShowRecharge" @click="isShowRecharge = false"></div> -->
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: "",
   components: {},
@@ -73,16 +73,24 @@ export default {
       tabIndex: 0,
       meTabIndex: 1,
       rechargeMethod: ['amount', 'method'],
-      amount: "",
+      amount: '',
       isShowRecharge: false,
-
+      paymentMethod: 'amount_zfb',
     }
   },
   methods: {
     toggleTab({ target }) {
       if (target.tagName === "SPAN" || target.tagName === 'INPUT') {
         if (target.parentElement.getAttribute('tr') === "method") {
-          this.meTabIndex = target.tabIndex
+          this.paymentMethod = target.dataset.tabindex
+          switch (target.dataset.tabindex) {
+            case 'amount_zfb':
+              this.meTabIndex = 1;
+              break
+            case 'amount_yhk':
+              this.meTabIndex = 2;
+              break
+          }
         } else {
           this.tabIndex = target.tabIndex;
           switch (target.tabIndex) {
@@ -100,9 +108,28 @@ export default {
 
       }
     },
-    openRecharge() {
-      this.isShowRecharge = true;
-    }
+    // openRecharge() {
+    //   this.isShowRecharge = true;
+    // }
+    recharge() {
+      axios.put("http://localhost:8081/user/recharge", {
+        uID: this.$store.state.userInfo.uid,
+        paymentMethod: this.paymentMethod,
+        price: this.amount
+      }).then(res => {
+        this.$message({
+          message: "充值成功！",
+          type: "success",
+        })
+        axios.get("http://localhost:8081/user/getUserInfo", {
+          params: {
+            uID: this.$store.state.userInfo.uid
+          }
+        }).then(res => {
+          this.$store.commit("addUserInfo", res.data.data)
+        })
+      })
+    },
   },
 }
 </script>

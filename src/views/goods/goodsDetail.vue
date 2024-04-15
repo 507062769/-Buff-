@@ -30,7 +30,7 @@
             <ul @click="toggleWearTab">
                 <li :dataWIndex="w.wid" v-for="w in wear" :key="w.wid" :class="wearIndex === w.wid ? 'on' : ''">
                     <span :dataWIndex="w.wid">{{ w.name }}</span>
-                    <span :dataWIndex="w.wid">￥3.68</span>
+                    <!-- <span :dataWIndex="w.wid">￥3.68</span> -->
                 </li>
             </ul>
         </div>
@@ -79,7 +79,8 @@
                 </div>
             </div>
         </div>
-        <router-view :goodsInfo="filterData" :hidden="hidden"></router-view>
+
+        <router-view :goodsInfo="filterData" :hiddenData="hiddenData"></router-view>
 
     </div>
 </template>
@@ -104,6 +105,7 @@ export default {
             filterData: [],
             qualityName: "",
             kindName: "",
+            actualPrice: 0,
         };
     },
     methods: {
@@ -145,6 +147,7 @@ export default {
                 }
             }).then(res => {
                 this.goodsInfo = res.data.data;
+                this.actualPrice = this.goodsInfo[0].price
                 // 遍历饰品添加nickName项
                 this.goodsInfo.forEach(g => {
                     axios.get("http://localhost:8081/user/getNameByID", {
@@ -291,7 +294,7 @@ export default {
             }
         },
         // 当购买了饰品，隐藏它 
-        hidden(sid, uid) {
+        hiddenData(sid, uid) {
             axios.put("http://localhost:8081/sell/updateIsShow", {
                 uID: uid,
                 sID: sid,
@@ -300,15 +303,9 @@ export default {
             this.filterData = this.filterData.filter(item => item.sid != sid)
         }
 
-
     },
     computed: {
-        actualPrice() {
-            // return this.goodsInfo.reduce((cheapest, item) => {
-            //     return (cheapest < item.price) ? cheapest : item;
-            // }).price
-            return 1
-        }
+
     },
     directives: {
         LimitInputNumber: {

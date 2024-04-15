@@ -4,9 +4,11 @@
         <el-table :data="goodsInfo" style="width: 100%" v-else>
             <el-table-column width="30"></el-table-column>
             <el-table-column prop="GoodsName" label="饰品" width="180">
-                <div class="pic-cont">
-                    <img src="~@img/pf/akhs.png" alt="" class="goodsImg">
-                </div>
+                <template slot-scope="scope">
+                    <div class="pic-cont">
+                        <img :src="scope.row.img" alt="" class="goodsImg">
+                    </div>
+                </template>
             </el-table-column>
             <el-table-column prop="wear" label="磨损度" width="380">
             </el-table-column>
@@ -46,13 +48,13 @@
                 <h3>应付 <span>￥{{ selectData.price }}</span></h3>
                 <p class="cont-tip">选择支付方式</p>
                 <ul>
-                    <li v-for="item in paymentMethod" :key="item.id">
+                    <li v-for="item in paymentMethod" :key="item.id" @click="togglePay(item.id)">
                         <div class="pay_mode">
                             <img :src="item.img">
                             <div class="pay_mode_text">
                                 <h5> {{ item.name }} <span style="color:#4d80e1">￥{{ getItemAmount(item.id) }} </span>
                                 </h5>
-                                <p style="color:#EEA20E" v-if="getItemAmount(item.id) < selectData.price">
+                                <p style="color:#EEA20E" v-show="getItemAmount(item.id) < selectData.price">
                                     余额不足，请充值
                                 </p>
                             </div>
@@ -60,8 +62,8 @@
                         </div>
                     </li>
                 </ul>
-                <el-button type="primary" @click="buy">确认付款</el-button>
-                <!-- <el-button type="primary">前往充值</el-button> -->
+                <el-button type="primary" @click="buy" v-if="isShow">确认付款</el-button>
+                <el-button type="primary" @click="goRecharge" v-else>前往充值</el-button>
 
             </div>
         </div>
@@ -75,11 +77,11 @@ import axios from 'axios'
 export default {
     name: "currentSell",
     components: {},
-    props: ["goodsInfo", "hidden"],
+    props: ["goodsInfo", "hiddenData"],
     data() {
         return {
             isBuy: false,
-            selectedPayment: null,
+            selectedPayment: 'amount_zfb',
             paymentMethod: [
                 { id: 'amount_zfb', name: 'BUFF余额-支付宝', img: "/img/zfb.png" },
                 { id: 'amount_yhk', name: 'BUFF余额-银行卡', img: "/img/yhk.png" }
@@ -123,7 +125,7 @@ export default {
                     message: "购买成功，等待卖家发货！",
                     type: "success",
                 })
-                this.hidden(this.selectData.sid, this.selectData.uid)
+                this.hiddenData(this.selectData.sid, this.selectData.uid)
                 // 创建资金流水
                 axios.get("http://localhost:8081/fund/addFlow", {
                     params: {
@@ -152,7 +154,21 @@ export default {
                 statue: 1,
             })
         },
+        // 前往充值
+        goRecharge() {
+            this.$router.push({
+                name: "recharge",
+            });
+        },
+        togglePay(id) {
+            this.selectedPayment = id
+        }
 
+    },
+    computed: {
+        isShow() {
+            return this.$store.state.userInfo[this.selectedPayment] > this.selectData.price;
+        }
     },
     mounted() {
         this.init()

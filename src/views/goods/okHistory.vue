@@ -1,25 +1,24 @@
 <template>
     <div id="okHistory">
-        <el-table :data="okHistoryData" style="width: 100%">
+        <el-table :data="data" style="width: 100%">
             <el-table-column width="30"></el-table-column>
-            <el-table-column prop="GoodsName" label="饰品" width="445">
+            <el-table-column label="饰品" width="445">
                 <template slot-scope="scope">
                     <div class="pic-cont">
-                        <img src="~@img/pf/akhs.png" alt="" class="goodsImg">
+                        <img :src="scope.row.img" alt="" class="goodsImg">
                     </div>
                     <div class="goodsName">
-                        {{ scope.row.GoodsName }}
+                        {{ scope.row.name }}
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="Price" label="价格" width="350">
-
+            <el-table-column label="价格" width="350">
                 <template slot-scope="scope">
-                    <b style="color:#eea20e">￥{{ scope.row.Price }}</b>
+                    <b style="color:#eea20e">￥{{ scope.row.price }}</b>
                 </template>
             </el-table-column>
 
-            <el-table-column prop="Date" label="时间" width="360">
+            <el-table-column prop="sellingTime" label="出售时间" width="360">
             </el-table-column>
 
             <el-table-column width="30"></el-table-column>
@@ -28,61 +27,31 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     name: "okHistory",
     components: {},
+    props: ["goodsInfo"],
     data() {
         return {
-            okHistoryData: [
-                {
-                    Id: 1,
-                    GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/pf/akhs.png',
-                    Price: 999.00,
-                    Seller: '匿名用户2231',
-                    Date: '2023-12-31 15:25:38',
-                    Detail: "订单ID20231231152538",
-                },
-                {
-                    Id: 2,
-                    GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/pf/akhs.png',
-                    Price: 999.00,
-                    Seller: '匿名用户2231',
-                    Date: '2023-12-31 15:25:38',
-                    Detail: "订单ID20231231152538",
-                },
-                {
-                    Id: 3,
-                    GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/pf/akhs.png',
-                    Price: 999.00,
-                    Seller: '匿名用户2231',
-                    Date: '2023-12-31 15:25:38',
-                    Detail: "订单ID20231231152538",
-                },
-                {
-                    Id: 4,
-                    GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/pf/akhs.png',
-                    Price: 999.00,
-                    Seller: '匿名用户2231',
-                    Date: '2023-12-31 15:25:38',
-                    Detail: "订单ID20231231152538",
-                },
-                {
-                    Id: 5,
-                    GoodsName: '蝴蝶刀|虎牙(久经沙场)',
-                    Img: '~@img/pf/akhs.png',
-                    Price: 999.00,
-                    Seller: '匿名用户2231',
-                    Date: '2023-12-31 15:25:38',
-                    Detail: "订单ID20231231152538",
-                },
-            ]
+            data: []
         }
     },
-    methods: {},
+    methods: {
+        init() {
+            axios.get("http://localhost:8081/sell/getOkData", {
+                params: {
+                    gID: this.goodsInfo[0].gid
+                }
+            }).then(res => {
+                console.log('', res)
+                this.data = res.data.data
+            })
+        }
+    },
+    mounted() {
+        this.init()
+    }
 }
 </script>
 

@@ -31,9 +31,9 @@
                     <div class="pupop_header">
                         <h3>确认支付</h3>
                         <span class="popup-close" @click="
-                    isBuy = false;
-                isShowBody = false;
-                ">x</span>
+                            isBuy = false;
+                        isShowBody = false;
+                        ">x</span>
                     </div>
                     <div class="pupop_cont">
                         <h3>
@@ -59,7 +59,7 @@
                             </li>
                         </ul>
                         <el-button type="primary" @click="buy">确认付款</el-button>
-                        <el-button type="primary">前往充值</el-button>
+                        <!-- <el-button type="primary">前往充值</el-button> -->
                     </div>
                 </div>
                 <div class="mask" v-show="isBuy" @click="isBuy = false"></div>

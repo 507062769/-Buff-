@@ -265,7 +265,8 @@ export default {
           }
 
           ul {
-            width: 200px;
+            width: 230px;
+            max-height: 430px;
             position: relative;
             overflow: auto;
             background-color: #2d2f3e;
@@ -274,7 +275,7 @@ export default {
 
             li {
               height: 32px;
-              width: 90px;
+              width: 100px;
               line-height: 32px;
               list-style-type: none;
               float: left;
