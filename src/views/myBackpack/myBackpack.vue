@@ -122,6 +122,7 @@ export default {
             })
                 .then((res) => {
                     this.marketInfo = res.data.data;
+                    console.log('当前的data：', this.marketInfo)
                 });
         },
         // 获取买家订单

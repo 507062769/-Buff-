@@ -44,7 +44,6 @@ export default {
                     gID: this.goodsInfo[0].gid
                 }
             }).then(res => {
-                console.log('', res)
                 this.data = res.data.data
             })
         }

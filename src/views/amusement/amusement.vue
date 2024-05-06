@@ -40,13 +40,20 @@ export default {
         },
         // 跳转购买页面
         goBoxDetail(id) {
-            console.log('当前想要的是：', id)
-            this.$router.push({
-                name: "BoxDetatil",
-                params: {
-                    bID: id
-                }
-            });
+            if (Object.keys(this.$store.state.userInfo).length) {
+                this.$router.push({
+                    name: "BoxDetatil",
+                    params: {
+                        bID: id
+                    }
+                });
+            } else {
+                this.$message({
+                    message: "还没登录，请登录！",
+                    type: "error"
+                })
+            }
+
         },
     },
     mounted() {

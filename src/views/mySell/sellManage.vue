@@ -202,6 +202,10 @@ export default {
                         type: "success",
                     });
                 });
+            axios.post("http://localhost:8081/inventory/updateIsSell", {
+                IIDList: this.$store.state.checkedSellItem,
+                value: 0,
+            })
         },
         // 点击取消时触发的事件
         handleClose(done) {

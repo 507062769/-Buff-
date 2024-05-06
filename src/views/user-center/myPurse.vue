@@ -88,7 +88,6 @@ export default {
     },
     // 切换充值、提现tab
     toggleTab({ target }) {
-      console.log('tar:', target)
       if (target.tagName === "LI") {
         this.tabIndex = target.tabIndex;
       } else if (target.tagName === "SPAN") {

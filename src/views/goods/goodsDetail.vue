@@ -80,7 +80,7 @@
             </div>
         </div>
 
-        <router-view :goodsInfo="filterData" :hiddenData="hiddenData"></router-view>
+        <router-view :goodsInfo="filterData" :hiddenData="hiddenData" :delist="delist"></router-view>
 
     </div>
 </template>
@@ -301,7 +301,23 @@ export default {
                 isShow: 0,
             })
             this.filterData = this.filterData.filter(item => item.sid != sid)
-        }
+        },
+        delist(iID) {
+            axios
+                .post("http://localhost:8081/sell/delist", {
+                    uID: this.$store.state.userInfo.uid,
+                    idList: [iID],
+                })
+                .then((res) => {
+                    this.filterData = this.filterData.filter((item) => {
+                        return item.iid !== iID
+                    })
+                    this.$message({
+                        message: "下架成功",
+                        type: "success",
+                    });
+                });
+        },
 
     },
     computed: {

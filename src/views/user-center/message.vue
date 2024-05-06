@@ -30,7 +30,6 @@ export default {
   methods: {
     init() {
       axios.get("http://localhost:8081/tool/getMessage").then(res => {
-        console.log('res', res.data.data)
         this.msgData = res.data.data
       })
     }

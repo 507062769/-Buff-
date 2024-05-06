@@ -33,7 +33,7 @@ const actions = {
           let IDList = res.data.data;
           // 当点击的id未被出售时，才能触发点击
           if (!IDList.includes(id)) {
-            cont.commit("toggleSellCheckedItem", id);
+            cont.commit("toggleInventCheckedItem", id);
           }
         });
     } else {
@@ -59,18 +59,22 @@ const mutations = {
             !state.checkedSellItem.includes(item.iid) &&
             !IDList.includes(item.iid)
           ) {
-            state.checkedSellItem.push(item.iid);
+            state.checkedInventItem.push(item.iid);
           }
         });
       });
   },
   // 全选我的出售
-  SelectAllBySell(state, items) { 
+  SelectAllBySell(state, items) {
     items.forEach((item) => {
       if (!state.checkedSellItem.includes(item.iid)) {
         state.checkedSellItem.push(item.iid);
       }
     });
+  },
+  // 全不选
+  resetInventCheckedItem(state) {
+    state.checkedInventItem = [];
   },
   // 全不选
   resetSellCheckedItem(state) {
@@ -83,6 +87,14 @@ const mutations = {
       state.checkedSellItem.splice(index, 1);
     } else {
       state.checkedSellItem.push(id);
+    }
+  },
+  toggleInventCheckedItem(state, id) {
+    const index = state.checkedInventItem.indexOf(id);
+    if (index > -1) {
+      state.checkedInventItem.splice(index, 1);
+    } else {
+      state.checkedInventItem.push(id);
     }
   },
   // 切换库存的排序方式(时间、价格、磨损)
@@ -115,14 +127,15 @@ const mutations = {
   },
   // 修改当前所在tab
   updateIsSell(state, val) {
-    state.isSell=val
-  }
+    state.isSell = val;
+  },
 };
 
 // 用于存放数据
 const state = {
   isSell: false, //是否为我的出售页，否为出售，真为库存
   checkedSellItem: [],
+  checkedInventItem:[],
   inventorySortord: "gainTime desc",
   sellSortord: "sellingTime",
   group: "sell",
@@ -132,7 +145,9 @@ const state = {
 const getters = {
   // 判断当前id是否存在checkedSellItem中
   isChecked: (state) => (id) => {
-    return state.checkedSellItem.includes(id);
+    return state.isSell
+      ? state.checkedInventItem.includes(id)
+      : state.checkedSellItem.includes(id);
   },
 };
 

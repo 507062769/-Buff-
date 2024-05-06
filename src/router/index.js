@@ -178,4 +178,17 @@ const router = new VueRouter({
   routes,
 });
 
+// router.beforeEach((to, form, next) => {
+//  const { userInfo } = JSON.parse(localStorage.getItem("store"));
+//   console.log("@@", userInfo);
+//   if (userInfo!={}) next();
+//   else {
+//     next({
+//       name: "Home",
+//     });
+//   }
+// })
+
+
+
 export default router;

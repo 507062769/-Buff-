@@ -90,7 +90,6 @@ export default {
           },
         })
         .then((res) => {
-          console.log('res:', res)
           switch (res.data.status) {
             case "200":
               this.dialogForm = false;
@@ -117,8 +116,10 @@ export default {
     },
     // 退出登录
     logout() {
-      // localStorage.removeItem("BuffUserInfo");
       this.$store.commit("removeUserInfo");
+      this.$router.push({
+        name: "Home"
+      })
       this.$message({
         message: "退出成功！",
         type: "success",
@@ -137,8 +138,6 @@ export default {
       return Object.keys(this.$store.state.userInfo).length > 0;
     },
     sum() {
-      console.log('zfb:', this.$store.state.userInfo.amount_zfb)
-      console.log('yhk:', this.$store.state.userInfo.amount_yhk)
       return (this.$store.state.userInfo.amount_zfb + this.$store.state.userInfo.amount_yhk).toFixed(2);
     }
 

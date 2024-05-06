@@ -70,7 +70,6 @@ export default {
                         // 请求头
                         // headers: { Authorization: 'Bearer ' + getToken() },
                         customInsert: (res, insertFn) => {
-                            console.log('res,insertfn:', res, insertFn)
                             insertFn(res.data)
                         }
                     }
@@ -93,7 +92,6 @@ export default {
         },
         // 删除图片
         handleRemove(file) {
-            console.log(file);
             this.hideUpload = false;
         },
         // 上传图片成功
@@ -103,9 +101,7 @@ export default {
             this.form.coverURL = response.data
         },
         beforeUpload(file) {
-            console.log('file.size ', file.size)
             const isLt500K = file.size / 1024 / 1024 < 10;
-            console.log('isLt500K', isLt500K)
             if (!isLt500K) {
                 this.$message.error('上传的文件大小不能超过 10KB!');
             }
@@ -118,11 +114,9 @@ export default {
         // 当点击提交按钮时触发
         onSubmit() {
             // this.$refs.upload.submit();
-            console.log('data：', this.form)
             axios.post("http://localhost:8081/gameInfo/addGameInfo", {
                 gameInfo: this.form
             }).then(res => {
-                console.log('res:', res.data)
                 this.$message({
                     type: "success",
                     message: "发布成功！"

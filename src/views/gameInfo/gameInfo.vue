@@ -42,9 +42,17 @@ export default {
       })
     },
     goContribute() {
-      this.$router.push({
-        name: "Contribute",
-      });
+      if (Object.keys(this.$store.state.userInfo).length) {
+        this.$router.push({
+          name: "Contribute",
+        });
+      } else {
+        this.$message({
+          message: "还没登录，请登录！",
+          type: "error"
+        })
+      }
+
     },
     goDetails(id) {
       this.$router.push({

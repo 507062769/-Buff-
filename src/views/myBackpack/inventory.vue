@@ -4,19 +4,19 @@
             <div class="left">
                 <div class="group" @click="toggleTab">
                     <div data-inventorySortord="gainTime" :class="startsWith($store.state.inventorySortord, 'gainTime') ? 'on' : ''
-                    ">
+                        ">
                         <span>时间</span>
                         <i class="el-icon-bottom" v-if="sortOptions['gainTime'] === 'desc'"></i>
                         <i class="el-icon-top" v-else></i>
                     </div>
                     <div data-inventorySortord="price" :class="startsWith($store.state.inventorySortord, 'price') ? 'on' : ''
-                    ">
+                        ">
                         <span>价格</span>
                         <i class="el-icon-bottom" v-if="sortOptions['price'] === 'desc'"></i>
                         <i class="el-icon-top" v-else></i>
                     </div>
                     <div data-inventorySortord="wear" :class="startsWith($store.state.inventorySortord, 'wear') ? 'on' : ''
-                    ">
+                        ">
                         <span>磨损</span>
                         <i class="el-icon-bottom" v-if="sortOptions['wear'] === 'desc'"></i>
                         <i class="el-icon-top" v-else></i>
@@ -25,8 +25,8 @@
                 <span class="total">
                     已选
                     <b style="color: #eea20e">{{
-                    $store.state.checkedSellItem.length
-                }}</b>
+                        $store.state.checkedInventItem.length
+                    }}</b>
                     /
                     <span>{{ marketInfo.length }}</span>
                 </span>
@@ -35,7 +35,7 @@
                 <el-checkbox v-model="isSelect" @change="allSelect">全选</el-checkbox>
                 <el-button type="info" @click="openFullScreen">刷新</el-button>
                 <el-button type="primary" @click="openGoSell"
-                    :disabled="$store.state.checkedSellItem.length == 0">上架</el-button>
+                    :disabled="$store.state.checkedInventItem.length == 0">上架</el-button>
             </div>
             <div class="pupop_container" v-show="isGoSell">
                 <div class="pupop_header">
@@ -44,9 +44,9 @@
                         <span>(1件)</span>
                     </h3>
                     <span class="popup-close" @click="
-                    isGoSell = false;
-                isShowBody = false;
-                ">x</span>
+                        isGoSell = false;
+                    isShowBody = false;
+                    ">x</span>
                 </div>
                 <div class="pupop_cont">
                     <el-table :data="sellData" style="width: 100%">
@@ -101,9 +101,9 @@
                 </div>
             </div>
             <div class="mask" v-show="isGoSell" @click="
-                    isGoSell = false;
-                isShowBody = false;
-                "></div>
+                isGoSell = false;
+            isShowBody = false;
+            "></div>
         </div>
 
         <el-empty description="暂无数据" v-if="marketInfo.length == 0"></el-empty>
@@ -173,7 +173,7 @@ export default {
         allSelect() {
             this.isSelect
                 ? this.$store.dispatch("selectAllByInventory", this.marketInfo)
-                : this.$store.commit("resetSellCheckedItem");
+                : this.$store.commit("resetInventCheckedItem");
         },
         // 刷新
         openFullScreen() {
@@ -191,7 +191,7 @@ export default {
             axios
                 .post("http://localhost:8081/inventory/getInventoryByItemList", {
                     uID: this.$store.state.userInfo.uid,
-                    itemIDList: this.$store.state.checkedSellItem,
+                    itemIDList: this.$store.state.checkedInventItem,
                 })
                 .then((res) => {
                     this.isSell = []
@@ -217,8 +217,7 @@ export default {
                             type: "success",
                         });
                         this.isGoSell = false;
-                        this.$store.commit("resetSellCheckedItem");
-                        console.log('isSell', this.isSell)
+                        this.$store.commit("resetInventCheckedItem");
                         axios.post("http://localhost:8081/inventory/updateIsSell", {
                             IIDList: this.isSell,
                             value: 1,

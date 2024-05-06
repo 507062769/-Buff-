@@ -15,9 +15,6 @@ import Footerr from "./components/footer.vue";
 export default {
   name: "App",
   components: { TopHeader, Footerr },
-  mounted() {
-
-  }
 };
 </script>
 

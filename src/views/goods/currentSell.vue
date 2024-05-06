@@ -29,7 +29,9 @@
             <el-table-column label="操作" width="145">
 
                 <template slot-scope="scope">
-                    <el-button @click="handleBuy(scope.row)" type="primary" size="small">
+                    <el-link type="primary" v-if="scope.row.uid === $store.state.userInfo.uid"
+                        @click="handleDelist(scope.row.iid)">下架</el-link>
+                    <el-button @click="handleBuy(scope.row)" type="primary" size="small" v-else>
                         购买
                     </el-button>
                 </template>
@@ -77,7 +79,7 @@ import axios from 'axios'
 export default {
     name: "currentSell",
     components: {},
-    props: ["goodsInfo", "hiddenData"],
+    props: ["goodsInfo", "hiddenData", "delist"],
     data() {
         return {
             isBuy: false,
@@ -97,8 +99,15 @@ export default {
         },
         // 处理点击购买的事件
         handleBuy(row) {
-            this.isBuy = true;
-            this.selectData = row
+            if (Object.keys(this.$store.state.userInfo).length) {
+                this.isBuy = true;
+                this.selectData = row
+            } else {
+                this.$message({
+                    message: "还没登录，请登录！",
+                    type: "error"
+                })
+            }
         },
         //  获取账户支付宝、银行卡金额
         getItemAmount(id) {
@@ -162,6 +171,9 @@ export default {
         },
         togglePay(id) {
             this.selectedPayment = id
+        },
+        handleDelist(iID) {
+            this.delist(iID)
         }
 
     },
@@ -336,7 +348,7 @@ export default {
     }
 
     /deep/ .cell {
-        padding-left: 0;
+        padding-left: 10px;
     }
 
     /deep/.el-avatar {
