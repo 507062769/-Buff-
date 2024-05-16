@@ -4,17 +4,17 @@
             <div class="count-item">
                 <h5>今日出售统计</h5>
                 <ul>
-                    <li class="money moneyColor">￥0</li>
+                    <li class="money moneyColor">￥{{ todayPrice }}</li>
                     <li class="line"></li>
-                    <li class="count countColor">0件</li>
+                    <li class="count countColor"> {{ todayCount }} 件</li>
                 </ul>
             </div>
             <div class="count-item">
                 <h5>昨日出售统计</h5>
                 <ul>
-                    <li class="money">￥0</li>
+                    <li class="money">￥{{ yesterdayPrice }}</li>
                     <li class="line"></li>
-                    <li class="count">0件</li>
+                    <li class="count"> {{ yesterdayCount }}件</li>
                 </ul>
             </div>
             <div class="count-item">
@@ -30,7 +30,6 @@
             <div class="chart">
                 <h5>30天统计图</h5>
                 <div ref="lineChart" style="width: 100%; height: 300px"></div>
-
             </div>
         </div>
     </div>
@@ -67,28 +66,71 @@ export default {
         return {
             lineChart: null,
             datePoints: [],
+            statisticData: [],
+            todayPrice: 0,
+            todayCount: 0,
             totalPrice: 0,
             totalCount: 0,
+            yesterdayPrice: 0,
+            yesterdayCount: 0,
+
         };
     },
     methods: {
         init() {
+            // 获取所有的价格与件数
             axios.get("http://localhost:8081/order/getTotalPrice", {
                 params: {
                     uID: this.$store.state.userInfo.uid,
                     statue: 2,
                 }
             }).then(res => {
-                this.totalPrice = res.data.data
+                this.totalPrice = res.data.data || 0
             })
-
             axios.get("http://localhost:8081/order/getTotalCount", {
                 params: {
                     uID: this.$store.state.userInfo.uid,
                     statue: 2,
                 }
             }).then(res => {
-                this.totalCount = res.data.data
+                this.totalCount = res.data.data || 0
+            })
+
+            // 获取今日的价格与件数
+            axios.get("http://localhost:8081/order/getTodayPrice", {
+                params: {
+                    uID: this.$store.state.userInfo.uid,
+                    statue: 2,
+                }
+            }).then(res => {
+                this.todayPrice = res.data.data || 0
+            })
+            axios.get("http://localhost:8081/order/getTodayCount", {
+                params: {
+                    uID: this.$store.state.userInfo.uid,
+                    statue: 2,
+                }
+            }).then(res => {
+                this.todayCount = res.data.data || 0
+            })
+
+            axios.get("http://localhost:8081/order/getYesterdayPrice", {
+                params: {
+                    uID: this.$store.state.userInfo.uid,
+                    statue: 2,
+                }
+            }).then(res => {
+                console.log('res:', res)
+                this.yesterdayPrice = res.data.data || 0
+            })
+
+            axios.get("http://localhost:8081/order/getYesterdayCount", {
+                params: {
+                    uID: this.$store.state.userInfo.uid,
+                    statue: 2,
+                }
+            }).then(res => {
+                this.yesterdayCount = res.data.data || 0
             })
         },
         renderLineChart() {
@@ -113,8 +155,8 @@ export default {
                         data: dateList,
                         gridIndex: 1,
                         axisLabel: {
-                            interval: 0, // 设置刻度间隔，0表示所有刻度都显示
-                            rotate: 45, // 设置刻度文字旋转角度
+                            interval: 3, // 设置刻度间隔，0表示所有刻度都显示
+                            rotate: 0, // 设置刻度文字旋转角度
                         },
                     },
                 ],
@@ -128,7 +170,7 @@ export default {
                 ],
                 grid: [
                     {
-                        bottom: "20%",
+                        bottom: "10%",
                     },
                     {
                         top: "15%",
@@ -147,24 +189,41 @@ export default {
             this.lineChart.setOption(option); // 设置echarts实例的配置项和数据
         },
         renderData() {
-            // 获取从今天算起的前30天日期
-            const now = new Date();
-            for (let i = 0; i < 30; i++) {
-                const date = new Date(now);
-                date.setDate(date.getDate() - i); // 逐日减少日期
-                const amount = Math.floor(Math.random() * 1000); // 生成随机金额
-                this.datePoints.unshift({
-                    date: `${date.getMonth() + 1}/${date.getDate()}`,
-                    amount: amount,
+            axios.get("http://localhost:8081/order/getStatistics").then(res => {
+                // 将获取到的值赋给StatisicDate
+                this.StatisicData = res.data.data
+
+                // x轴修改前存放的值，前30天的日期
+                const dateList = [];
+                // 获取前30天的日期
+                const currentDate = new Date();
+                for (let i = 0; i < 30; i++) {
+                    const date = new Date(currentDate);
+                    date.setDate(date.getDate() - i);
+                    dateList.unshift(`0${date.getMonth() + 1}/${date.getDate()}`);
+                }
+
+                // 将对应的日期中的金额赋值，新的x轴
+                const formattedData = dateList.map(date => {
+                    const dataItem = this.StatisicData.find(item => {
+                        return item.formattedTime === date
+                    });
+                    return {
+                        date: date,
+                        amount: dataItem ? dataItem.price : 0
+                    };
                 });
-            }
+
+                // 使用x轴的规则
+                this.datePoints.unshift(...formattedData)
+                this.renderLineChart() // 渲染折线图，并传入日期数组
+            })
         }
     },
     mounted() {
         this.init()
         this.renderData();
         this.lineChart = echarts.init(this.$refs.lineChart); // 初始化echarts实例
-        this.renderLineChart(this.datePoints); // 渲染折线图，并传入日期数组
     },
 };
 </script>

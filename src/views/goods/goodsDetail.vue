@@ -317,6 +317,10 @@ export default {
                         type: "success",
                     });
                 });
+            axios.post("http://localhost:8081/inventory/updateIsSell", {
+                IIDList: [iID],
+                value: 0,
+            })
         },
 
     },

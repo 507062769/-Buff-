@@ -115,7 +115,8 @@ export default {
       axios.put("http://localhost:8081/user/recharge", {
         uID: this.$store.state.userInfo.uid,
         paymentMethod: this.paymentMethod,
-        price: this.amount
+        price: this.amount,
+        type: 'recharge'
       }).then(res => {
         this.$message({
           message: "充值成功！",

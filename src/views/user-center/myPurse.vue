@@ -117,6 +117,7 @@ export default {
       this.paymentMethod.name = target.innerText
       this.init()
       this.isClickName = false
+      console.log('@支付方式：', this.paymentMethod.id)
     }
 
   },

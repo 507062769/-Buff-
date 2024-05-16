@@ -26,7 +26,7 @@
                     已选
                     <b style="color: #eea20e">{{
                         $store.state.checkedInventItem.length
-                    }}</b>
+                        }}</b>
                     /
                     <span>{{ marketInfo.length }}</span>
                 </span>
@@ -89,7 +89,6 @@
                         <p class="tip1">
                             预计收入|
                             <span> ￥{{ totalPrice }} </span>
-                            <span> (已扣除 ¥ 0 手续费)</span>
                         </p>
                         <p class="tip2">
                             请在买家付款后12小时内发货，否则将下架该类饰品并取消出售权限。

@@ -46,8 +46,8 @@
         <tr>
           <td class="title"></td>
           <td class="content">
-            <div class="submit">
-              确认充值
+            <div class="submit" @click="withdraw">
+              确认提现
             </div>
           </td>
         </tr>
@@ -73,6 +73,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: "",
   components: {},
@@ -88,7 +89,49 @@ export default {
       },
     }
   },
-  methods: {},
+  methods: {
+    withdraw() {
+      let paymentMethod
+      let amount
+      if (this.amount.zfb != '' && this.account.zfb != '') {
+        paymentMethod = 'amount_zfb'
+        amount = this.amount.zfb
+      } else if (this.amount.qt != '' && this.account.qt != '') {
+        paymentMethod = 'amount_yhk'
+        amount = this.amount.qt
+      }
+
+      if ((this.amount.zfb != '' && this.account.zfb != '') || (this.amount.qt != '' && this.account.qt != '')) {
+        axios.put("http://localhost:8081/user/recharge", {
+          uID: this.$store.state.userInfo.uid,
+          paymentMethod: paymentMethod,
+          price: amount,
+          type: 'withdraw'
+        }).then(res => {
+          this.$message({
+            message: "提现成功！",
+            type: "success",
+          })
+          axios.get("http://localhost:8081/user/getUserInfo", {
+            params: {
+              uID: this.$store.state.userInfo.uid
+            }
+          }).then(res => {
+            this.$store.commit("addUserInfo", res.data.data)
+          })
+
+          axios.get("http://localhost:8081/fund/addFlow", {
+            params: {
+              uID: this.$store.state.userInfo.uid,
+              type: 1,
+              amount: amount,
+              source: paymentMethod,
+            }
+          })
+        })
+      }
+    }
+  },
 }
 </script>
 

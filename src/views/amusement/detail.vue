@@ -193,7 +193,7 @@ export default {
                     },
                 })
                 .then((res) => {
-                    this.count = res.data.data;
+                    this.count = res.data.data || 0;
                 });
 
             // 设置温馨提示滚动开始的地方与开始滚动
