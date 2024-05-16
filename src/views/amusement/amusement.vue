@@ -66,6 +66,7 @@ export default {
 #amusement {
     width: 80%;
     height: fit-content;
+    min-height: 400px;
     margin: 0 auto;
 
     .pc-home-wrap {

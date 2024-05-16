@@ -42,6 +42,7 @@ export default {
 #GameInfodetails {
     width: 80%;
     height: fit-content;
+    min-height: 400px;
     margin: 0 auto;
     background-color: #fff;
     padding: 20px 40px;

@@ -48,5 +48,6 @@ export default {
 <style scoped lang="less">
 #asset {
   background-color: #fff;
+  min-height: 520px;
 }
 </style>

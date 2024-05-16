@@ -64,13 +64,13 @@
             <div class="btn close" @click="closeUpdateAccount">取消</div>
           </td>
         </tr>
-        <tr>
+        <!-- <tr>
           <td>实名认证</td>
           <td>
             <span>已认证</span>
           </td>
           <td></td>
-        </tr>
+        </tr> -->
         <tr>
           <td>密码设置</td>
           <td></td>
