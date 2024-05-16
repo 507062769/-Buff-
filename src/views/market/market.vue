@@ -307,7 +307,7 @@ export default {
 
         .criteria-item {
           height: 35px;
-          width: 90px;
+          width: 95px;
           float: left;
           margin: 13px 20px 13px 0;
           background-color: #2d2f3e;
@@ -332,13 +332,14 @@ export default {
 
             li {
               height: 30px;
-              width: 90px;
+              width: 95px;
               font-size: 16px;
               line-height: 30px;
               background-color: #2d2f3e;
               padding: 0 10px;
               border-top: solid #36394b 1px;
               color: #fff;
+              cursor: pointer;
             }
           }
         }
